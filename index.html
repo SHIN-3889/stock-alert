@@ -569,13 +569,28 @@
 
       var rawText = data.candidates[0].content.parts[0].text.trim();
 
-      // 1) 마크다운 코드블록 제거
-      var text = rawText.replace(/```json/gi,'').replace(/```/g,'').trim();
+      // 1) 마크다운 코드블록 제거 (백틱 3개로 감싸진 부분 처리)
+      var text = rawText;
+      var bt = '`';
+      var tribt = bt + bt + bt;
+      // 앞부분 제거: 첫 번째 줄바꿈 이후부터
+      var triStart = text.indexOf(tribt);
+      if (triStart !== -1) {
+        var nl = text.indexOf('\n', triStart);
+        if (nl !== -1) text = text.slice(nl + 1);
+        // 끝부분 제거
+        var triEnd = text.lastIndexOf(tribt);
+        if (triEnd !== -1) text = text.slice(0, triEnd);
+      }
+      text = text.trim();
 
       // 2) JSON 객체 부분만 추출 ({ ... })
       var jsonStart = text.indexOf('{');
       var jsonEnd   = text.lastIndexOf('}');
-      if (jsonStart === -1 || jsonEnd === -1) throw new Error('JSON을 찾을 수 없어요. 다시 시도해주세요.');
+      if (jsonStart === -1 || jsonEnd === -1) {
+        resultDiv.innerHTML = '<div class="eval-result" style="display:block;"><div style="color:#d70015;font-size:13px;">원본 응답:<br><small style="color:#555;white-space:pre-wrap;">' + rawText.slice(0,300) + '</small></div></div>';
+        return;
+      }
       text = text.slice(jsonStart, jsonEnd + 1);
 
 
