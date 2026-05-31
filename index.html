@@ -19,7 +19,6 @@
     .subtitle { color: #86868b; font-size: 14px; margin-bottom: 4px; }
     .updated { color: #86868b; font-size: 12px; margin-bottom: 24px; }
 
-    /* 평가손익 강조 박스 */
     .pl-hero {
       background: white;
       border-radius: 16px;
@@ -37,7 +36,6 @@
     .profit-color { color: #d70015; }
     .loss-color { color: #0066cc; }
 
-    /* 자산 요약 */
     .summary {
       background: white;
       border-radius: 12px;
@@ -55,7 +53,6 @@
     .summary-label { color: #86868b; }
     .summary-value { font-weight: 500; }
 
-    /* 종목 카드 */
     .card {
       background: white;
       border-radius: 12px;
@@ -114,7 +111,6 @@
       text-align: center;
     }
 
-    /* 시간 칩 */
     .times { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
     .time-chip {
       background: #e8f0fe;
@@ -123,8 +119,6 @@
       border-radius: 14px;
       font-size: 13px;
       font-weight: 500;
-    }
-.time-chip {
       position: relative;
       display: inline-flex;
       align-items: center;
@@ -152,6 +146,7 @@
       cursor: pointer;
     }
     .time-chip.add-chip:active { background: #f5f5f7; }
+
     .loading, .error {
       text-align: center;
       padding: 40px 20px;
@@ -159,7 +154,6 @@
     }
     .error { color: #d70015; }
 
-    /* 새로고침 버튼 */
     .refresh-btn {
       width: 100%;
       padding: 12px;
@@ -174,7 +168,6 @@
     }
     .refresh-btn:active { background: #f5f5f7; }
 
-    /* 토큰 설정 영역 */
     .settings-section {
       margin-top: 32px;
       padding-top: 24px;
@@ -193,16 +186,8 @@
       padding: 20px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.06);
     }
-    .token-label {
-      font-size: 14px;
-      font-weight: 500;
-      margin-bottom: 4px;
-    }
-    .token-help {
-      font-size: 12px;
-      color: #86868b;
-      margin-bottom: 12px;
-    }
+    .token-label { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+    .token-help { font-size: 12px; color: #86868b; margin-bottom: 12px; }
     .token-input {
       width: 100%;
       padding: 10px 12px;
@@ -252,7 +237,6 @@
 
   <div id="content" class="loading">불러오는 중...</div>
 
-  <!-- 토큰 설정 (화면 맨 아래) -->
   <div class="settings-section">
     <div class="settings-title">⚙️ 수정 권한 설정</div>
     <div class="token-card">
@@ -323,15 +307,15 @@
       }
     }
 
-    // 페이지 로드 시 토큰 상태 표시
     updateTokenStatus();
-// ── 시간 칩 추가/삭제 (임시 - 단계 4-D에서 저장 연결) ──
-    let currentSettings = null;  // 화면에서 수정 중인 설정
+
+    // ── 화면 수정 (임시, 단계 4-D 에서 깃허브 저장 연결) ──
+    let currentSettings = null;
+    let currentLatest = null;
 
     function addTime() {
       const time = prompt('시간을 입력하세요 (예: 09:00, 14:30)', '12:00');
       if (!time) return;
-      // 형식 검증: HH:MM
       if (!/^\d{1,2}:\d{2}$/.test(time)) {
         alert('시간 형식이 올바르지 않아요. 예: 09:00, 14:30');
         return;
@@ -341,7 +325,6 @@
         alert('시간이 범위를 벗어났어요 (시: 0-23, 분: 0-59)');
         return;
       }
-      // 패딩(09:00 형식으로 통일)
       const normalized = String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
       if (currentSettings.run_times.includes(normalized)) {
         alert('이미 추가된 시간이에요');
@@ -357,7 +340,11 @@
         alert('최소 한 개의 시간은 필요해요');
         return;
       }
-      // ── 종목 수량/평단가 수정 ──
+      if (!confirm('이 시간을 삭제할까요?')) return;
+      currentSettings.run_times.splice(idx, 1);
+      renderContent(currentSettings, currentLatest);
+    }
+
     function editShares(code) {
       const h = currentSettings.holdings[code];
       const v = prompt(h.name + ' - 보유 수량을 입력하세요', h.shares);
@@ -384,12 +371,7 @@
       h.avg_price = n;
       renderContent(currentSettings, currentLatest);
     }
-      if (!confirm('이 시간을 삭제할까요?')) return;
-      currentSettings.run_times.splice(idx, 1);
-      renderContent(currentSettings, currentLatest);
-    }
 
-    let currentLatest = null;  // renderContent 가 다시 호출될 때 시세도 같이 표시
     // ── 데이터 로드 ────────────────────────────
     const settingsUrl = 'settings.json?t=' + Date.now();
     const latestUrl   = 'latest.json?t=' + Date.now();
@@ -398,7 +380,7 @@
       fetch(settingsUrl).then(r => r.ok ? r.json() : null),
       fetch(latestUrl).then(r => r.ok ? r.json() : null),
     ])
-     .then(([settings, latest]) => {
+      .then(([settings, latest]) => {
         currentSettings = settings;
         currentLatest = latest;
         renderContent(settings, latest);
@@ -502,6 +484,7 @@
             ? '$' + h.avg_price.toLocaleString()
             : h.avg_price.toLocaleString() + '원';
           html += '    <div><div class="info-label">평균 단가</div><div class="info-value"><span class="editable-value" onclick="editAvgPrice(\'' + code + '\')">' + avgStr + ' <span class="edit-icon">✎</span></span></div></div>';
+          html += '  </div>';
 
           if (row && !row.error) {
             const plCls = row.pl_krw >= 0 ? 'profit-color' : 'loss-color';
