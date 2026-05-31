@@ -560,7 +560,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0.3, maxOutputTokens: 1024 }
+            generationConfig: { temperature: 0.3, maxOutputTokens: 2048 }
           })
         }
       );
@@ -571,10 +571,12 @@
 
       // 1) { ... } 부분만 직접 추출
       var text = rawText;
+      // 응답 전체 확인
       console.log('=== GEMINI RAW ===');
       console.log('length:', text.length);
+      console.log('finishReason:', data.candidates[0].finishReason);
       console.log('first 50 chars:', JSON.stringify(text.slice(0,50)));
-      console.log('charCodes 0-10:', Array.from(text.slice(0,10)).map(function(c){return c.charCodeAt(0);}));
+      console.log('last 50 chars:', JSON.stringify(text.slice(-50)));
       var jsonStart = text.indexOf('{');
       var jsonEnd   = text.lastIndexOf('}');
       console.log('jsonStart:', jsonStart, 'jsonEnd:', jsonEnd);
