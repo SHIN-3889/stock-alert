@@ -569,10 +569,15 @@
 
       var rawText = data.candidates[0].content.parts[0].text.trim();
 
-      // 1) { ... } 부분만 직접 추출 (마크다운 무시하고 JSON만 찾기)
+      // 1) { ... } 부분만 직접 추출
       var text = rawText;
+      console.log('=== GEMINI RAW ===');
+      console.log('length:', text.length);
+      console.log('first 50 chars:', JSON.stringify(text.slice(0,50)));
+      console.log('charCodes 0-10:', Array.from(text.slice(0,10)).map(function(c){return c.charCodeAt(0);}));
       var jsonStart = text.indexOf('{');
       var jsonEnd   = text.lastIndexOf('}');
+      console.log('jsonStart:', jsonStart, 'jsonEnd:', jsonEnd);
       if (jsonStart === -1 || jsonEnd === -1) {
         resultDiv.innerHTML = '<div class="eval-result" style="display:block;"><div style="color:#d70015;font-size:13px;">원본 응답:<br><small style="color:#555;">' + rawText.slice(0,300) + '</small></div></div>';
         return;
