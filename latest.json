@@ -1,15 +1,25 @@
 {
-  "updated_at": "2026-05-31 22:22:31",
+  "updated_at": "2026-06-01 06:01:10",
   "portfolio": {
     "rows": [
+      {
+        "name": "TIGER 미국30년국채커버드콜액티브(H)",
+        "currency": "KRW",
+        "price": 7195.0,
+        "day_change_pct": 0.7703081232492998,
+        "shares": 503,
+        "value_krw": 3619085.0,
+        "pl_krw": 19617.0,
+        "pl_pct": 0.5449972051425377
+      },
       {
         "name": "GE버노바",
         "currency": "USD",
         "price": 968.3200073242188,
         "day_change_pct": -3.1079261818108472,
         "shares": 42,
-        "value_krw": 61294133.76940034,
-        "pl_krw": -4851225.856875949,
+        "value_krw": 60812608.98622692,
+        "pl_krw": -4813114.779433437,
         "pl_pct": -7.334189252708813
       },
       {
@@ -21,29 +31,62 @@
         "value_krw": 165808000.0,
         "pl_krw": 24853366.0,
         "pl_pct": 17.632173767341342
-      },
-      {
-        "name": "TIGER 미국30년국채커버드콜액티브(H)",
-        "currency": "KRW",
-        "price": 7195.0,
-        "day_change_pct": 0.7703081232492998,
-        "shares": 503,
-        "value_krw": 3619085.0,
-        "pl_krw": 19617.0,
-        "pl_pct": 0.5449972051425377
       }
     ],
     "summary": {
-      "total_value_krw": 230721218.76940036,
-      "day_change_krw": 953584.229649365,
-      "day_change_pct": 0.41502112843677724,
-      "total_pl_krw": 20021757.143124074,
-      "total_pl_pct": 9.50251936506475,
-      "usdkrw": 1507.1300048828125
+      "total_value_krw": 230239693.98622692,
+      "day_change_krw": 969029.6982191205,
+      "day_change_pct": 0.42265751758010955,
+      "total_pl_krw": 20059868.22056657,
+      "total_pl_pct": 9.544145422849617,
+      "usdkrw": 1495.2900390625
     },
-    "watchlist": []
+    "watchlist": [
+      {
+        "code": "000660",
+        "name": "SK하이닉스",
+        "market": "KR",
+        "currency": "KRW",
+        "price": 2333000.0,
+        "day_change_pct": 1.9222367846221056
+      },
+      {
+        "code": "012330",
+        "name": "현대모비스",
+        "market": "KR",
+        "currency": "KRW",
+        "price": 768000.0,
+        "day_change_pct": 11.9533527696793
+      },
+      {
+        "code": "005930",
+        "name": "삼성전자",
+        "market": "KR",
+        "currency": "KRW",
+        "price": 317000.0,
+        "day_change_pct": 5.843071786310518
+      }
+    ]
   },
   "news": {
+    "476550": {
+      "name": "TIGER 미국30년국채커버드콜액티브(H)",
+      "domestic": [
+        {
+          "title": "'불장'서 커버드콜 ETF 성적표도 갈렸다… 관건은 '기초자산'",
+          "link": "https://www.sidae.com/article/2026050813412451821"
+        },
+        {
+          "title": "PLUS 테슬라위클리커버드콜채권혼합 ETF 5월 분배금 187원",
+          "link": "https://www.g-enews.com/view.php?ud=202605191744548000c5557f8da8_1"
+        },
+        {
+          "title": "\"배당금 쏠쏠\" … 이란전쟁에 '커버드콜' 재조명, 수익률은 '제각각' [마...",
+          "link": "https://biz.newdaily.co.kr/site/data/html/2026/04/16/2026041600068.html"
+        }
+      ],
+      "overseas": []
+    },
     "GEV": {
       "name": "GE버노바",
       "domestic": [
@@ -111,24 +154,6 @@
           "link": "https://www.sammobile.com/news/samsungs-3-5-billion-ev-battery-deal-with-gm-hits-pause/"
         }
       ]
-    },
-    "476550": {
-      "name": "TIGER 미국30년국채커버드콜액티브(H)",
-      "domestic": [
-        {
-          "title": "'불장'서 커버드콜 ETF 성적표도 갈렸다… 관건은 '기초자산'",
-          "link": "https://www.sidae.com/article/2026050813412451821"
-        },
-        {
-          "title": "PLUS 테슬라위클리커버드콜채권혼합 ETF 5월 분배금 187원",
-          "link": "https://www.g-enews.com/view.php?ud=202605191744548000c5557f8da8_1"
-        },
-        {
-          "title": "美 장기채 ETF 가격 추락…개미들 '눈물의 손절'",
-          "link": "http://www.fnnews.com/news/202605251800063358"
-        }
-      ],
-      "overseas": []
     }
   }
 }
