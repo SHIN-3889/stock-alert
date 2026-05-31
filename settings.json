@@ -1,18 +1,6 @@
 {
-  "run_times": [
-    "06:00",
-    "15:30",
-    "20:00"
-  ],
+  "run_times": ["06:00", "15:30", "20:00"],
   "holdings": {
-    "476550": {
-      "name": "TIGER 미국30년국채커버드콜액티브(H)",
-      "market": "KR",
-      "shares": 503,
-      "avg_price": 7156,
-      "kr_query": "TIGER 미국30년국채 커버드콜",
-      "en_query": null
-    },
     "GEV": {
       "name": "GE버노바",
       "market": "US",
@@ -28,6 +16,15 @@
       "avg_price": 584874,
       "kr_query": "삼성SDI",
       "en_query": "Samsung SDI"
+    },
+    "476550": {
+      "name": "TIGER 미국30년국채커버드콜액티브(H)",
+      "market": "KR",
+      "shares": 503,
+      "avg_price": 7156,
+      "kr_query": "TIGER 미국30년국채 커버드콜",
+      "en_query": null
     }
-  }
+  },
+  "watchlist": {}
 }
