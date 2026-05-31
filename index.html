@@ -32,11 +32,7 @@
     .pl-hero.profit { border-color: #d70015; }
     .pl-hero.loss { border-color: #0066cc; }
     .pl-label { font-size: 13px; color: #86868b; margin-bottom: 6px; }
-    .pl-value {
-      font-size: 32px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
+    .pl-value { font-size: 32px; font-weight: 700; margin-bottom: 4px; }
     .pl-percent { font-size: 16px; font-weight: 500; }
     .profit-color { color: #d70015; }
     .loss-color { color: #0066cc; }
@@ -83,15 +79,8 @@
     }
     .market-us { background: #fef3c7; color: #92400e; }
     .market-kr { background: #dbeafe; color: #1e40af; }
-    .stock-price {
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-    .stock-change {
-      font-size: 13px;
-      margin-bottom: 14px;
-    }
+    .stock-price { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+    .stock-change { font-size: 13px; margin-bottom: 14px; }
     .stock-info {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -112,12 +101,7 @@
     }
 
     /* 시간 칩 */
-    .times {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 8px;
-    }
+    .times { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
     .time-chip {
       background: #e8f0fe;
       color: #1967d2;
@@ -148,6 +132,74 @@
       cursor: pointer;
     }
     .refresh-btn:active { background: #f5f5f7; }
+
+    /* 토큰 설정 영역 */
+    .settings-section {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #d2d2d7;
+    }
+    .settings-title {
+      font-size: 13px;
+      color: #86868b;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .token-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .token-label {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    .token-help {
+      font-size: 12px;
+      color: #86868b;
+      margin-bottom: 12px;
+    }
+    .token-input {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-family: monospace;
+      border: 1px solid #d2d2d7;
+      border-radius: 8px;
+      background: #f5f5f7;
+      margin-bottom: 12px;
+    }
+    .token-input:focus {
+      outline: none;
+      border-color: #1967d2;
+      background: white;
+    }
+    .token-btn {
+      width: 100%;
+      padding: 12px;
+      background: #1967d2;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .token-btn:active { background: #1557b0; }
+    .token-btn.danger { background: #d70015; }
+    .token-btn.danger:active { background: #a8000f; }
+    .token-status {
+      font-size: 13px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .token-status.ok { background: #e8f5e9; color: #2e7d32; }
+    .token-status.none { background: #fff3e0; color: #e65100; }
   </style>
 </head>
 <body>
@@ -159,11 +211,84 @@
 
   <div id="content" class="loading">불러오는 중...</div>
 
+  <!-- 토큰 설정 (화면 맨 아래) -->
+  <div class="settings-section">
+    <div class="settings-title">⚙️ 수정 권한 설정</div>
+    <div class="token-card">
+      <div id="token-status" class="token-status none">토큰이 저장되지 않았어요</div>
+
+      <div class="token-label">GitHub 토큰</div>
+      <div class="token-help">
+        화면에서 종목·시간을 직접 수정하려면 토큰을 한 번 저장하세요.
+        토큰은 이 휴대폰 브라우저에만 저장돼요.
+      </div>
+      <input
+        type="password"
+        id="token-input"
+        class="token-input"
+        placeholder="github_pat_... 으로 시작하는 토큰을 붙여넣으세요"
+        autocomplete="off"
+      />
+      <button class="token-btn" onclick="saveToken()">기억하기</button>
+
+      <div style="margin-top: 12px;">
+        <button class="token-btn danger" onclick="clearToken()" style="background: transparent; color: #d70015; border: 1px solid #d70015;">저장된 토큰 지우기</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // ── 토큰 관리 ──────────────────────────────
+    const TOKEN_KEY = 'gh_token_stock_alert';
+
+    function getToken() {
+      return localStorage.getItem(TOKEN_KEY) || '';
+    }
+
+    function saveToken() {
+      const input = document.getElementById('token-input');
+      const value = input.value.trim();
+      if (!value) {
+        alert('토큰을 입력해주세요');
+        return;
+      }
+      if (!value.startsWith('github_pat_')) {
+        alert('올바른 토큰이 아니에요. github_pat_ 으로 시작해야 해요.');
+        return;
+      }
+      localStorage.setItem(TOKEN_KEY, value);
+      input.value = '';
+      updateTokenStatus();
+      alert('토큰이 저장됐어요!');
+    }
+
+    function clearToken() {
+      if (!confirm('저장된 토큰을 지울까요?')) return;
+      localStorage.removeItem(TOKEN_KEY);
+      updateTokenStatus();
+      alert('토큰이 지워졌어요');
+    }
+
+    function updateTokenStatus() {
+      const status = document.getElementById('token-status');
+      const token = getToken();
+      if (token) {
+        const masked = token.slice(0, 11) + '...' + token.slice(-4);
+        status.textContent = '✓ 토큰 저장됨 (' + masked + ')';
+        status.className = 'token-status ok';
+      } else {
+        status.textContent = '토큰이 저장되지 않았어요';
+        status.className = 'token-status none';
+      }
+    }
+
+    // 페이지 로드 시 토큰 상태 표시
+    updateTokenStatus();
+
+    // ── 데이터 로드 ────────────────────────────
     const settingsUrl = 'settings.json?t=' + Date.now();
     const latestUrl   = 'latest.json?t=' + Date.now();
 
-    // 두 파일을 동시에 불러옴
     Promise.all([
       fetch(settingsUrl).then(r => r.ok ? r.json() : null),
       fetch(latestUrl).then(r => r.ok ? r.json() : null),
@@ -193,15 +318,13 @@
     function renderContent(settings, latest) {
       let html = '';
 
-      // ── 최종 업데이트 시각 ──
       if (latest && latest.updated_at) {
         document.getElementById('updated').textContent = '최종 업데이트: ' + latest.updated_at;
       } else {
-        document.getElementById('updated').textContent = '아직 시세 데이터가 없어요 (다음 자동 실행 후 표시)';
+        document.getElementById('updated').textContent = '아직 시세 데이터가 없어요';
       }
       document.getElementById('subtitle').textContent = '내 자산 현황';
 
-      // ── 평가손익 강조 박스 ──
       if (latest && latest.portfolio && latest.portfolio.summary) {
         const s = latest.portfolio.summary;
         const pl = s.total_pl_krw;
@@ -213,7 +336,6 @@
         html += '  <div class="pl-percent ' + colorCls + '">(' + fmtPct(s.total_pl_pct) + ')</div>';
         html += '</div>';
 
-        // 자산 요약
         html += '<div class="summary">';
         html += '  <div class="summary-row"><span class="summary-label">총 평가금액</span><span class="summary-value">' + Math.round(s.total_value_krw).toLocaleString() + '원</span></div>';
         html += '  <div class="summary-row"><span class="summary-label">전일 대비</span><span class="summary-value ' + (s.day_change_krw >= 0 ? 'profit-color' : 'loss-color') + '">' + mark(s.day_change_krw) + ' ' + fmtWon(s.day_change_krw) + ' (' + fmtPct(s.day_change_pct) + ')</span></div>';
@@ -223,7 +345,6 @@
         html += '</div>';
       }
 
-      // ── 알림 시간 ──
       if (settings && settings.run_times && settings.run_times.length > 0) {
         html += '<div class="card">';
         html += '  <div class="stock-name">⏰ 알림 시간</div>';
@@ -235,7 +356,6 @@
         html += '</div>';
       }
 
-      // ── 종목별 카드 (latest.json 의 portfolio.rows 우선, 없으면 settings.json 만 표시) ──
       const rowsByName = {};
       if (latest && latest.portfolio && latest.portfolio.rows) {
         latest.portfolio.rows.forEach(row => {
@@ -256,7 +376,6 @@
           html += '  </div>';
 
           if (row && !row.error) {
-            const unit = row.currency === 'USD' ? '$' : '원';
             const priceStr = row.currency === 'USD'
               ? '$' + row.price.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})
               : Math.round(row.price).toLocaleString() + '원';
