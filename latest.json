@@ -1,0 +1,133 @@
+{
+  "updated_at": "2026-05-31 12:06:50",
+  "portfolio": {
+    "rows": [
+      {
+        "name": "GE버노바",
+        "currency": "USD",
+        "price": 968.3200073242188,
+        "day_change_pct": -3.1079261818108472,
+        "shares": 42,
+        "value_krw": 61294133.76940034,
+        "pl_krw": -4851225.856875949,
+        "pl_pct": -7.334189252708813
+      },
+      {
+        "name": "삼성SDI",
+        "currency": "KRW",
+        "price": 688000.0,
+        "day_change_pct": 1.7751479289940828,
+        "shares": 241,
+        "value_krw": 165808000.0,
+        "pl_krw": 24853366.0,
+        "pl_pct": 17.632173767341342
+      },
+      {
+        "name": "TIGER 미국30년국채커버드콜액티브(H)",
+        "currency": "KRW",
+        "price": 7195.0,
+        "day_change_pct": 0.7703081232492998,
+        "shares": 503,
+        "value_krw": 3619085.0,
+        "pl_krw": 19617.0,
+        "pl_pct": 0.5449972051425377
+      }
+    ],
+    "summary": {
+      "total_value_krw": 230721218.76940036,
+      "day_change_krw": 953584.229649365,
+      "day_change_pct": 0.41502112843677724,
+      "total_pl_krw": 20021757.143124074,
+      "total_pl_pct": 9.50251936506475,
+      "usdkrw": 1507.1300048828125
+    }
+  },
+  "news": {
+    "GEV": {
+      "name": "GE버노바",
+      "domestic": [
+        {
+          "title": "美 GE 버노바, 로보테크 오토메이션 인수 계약",
+          "link": "https://www.irobotnews.com/news/articleView.html?idxno=46566"
+        },
+        {
+          "title": "국민연금의 MOVE",
+          "link": "https://www.joongang.co.kr/article/25431168"
+        },
+        {
+          "title": "GE 버노바, 캐나다 로봇 자동화기업 로보텍 인수",
+          "link": "https://www.junggi.co.kr/news/articleView.html?idxno=36538"
+        }
+      ],
+      "overseas": [
+        {
+          "title": "초대형 유틸리티 합병이 버지니아를 통과합니다.",
+          "title_orig": "Super-sized utility merger runs through Virginia",
+          "link": "https://www.politico.com/news/2026/05/19/power-companies-merger-lower-bills-affordability-politics-00927494"
+        },
+        {
+          "title": "가스와 원자력의 장점을 결합한 하이브리드 텍사스 발전소",
+          "title_orig": "Hybrid Texas power plant blends the best of gas and nuclear",
+          "link": "https://newatlas.com/energy/hybrid-nuclear-natural-gas-plant-texas/"
+        },
+        {
+          "title": "GE Vernova 주식이 화요일에 승리한 이유",
+          "title_orig": "Why GE Vernova Stock Triumphed on Tuesday",
+          "link": "https://consent.yahoo.com/v2/collectConsent?sessionId=1_cc-session_0897abdb-ea11-4d35-8e48-8a2a6324e8da"
+        }
+      ]
+    },
+    "006400": {
+      "name": "삼성SDI",
+      "domestic": [
+        {
+          "title": "5월 4주차 삼성SDI 주가 68만원대 강세 마감",
+          "link": "https://www.topstarnews.net/news/articleView.html?idxno=16075606"
+        },
+        {
+          "title": "삼성SDI 전고체 배터리 전용 시설 'S라인' 2027년 상용화 목표로 속도 낸...",
+          "link": "https://www.autodaily.co.kr/news/articleView.html?idxno=544516"
+        },
+        {
+          "title": "\"AI 인프라 수혜로 재평가\"…2차전지주, ESS로 캐즘 돌파할까 [종목+]",
+          "link": "https://www.hankyung.com/article/2026052955446"
+        }
+      ],
+      "overseas": [
+        {
+          "title": "Tesla에 전력을 공급하는 중국 배터리 거대 기업이 방금 50억 달러를 모금했습니다.",
+          "title_orig": "The Chinese battery giant powering Tesla just raised $5 billion",
+          "link": "https://www.thestreet.com/automotive/the-chinese-battery-giant-powering-tesla-just-raised-5-billion"
+        },
+        {
+          "title": "삼성SDI, AI 데이터센터용 배터리 공급 가능성",
+          "title_orig": "Samsung SDI may supply batteries to Amazon for AI data centres",
+          "link": "https://www.sammobile.com/news/samsung-sdi-may-supply-batteries-amazon-ai-data-centres/"
+        },
+        {
+          "title": "삼성전자, GM과 35억 달러 규모 전기차 배터리 거래 중단",
+          "title_orig": "Samsung’s $3.5 billion EV battery deal with GM hits pause",
+          "link": "https://www.sammobile.com/news/samsungs-3-5-billion-ev-battery-deal-with-gm-hits-pause/"
+        }
+      ]
+    },
+    "476550": {
+      "name": "TIGER 미국30년국채커버드콜액티브(H)",
+      "domestic": [
+        {
+          "title": "PLUS 테슬라위클리커버드콜채권혼합 ETF 5월 분배금 187원",
+          "link": "https://www.g-enews.com/view.php?ud=202605191744548000c5557f8da8_1"
+        },
+        {
+          "title": "'불장'서 커버드콜 ETF 성적표도 갈렸다… 관건은 '기초자산'",
+          "link": "https://www.sidae.com/article/2026050813412451821"
+        },
+        {
+          "title": "美 장기채 ETF 가격 추락…개미들 '눈물의 손절'",
+          "link": "http://www.fnnews.com/news/202605251800063358"
+        }
+      ],
+      "overseas": []
+    }
+  }
+}
