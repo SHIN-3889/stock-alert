@@ -198,6 +198,61 @@
     }
     .token-status.ok { background: #e8f5e9; color: #2e7d32; }
     .token-status.none { background: #fff3e0; color: #e65100; }
+
+    .delete-stock-btn {
+      background: transparent; border: none;
+      color: var(--color-text-tertiary); font-size: 13px;
+      cursor: pointer; padding: 2px 4px; border-radius: 4px;
+      line-height: 1;
+    }
+    .delete-stock-btn:active { color: #d70015; background: #fff0f0; }
+
+    .new-stock-card {
+      border: 1px dashed var(--color-border-secondary) !important;
+    }
+    .new-stock-title {
+      font-size: 13px; font-weight: 500;
+      color: var(--color-text-secondary); margin-bottom: 12px;
+    }
+    .new-stock-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    }
+    .ns-input {
+      width: 100%; padding: 8px 10px; font-size: 13px;
+      border: 0.5px solid var(--color-border-secondary);
+      border-radius: var(--border-radius-md);
+      background: var(--color-background-secondary);
+      color: var(--color-text-primary);
+      margin-top: 4px;
+    }
+    .ns-input:focus { outline: none; border-color: #1967d2; }
+    .new-stock-btns {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 8px; margin-top: 14px;
+    }
+    .ns-btn-cancel {
+      padding: 10px; font-size: 13px;
+      background: transparent; color: var(--color-text-secondary);
+      border: 0.5px solid var(--color-border-secondary);
+      border-radius: var(--border-radius-md); cursor: pointer;
+    }
+    .ns-btn-confirm {
+      padding: 10px; font-size: 13px; font-weight: 500;
+      background: #e8f0fe; color: #1967d2;
+      border: 0.5px solid #1967d2;
+      border-radius: var(--border-radius-md); cursor: pointer;
+    }
+    .ns-btn-confirm:active { background: #1967d2; color: white; }
+
+    .add-stock-btn {
+      width: 100%; padding: 12px;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      border: 0.5px dashed var(--color-border-secondary);
+      background: transparent; border-radius: var(--border-radius-md);
+      color: var(--color-text-secondary); font-size: 14px;
+      cursor: pointer; margin-bottom: 12px;
+    }
+    .add-stock-btn:active { background: var(--color-background-secondary); }
   </style>
 </head>
 <body>
@@ -383,6 +438,61 @@
         s.textContent = 'cron-job.org API 키가 저장되지 않았어요 (시간 수정 시 필요)';
         s.className = 'token-status none';
       }
+    }
+
+    // ── 종목 추가/삭제 ────────────────────
+    let addingStock = false;
+
+    function startAddStock() {
+      addingStock = true;
+      renderContent(currentSettings, currentLatest);
+    }
+
+    function cancelAddStock() {
+      addingStock = false;
+      renderContent(currentSettings, currentLatest);
+    }
+
+    function confirmAddStock() {
+      const name     = document.getElementById('ns-name').value.trim();
+      const code     = document.getElementById('ns-code').value.trim().toUpperCase();
+      const market   = document.getElementById('ns-market').value;
+      const shares   = Number(document.getElementById('ns-shares').value);
+      const avgPrice = Number(document.getElementById('ns-avg').value);
+      const krQuery  = document.getElementById('ns-kr-query').value.trim();
+      const enQuery  = document.getElementById('ns-en-query').value.trim();
+
+      if (!name) { alert('종목명을 입력해주세요'); return; }
+      if (!code) { alert('종목코드를 입력해주세요'); return; }
+      if (currentSettings.holdings[code]) {
+        alert('이미 등록된 종목코드예요: ' + code); return;
+      }
+      if (!shares || shares <= 0) { alert('보유 수량을 입력해주세요'); return; }
+      if (!avgPrice || avgPrice <= 0) { alert('평균 단가를 입력해주세요'); return; }
+      if (!krQuery) { alert('국내 뉴스 검색어를 입력해주세요'); return; }
+
+      currentSettings.holdings[code] = {
+        name:      name,
+        market:    market,
+        shares:    shares,
+        avg_price: avgPrice,
+        kr_query:  krQuery,
+        en_query:  enQuery || null,
+      };
+
+      addingStock = false;
+      renderContent(currentSettings, currentLatest);
+      markChanged();
+      alert('✓ ' + name + ' 종목이 추가됐어요! 저장 버튼을 눌러 반영하세요.');
+    }
+
+    function deleteStock(code) {
+      const h = currentSettings.holdings[code];
+      if (!h) return;
+      if (!confirm(h.name + ' 종목을 삭제할까요?')) return;
+      delete currentSettings.holdings[code];
+      renderContent(currentSettings, currentLatest);
+      markChanged();
     }
 
     // ── 화면 상태 ──────────────────────────
@@ -664,7 +774,10 @@
           const row   = rowsByName[h.name];
           html += '<div class="card">';
           html += '<div class="stock-header"><div class="stock-name">' + h.name + '</div>';
-          html += '<span class="market-badge ' + mCls + '">' + mTxt + '</span></div>';
+          html += '<div style="display:flex;align-items:center;gap:8px;">';
+          html += '<span class="market-badge ' + mCls + '">' + mTxt + '</span>';
+          html += '<button class="delete-stock-btn" onclick="deleteStock(\'' + code + '\')" title="종목 삭제">✕</button>';
+          html += '</div></div>';
           if (row && !row.error) {
             const priceStr = row.currency === 'USD'
               ? '$' + row.price.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})
@@ -686,6 +799,35 @@
           }
           html += '</div>';
         });
+      }
+
+      // 새 종목 추가 중인 카드
+      if (addingStock) {
+        html += '<div class="card new-stock-card">';
+        html += '<div class="new-stock-title"><i class="ti ti-pencil" style="font-size:13px;vertical-align:-1px;margin-right:4px;"></i>새 종목</div>';
+        html += '<div class="new-stock-grid">';
+        html += '<div><div class="info-label">종목명</div><input type="text" id="ns-name" class="ns-input" placeholder="예: 애플" /></div>';
+        html += '<div><div class="info-label">종목코드</div><input type="text" id="ns-code" class="ns-input" placeholder="예: AAPL" /></div>';
+        html += '</div>';
+        html += '<div class="new-stock-grid" style="margin-top:8px;">';
+        html += '<div><div class="info-label">시장</div><select id="ns-market" class="ns-input"><option value="US">미국</option><option value="KR">한국</option></select></div>';
+        html += '<div><div class="info-label">보유 수량</div><input type="number" id="ns-shares" class="ns-input" placeholder="0" min="0" /></div>';
+        html += '</div>';
+        html += '<div style="margin-top:8px;"><div class="info-label">평균 단가</div>';
+        html += '<input type="number" id="ns-avg" class="ns-input" placeholder="0" min="0" style="width:100%;" /></div>';
+        html += '<div style="margin-top:8px;"><div class="info-label">뉴스 검색어 (국내)</div>';
+        html += '<input type="text" id="ns-kr-query" class="ns-input" placeholder="예: 애플" style="width:100%;" /></div>';
+        html += '<div style="margin-top:8px;"><div class="info-label">뉴스 검색어 (해외, 미국 종목만)</div>';
+        html += '<input type="text" id="ns-en-query" class="ns-input" placeholder="예: Apple Inc (없으면 빈칸)" style="width:100%;" /></div>';
+        html += '<div class="new-stock-btns">';
+        html += '<button onclick="cancelAddStock()" class="ns-btn-cancel">취소</button>';
+        html += '<button onclick="confirmAddStock()" class="ns-btn-confirm">추가</button>';
+        html += '</div></div>';
+      }
+
+      // + 종목 추가 버튼
+      if (!addingStock) {
+        html += '<button class="add-stock-btn" onclick="startAddStock()"><span style="font-size:16px;line-height:1;">+</span> 종목 추가</button>';
       }
 
       document.getElementById('content').innerHTML = html;
