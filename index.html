@@ -320,9 +320,8 @@
     <div class="lock-title">건호의 작업공간</div>
     <div class="lock-subtitle">비밀번호를 입력하세요</div>
     <input type="password" id="lock-input" class="lock-input"
-      placeholder="비밀번호" autocomplete="off"
-      onkeydown="if(event.key==='Enter') checkPassword()" />
-    <button class="lock-btn" onclick="checkPassword()">잠금 해제</button>
+      placeholder="비밀번호" autocomplete="off" />
+    <button class="lock-btn" id="lock-btn">잠금 해제</button>
     <div class="lock-error" id="lock-error"></div>
   </div>
 
@@ -416,7 +415,17 @@
       document.body.classList.add('unlocked');
       setTimeout(startApp, 0);
     } else {
-      setTimeout(() => { const i = document.getElementById('lock-input'); if(i) i.focus(); }, 100);
+      setTimeout(() => {
+        const inp = document.getElementById('lock-input');
+        const btn = document.getElementById('lock-btn');
+        if (inp) {
+          inp.focus();
+          inp.addEventListener('keydown', e => {
+            if (e.key === 'Enter') checkPassword();
+          });
+        }
+        if (btn) btn.addEventListener('click', checkPassword);
+      }, 100);
     }
 
     // ── 데이터만 새로고침 ──────────────────
