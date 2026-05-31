@@ -90,6 +90,20 @@
     }
     .info-label { font-size: 12px; color: #86868b; margin-bottom: 4px; }
     .info-value { font-size: 14px; font-weight: 500; }
+    .editable-value {
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 6px;
+      margin: -2px -6px;
+      border-radius: 4px;
+    }
+    .editable-value:active { background: #f5f5f7; }
+    .editable-value .edit-icon {
+      font-size: 11px;
+      opacity: 0.4;
+    }
     .stock-pl {
       margin-top: 12px;
       padding: 10px 12px;
@@ -343,6 +357,33 @@
         alert('최소 한 개의 시간은 필요해요');
         return;
       }
+      // ── 종목 수량/평단가 수정 ──
+    function editShares(code) {
+      const h = currentSettings.holdings[code];
+      const v = prompt(h.name + ' - 보유 수량을 입력하세요', h.shares);
+      if (v === null) return;
+      const n = Number(v.replace(/,/g, ''));
+      if (!Number.isFinite(n) || n < 0) {
+        alert('올바른 숫자가 아니에요');
+        return;
+      }
+      h.shares = n;
+      renderContent(currentSettings, currentLatest);
+    }
+
+    function editAvgPrice(code) {
+      const h = currentSettings.holdings[code];
+      const unit = h.market === 'US' ? '$' : '원';
+      const v = prompt(h.name + ' - 평균 단가를 입력하세요 (' + unit + ')', h.avg_price);
+      if (v === null) return;
+      const n = Number(v.replace(/,/g, ''));
+      if (!Number.isFinite(n) || n < 0) {
+        alert('올바른 숫자가 아니에요');
+        return;
+      }
+      h.avg_price = n;
+      renderContent(currentSettings, currentLatest);
+    }
       if (!confirm('이 시간을 삭제할까요?')) return;
       currentSettings.run_times.splice(idx, 1);
       renderContent(currentSettings, currentLatest);
@@ -456,12 +497,11 @@
           }
 
           html += '  <div class="stock-info">';
-          html += '    <div><div class="info-label">보유 수량</div><div class="info-value">' + h.shares.toLocaleString() + '주</div></div>';
+          html += '    <div><div class="info-label">보유 수량</div><div class="info-value"><span class="editable-value" onclick="editShares(\'' + code + '\')">' + h.shares.toLocaleString() + '주 <span class="edit-icon">✎</span></span></div></div>';
           const avgStr = h.market === 'US'
             ? '$' + h.avg_price.toLocaleString()
             : h.avg_price.toLocaleString() + '원';
-          html += '    <div><div class="info-label">평균 단가</div><div class="info-value">' + avgStr + '</div></div>';
-          html += '  </div>';
+          html += '    <div><div class="info-label">평균 단가</div><div class="info-value"><span class="editable-value" onclick="editAvgPrice(\'' + code + '\')">' + avgStr + ' <span class="edit-icon">✎</span></span></div></div>';
 
           if (row && !row.error) {
             const plCls = row.pl_krw >= 0 ? 'profit-color' : 'loss-color';
