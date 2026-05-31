@@ -268,6 +268,35 @@
       cursor: pointer; margin-bottom: 12px;
     }
     .add-stock-btn:active { background: var(--color-background-secondary); }
+
+    .section-title {
+      font-size: 13px; font-weight: 500;
+      color: var(--color-text-secondary);
+      text-transform: uppercase; letter-spacing: 0.5px;
+      margin: 24px 0 10px;
+    }
+    .watch-card {
+      background: white; border-radius: 12px; padding: 16px 20px;
+      margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .watch-header {
+      display: flex; align-items: center;
+      justify-content: space-between; margin-bottom: 6px;
+    }
+    .watch-price { font-size: 18px; font-weight: 600; }
+    .watch-change { font-size: 13px; }
+    .new-watch-card {
+      border: 1px dashed var(--color-border-secondary) !important;
+    }
+    .add-watch-btn {
+      width: 100%; padding: 12px;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      border: 0.5px dashed var(--color-border-secondary);
+      background: transparent; border-radius: var(--border-radius-md);
+      color: var(--color-text-secondary); font-size: 14px;
+      cursor: pointer; margin-bottom: 12px;
+    }
+    .add-watch-btn:active { background: var(--color-background-secondary); }
   </style>
 </head>
 <body>
@@ -536,6 +565,50 @@
       if (!h) return;
       if (!confirm(h.name + ' 종목을 삭제할까요?')) return;
       delete currentSettings.holdings[code];
+      renderContent(currentSettings, currentLatest);
+      markChanged();
+    }
+
+    // ── 관심 종목 추가/삭제 ────────────────
+    let addingWatch = false;
+
+    function startAddWatch() {
+      addingWatch = true;
+      renderContent(currentSettings, currentLatest);
+    }
+
+    function cancelAddWatch() {
+      addingWatch = false;
+      renderContent(currentSettings, currentLatest);
+    }
+
+    function confirmAddWatch() {
+      const name   = document.getElementById('nw-name').value.trim();
+      const code   = document.getElementById('nw-code').value.trim().toUpperCase();
+      const market = document.getElementById('nw-market').value;
+
+      if (!name) { alert('종목명을 입력해주세요'); return; }
+      if (!code) { alert('종목코드를 입력해주세요'); return; }
+      if (!currentSettings.watchlist) currentSettings.watchlist = {};
+      if (currentSettings.watchlist[code]) {
+        alert('이미 등록된 종목코드예요: ' + code); return;
+      }
+      if (currentSettings.holdings && currentSettings.holdings[code]) {
+        alert('보유 종목에 이미 있는 코드예요: ' + code); return;
+      }
+
+      currentSettings.watchlist[code] = { name, market };
+      addingWatch = false;
+      renderContent(currentSettings, currentLatest);
+      markChanged();
+      alert('✓ ' + name + ' 관심 종목이 추가됐어요! 저장 버튼을 눌러 반영하세요.');
+    }
+
+    function deleteWatch(code) {
+      const w = currentSettings.watchlist && currentSettings.watchlist[code];
+      if (!w) return;
+      if (!confirm(w.name + ' 관심 종목을 삭제할까요?')) return;
+      delete currentSettings.watchlist[code];
       renderContent(currentSettings, currentLatest);
       markChanged();
     }
@@ -844,6 +917,67 @@
           }
           html += '</div>';
         });
+      }
+
+      // ── 관심 종목 섹션 ──────────────────
+      const watchlist = (settings && settings.watchlist) ? settings.watchlist : {};
+      const watchKeys = Object.keys(watchlist);
+      const watchRows = {};
+      if (latest && latest.portfolio && latest.portfolio.watchlist) {
+        latest.portfolio.watchlist.forEach(r => { watchRows[r.code] = r; });
+      }
+
+      html += '<div class="section-title">👀 관심 종목</div>';
+
+      if (watchKeys.length === 0 && !addingWatch) {
+        html += '<div style="color:var(--color-text-secondary);font-size:13px;padding:12px 0 8px;">아직 관심 종목이 없어요.</div>';
+      }
+
+      watchKeys.forEach(code => {
+        const w   = watchlist[code];
+        const row = watchRows[code];
+        const mCls = w.market === 'US' ? 'market-us' : 'market-kr';
+        const mTxt = w.market === 'US' ? '미국' : '한국';
+
+        html += '<div class="watch-card">';
+        html += '<div class="watch-header">';
+        html += '<div class="stock-name">' + w.name + '</div>';
+        html += '<div style="display:flex;align-items:center;gap:8px;">';
+        html += '<span class="market-badge ' + mCls + '">' + mTxt + '</span>';
+        html += '<button class="delete-stock-btn" onclick="deleteWatch(\'' + code + '\')" title="삭제">✕</button>';
+        html += '</div></div>';
+
+        if (row && !row.error) {
+          const priceStr = row.currency === 'USD'
+            ? '$' + row.price.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})
+            : Math.round(row.price).toLocaleString() + '원';
+          const dCls = row.day_change_pct >= 0 ? 'profit-color' : 'loss-color';
+          html += '<div class="watch-price">' + priceStr + '</div>';
+          html += '<div class="watch-change ' + dCls + '">일간 ' + mark(row.day_change_pct) + ' ' + fmtPct(row.day_change_pct) + '</div>';
+        } else {
+          html += '<div class="watch-change">시세 데이터 대기 중</div>';
+        }
+        html += '</div>';
+      });
+
+      // 관심 종목 추가 중인 카드
+      if (addingWatch) {
+        html += '<div class="card new-watch-card">';
+        html += '<div class="new-stock-title">새 관심 종목</div>';
+        html += '<div class="new-stock-grid">';
+        html += '<div class="ns-field"><div class="info-label">종목명</div><input type="text" id="nw-name" class="ns-input" placeholder="예: 애플" /></div>';
+        html += '<div class="ns-field"><div class="info-label">종목코드</div><input type="text" id="nw-code" class="ns-input" placeholder="예: AAPL" /></div>';
+        html += '</div>';
+        html += '<div class="ns-full" style="margin-top:12px;"><div class="info-label">시장</div>';
+        html += '<select id="nw-market" class="ns-input"><option value="US">미국</option><option value="KR">한국</option></select></div>';
+        html += '<div class="new-stock-btns">';
+        html += '<button onclick="cancelAddWatch()" class="ns-btn-cancel">취소</button>';
+        html += '<button onclick="confirmAddWatch()" class="ns-btn-confirm">추가</button>';
+        html += '</div></div>';
+      }
+
+      if (!addingWatch) {
+        html += '<button class="add-watch-btn" onclick="startAddWatch()"><span style="font-size:16px;line-height:1;">+</span> 관심 종목 추가</button>';
       }
 
       // 새 종목 추가 중인 카드
