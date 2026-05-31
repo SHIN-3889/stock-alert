@@ -578,13 +578,6 @@
       if (jsonStart === -1 || jsonEnd === -1) throw new Error('JSON을 찾을 수 없어요. 다시 시도해주세요.');
       text = text.slice(jsonStart, jsonEnd + 1);
 
-      // 3) 제어문자 제거
-      text = text.replace(/[ -]/g, function(c) {
-        if (c === '\n') return '\\n';
-        if (c === '\r') return '';
-        if (c === '\t') return '\\t';
-        return '';
-      });
 
       var parsed;
       try {
