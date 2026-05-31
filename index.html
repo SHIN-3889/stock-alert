@@ -16,7 +16,50 @@
       min-height: 100vh;
     }
     h1 { font-size: 24px; margin-bottom: 4px; }
-    .subtitle { color: #86868b; font-size: 14px; margin-bottom: 24px; }
+    .subtitle { color: #86868b; font-size: 14px; margin-bottom: 4px; }
+    .updated { color: #86868b; font-size: 12px; margin-bottom: 24px; }
+
+    /* 평가손익 강조 박스 */
+    .pl-hero {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 12px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      border: 2px solid #e8e8ed;
+    }
+    .pl-hero.profit { border-color: #d70015; }
+    .pl-hero.loss { border-color: #0066cc; }
+    .pl-label { font-size: 13px; color: #86868b; margin-bottom: 6px; }
+    .pl-value {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .pl-percent { font-size: 16px; font-weight: 500; }
+    .profit-color { color: #d70015; }
+    .loss-color { color: #0066cc; }
+
+    /* 자산 요약 */
+    .summary {
+      background: white;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 14px;
+    }
+    .summary-label { color: #86868b; }
+    .summary-value { font-weight: 500; }
+
+    /* 종목 카드 */
     .card {
       background: white;
       border-radius: 12px;
@@ -24,42 +67,51 @@
       margin-bottom: 12px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.06);
     }
-    .stock-name {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 12px;
+    .stock-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
     }
-    .stock-info {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    .info-label {
-      font-size: 12px;
-      color: #86868b;
-      margin-bottom: 4px;
-    }
-    .info-value {
-      font-size: 15px;
-      font-weight: 500;
-    }
+    .stock-name { font-size: 16px; font-weight: 600; }
     .market-badge {
-      display: inline-block;
       font-size: 11px;
       padding: 2px 8px;
       border-radius: 10px;
-      margin-left: 8px;
       background: #e8e8ed;
       color: #424245;
     }
     .market-us { background: #fef3c7; color: #92400e; }
     .market-kr { background: #dbeafe; color: #1e40af; }
-    .loading, .error {
-      text-align: center;
-      padding: 40px 20px;
-      color: #86868b;
+    .stock-price {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 4px;
     }
-    .error { color: #d70015; }
+    .stock-change {
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+    .stock-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #e8e8ed;
+    }
+    .info-label { font-size: 12px; color: #86868b; margin-bottom: 4px; }
+    .info-value { font-size: 14px; font-weight: 500; }
+    .stock-pl {
+      margin-top: 12px;
+      padding: 10px 12px;
+      background: #f5f5f7;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    /* 시간 칩 */
     .times {
       display: flex;
       flex-wrap: wrap;
@@ -74,67 +126,165 @@
       font-size: 13px;
       font-weight: 500;
     }
+
+    .loading, .error {
+      text-align: center;
+      padding: 40px 20px;
+      color: #86868b;
+    }
+    .error { color: #d70015; }
+
+    /* 새로고침 버튼 */
+    .refresh-btn {
+      width: 100%;
+      padding: 12px;
+      background: white;
+      color: #1d1d1f;
+      border: 1px solid #d2d2d7;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 16px;
+      cursor: pointer;
+    }
+    .refresh-btn:active { background: #f5f5f7; }
   </style>
 </head>
 <body>
   <h1>📊 주식 대시보드</h1>
-  <p class="subtitle">내 보유 종목 정보</p>
+  <p class="subtitle" id="subtitle">불러오는 중...</p>
+  <p class="updated" id="updated"></p>
+
+  <button class="refresh-btn" onclick="location.reload()">🔄 새로고침</button>
 
   <div id="content" class="loading">불러오는 중...</div>
 
   <script>
-    // settings.json 파일을 읽어와서 화면에 표시
-    const settingsUrl = 'settings.json?t=' + Date.now();  // 캐시 방지
+    const settingsUrl = 'settings.json?t=' + Date.now();
+    const latestUrl   = 'latest.json?t=' + Date.now();
 
-    fetch(settingsUrl)
-      .then(response => {
-        if (!response.ok) throw new Error('파일을 불러오지 못했어요');
-        return response.json();
-      })
-      .then(data => {
-        renderContent(data);
+    // 두 파일을 동시에 불러옴
+    Promise.all([
+      fetch(settingsUrl).then(r => r.ok ? r.json() : null),
+      fetch(latestUrl).then(r => r.ok ? r.json() : null),
+    ])
+      .then(([settings, latest]) => {
+        renderContent(settings, latest);
       })
       .catch(error => {
         document.getElementById('content').innerHTML =
-          '<div class="error">⚠️ 설정을 불러올 수 없어요<br><small>' + error.message + '</small></div>';
+          '<div class="error">⚠️ 데이터를 불러올 수 없어요<br><small>' + error.message + '</small></div>';
       });
 
-    function renderContent(data) {
-      const content = document.getElementById('content');
+    function fmtWon(n) {
+      const sign = n >= 0 ? '+' : '';
+      return sign + Math.round(n).toLocaleString() + '원';
+    }
+    function fmtPct(n) {
+      const sign = n >= 0 ? '+' : '';
+      return sign + n.toFixed(2) + '%';
+    }
+    function mark(n) {
+      if (n > 0) return '▲';
+      if (n < 0) return '▼';
+      return '-';
+    }
+
+    function renderContent(settings, latest) {
       let html = '';
 
-      // 알림 시간 표시
-      if (data.run_times && data.run_times.length > 0) {
+      // ── 최종 업데이트 시각 ──
+      if (latest && latest.updated_at) {
+        document.getElementById('updated').textContent = '최종 업데이트: ' + latest.updated_at;
+      } else {
+        document.getElementById('updated').textContent = '아직 시세 데이터가 없어요 (다음 자동 실행 후 표시)';
+      }
+      document.getElementById('subtitle').textContent = '내 자산 현황';
+
+      // ── 평가손익 강조 박스 ──
+      if (latest && latest.portfolio && latest.portfolio.summary) {
+        const s = latest.portfolio.summary;
+        const pl = s.total_pl_krw;
+        const cls = pl >= 0 ? 'profit' : 'loss';
+        const colorCls = pl >= 0 ? 'profit-color' : 'loss-color';
+        html += '<div class="pl-hero ' + cls + '">';
+        html += '  <div class="pl-label">💰 내 평가손익 (누적)</div>';
+        html += '  <div class="pl-value ' + colorCls + '">' + mark(pl) + ' ' + fmtWon(pl) + '</div>';
+        html += '  <div class="pl-percent ' + colorCls + '">(' + fmtPct(s.total_pl_pct) + ')</div>';
+        html += '</div>';
+
+        // 자산 요약
+        html += '<div class="summary">';
+        html += '  <div class="summary-row"><span class="summary-label">총 평가금액</span><span class="summary-value">' + Math.round(s.total_value_krw).toLocaleString() + '원</span></div>';
+        html += '  <div class="summary-row"><span class="summary-label">전일 대비</span><span class="summary-value ' + (s.day_change_krw >= 0 ? 'profit-color' : 'loss-color') + '">' + mark(s.day_change_krw) + ' ' + fmtWon(s.day_change_krw) + ' (' + fmtPct(s.day_change_pct) + ')</span></div>';
+        if (s.usdkrw) {
+          html += '  <div class="summary-row"><span class="summary-label">적용 환율</span><span class="summary-value">' + s.usdkrw.toFixed(1) + '원/$</span></div>';
+        }
+        html += '</div>';
+      }
+
+      // ── 알림 시간 ──
+      if (settings && settings.run_times && settings.run_times.length > 0) {
         html += '<div class="card">';
-        html += '<div class="stock-name">⏰ 알림 시간</div>';
-        html += '<div class="times">';
-        data.run_times.forEach(time => {
+        html += '  <div class="stock-name">⏰ 알림 시간</div>';
+        html += '  <div class="times">';
+        settings.run_times.forEach(time => {
           html += '<span class="time-chip">' + time + '</span>';
         });
-        html += '</div></div>';
+        html += '  </div>';
+        html += '</div>';
       }
 
-      // 종목별 카드
-      if (data.holdings) {
-        Object.entries(data.holdings).forEach(([code, h]) => {
-          const marketClass = h.market === 'US' ? 'market-us' : 'market-kr';
-          const marketText = h.market === 'US' ? '미국' : '한국';
-          const priceUnit = h.market === 'US' ? '$' : '원';
-          const priceText = h.market === 'US'
-            ? '$' + h.avg_price.toLocaleString()
-            : h.avg_price.toLocaleString() + '원';
-
-          html += '<div class="card">';
-          html += '<div class="stock-name">' + h.name +
-                  '<span class="market-badge ' + marketClass + '">' + marketText + '</span></div>';
-          html += '<div class="stock-info">';
-          html += '<div><div class="info-label">보유 수량</div><div class="info-value">' + h.shares.toLocaleString() + '주</div></div>';
-          html += '<div><div class="info-label">평균 단가</div><div class="info-value">' + priceText + '</div></div>';
-          html += '</div></div>';
+      // ── 종목별 카드 (latest.json 의 portfolio.rows 우선, 없으면 settings.json 만 표시) ──
+      const rowsByName = {};
+      if (latest && latest.portfolio && latest.portfolio.rows) {
+        latest.portfolio.rows.forEach(row => {
+          rowsByName[row.name] = row;
         });
       }
 
-      content.innerHTML = html;
+      if (settings && settings.holdings) {
+        Object.entries(settings.holdings).forEach(([code, h]) => {
+          const marketClass = h.market === 'US' ? 'market-us' : 'market-kr';
+          const marketText  = h.market === 'US' ? '미국' : '한국';
+          const row = rowsByName[h.name];
+
+          html += '<div class="card">';
+          html += '  <div class="stock-header">';
+          html += '    <div class="stock-name">' + h.name + '</div>';
+          html += '    <span class="market-badge ' + marketClass + '">' + marketText + '</span>';
+          html += '  </div>';
+
+          if (row && !row.error) {
+            const unit = row.currency === 'USD' ? '$' : '원';
+            const priceStr = row.currency === 'USD'
+              ? '$' + row.price.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})
+              : Math.round(row.price).toLocaleString() + '원';
+            const dayCls = row.day_change_pct >= 0 ? 'profit-color' : 'loss-color';
+            html += '  <div class="stock-price">' + priceStr + '</div>';
+            html += '  <div class="stock-change ' + dayCls + '">일간 ' + mark(row.day_change_pct) + ' ' + fmtPct(row.day_change_pct) + '</div>';
+          } else {
+            html += '  <div class="stock-change">시세 데이터 대기 중</div>';
+          }
+
+          html += '  <div class="stock-info">';
+          html += '    <div><div class="info-label">보유 수량</div><div class="info-value">' + h.shares.toLocaleString() + '주</div></div>';
+          const avgStr = h.market === 'US'
+            ? '$' + h.avg_price.toLocaleString()
+            : h.avg_price.toLocaleString() + '원';
+          html += '    <div><div class="info-label">평균 단가</div><div class="info-value">' + avgStr + '</div></div>';
+          html += '  </div>';
+
+          if (row && !row.error) {
+            const plCls = row.pl_krw >= 0 ? 'profit-color' : 'loss-color';
+            html += '  <div class="stock-pl ' + plCls + '">평가손익 ' + mark(row.pl_krw) + ' ' + fmtWon(row.pl_krw) + ' (' + fmtPct(row.pl_pct) + ')</div>';
+          }
+
+          html += '</div>';
+        });
+      }
+
+      document.getElementById('content').innerHTML = html;
     }
   </script>
 </body>
