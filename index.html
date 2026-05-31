@@ -343,6 +343,7 @@
   let originalSettings = null;
   let currentSettings  = null;
   let currentLatest    = null;
+  let currentLivePrices = {};
   let fileSha          = null;
   let addingStock      = false;
   let addingWatch      = false;
@@ -390,8 +391,11 @@
 
   function refreshData() {
     document.getElementById('content').innerHTML = '<div class="loading">불러오는 중...</div>';
+    document.getElementById('refresh-btn').textContent = '🔄 업데이트 중...';
+    document.getElementById('refresh-btn').disabled = true;
     addingStock = false;
     addingWatch = false;
+
     Promise.all([loadSettings(), loadLatest()])
       .then(function(results) {
         var sr     = results[0];
@@ -400,12 +404,32 @@
         currentSettings  = deepCopy(sr.content);
         fileSha          = sr.sha;
         currentLatest    = latest;
-        renderContent(currentSettings, latest);
-        markChanged();
+
+        // Gemini 키 있으면 실시간 시세도 가져오기
+        var geminiKey = getGeminiKey();
+        if (geminiKey) {
+          document.getElementById('content').innerHTML = '<div class="loading">📡 Gemini로 실시간 시세 가져오는 중...</div>';
+          fetchLivePrices(currentSettings)
+            .then(function(livePrices) {
+              currentLivePrices = livePrices || {};
+              renderContent(currentSettings, currentLatest);
+              markChanged();
+              document.getElementById('refresh-btn').textContent = '🔄 새로고침';
+              document.getElementById('refresh-btn').disabled = false;
+            });
+        } else {
+          currentLivePrices = {};
+          renderContent(currentSettings, currentLatest);
+          markChanged();
+          document.getElementById('refresh-btn').textContent = '🔄 새로고침';
+          document.getElementById('refresh-btn').disabled = false;
+        }
       })
       .catch(function(e) {
         document.getElementById('content').innerHTML =
           '<div class="error">⚠️ 데이터를 불러올 수 없어요<br><small>' + e.message + '</small></div>';
+        document.getElementById('refresh-btn').textContent = '🔄 새로고침';
+        document.getElementById('refresh-btn').disabled = false;
       });
   }
 
@@ -505,6 +529,75 @@
     renderContent(currentSettings, currentLatest);
     markChanged();
     alert('✓ ' + name + ' 추가됐어요! 저장 버튼을 눌러 반영하세요.');
+  }
+
+  // ── Gemini 실시간 시세 업데이트 ───────────────────────────────────
+  async function fetchLivePrices(settings) {
+    var key = getGeminiKey();
+    if (!key) return null;
+
+    // 전체 종목 목록 만들기
+    var stocks = [];
+    if (settings && settings.holdings) {
+      Object.entries(settings.holdings).forEach(function(e) {
+        stocks.push({ code: e[0], name: e[1].name, market: e[1].market });
+      });
+    }
+    if (settings && settings.watchlist) {
+      Object.entries(settings.watchlist).forEach(function(e) {
+        stocks.push({ code: e[0], name: e[1].name, market: e[1].market });
+      });
+    }
+    if (stocks.length === 0) return null;
+
+    var stockList = stocks.map(function(s) {
+      return s.name + '(' + (s.market === 'US' ? '미국' : '한국') + ')';
+    }).join(', ');
+
+    var prompt = '아래 종목들의 현재 주가를 조회하고 JSON으로만 답하세요. 다른 텍스트 없이 JSON만.' +
+      ' 종목: ' + stockList +
+      ' 형식: {"종목명":"현재가(단위포함, 예:$350.25 또는 125000원)"}' +
+      ' 모든 종목을 포함해서 한국어로 답하세요.';
+
+    try {
+      var res = await fetch(
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + key,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { temperature: 0.1, maxOutputTokens: 1024 }
+          })
+        }
+      );
+      var data = await res.json();
+      if (!res.ok || !data.candidates) return null;
+
+      var rawText = data.candidates[0].content.parts[0].text.trim();
+      var jsonStart = rawText.indexOf('{');
+      var jsonEnd   = rawText.lastIndexOf('}');
+      if (jsonStart === -1 || jsonEnd === -1) return null;
+
+      var parsed = JSON.parse(rawText.slice(jsonStart, jsonEnd + 1));
+
+      // 종목명 → { price, currency } 형태로 변환
+      var result = {};
+      stocks.forEach(function(s) {
+        var val = parsed[s.name];
+        if (val) {
+          result[s.code] = {
+            name: s.name,
+            rawPrice: val,
+            market: s.market
+          };
+        }
+      });
+      return result;
+    } catch(e) {
+      console.log('시세 업데이트 실패:', e.message);
+      return null;
+    }
   }
 
   // ── 종목 평가 (Gemini) ────────────────────────────────────────────
@@ -828,7 +921,11 @@
         html += '<span class="market-badge ' + mCls + '">' + mTxt + '</span>';
         html += '<button class="delete-stock-btn" onclick="deleteStock(' + "'" + code + "'" + ')">✕</button>';
         html += '</div></div>';
-        if (row && !row.error) {
+        var live = currentLivePrices && currentLivePrices[code];
+        if (live) {
+          html += '<div class="stock-price">' + live.rawPrice + ' <span style="font-size:11px;color:#1967d2;font-weight:400;">📡 실시간</span></div>';
+          html += '<div class="stock-change" style="color:#888;">이전 시세 기준 등락률은 다음 자동실행 후 갱신돼요</div>';
+        } else if (row && !row.error) {
           var priceStr = row.currency === 'USD'
             ? '$' + row.price.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})
             : Math.round(row.price).toLocaleString() + '원';
