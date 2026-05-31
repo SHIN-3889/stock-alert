@@ -168,6 +168,46 @@
     }
     .refresh-btn:active { background: #f5f5f7; }
 
+    /* 저장 바 (변경사항 있을 때만 표시) */
+    .save-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #fff8e1;
+      border: 1px solid #ffc107;
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .save-bar.show { display: flex; }
+    .save-bar-text { font-size: 14px; color: #6d4c00; flex: 1; }
+    .save-bar-btn {
+      padding: 8px 16px;
+      background: #ff9800;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .save-bar-btn:active { background: #f57c00; }
+    .save-bar-btn:disabled { background: #ccc; cursor: not-allowed; }
+    .save-bar-cancel {
+      background: transparent;
+      color: #6d4c00;
+      border: 1px solid #6d4c00;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
     .settings-section {
       margin-top: 32px;
       padding-top: 24px;
@@ -233,6 +273,13 @@
   <p class="subtitle" id="subtitle">불러오는 중...</p>
   <p class="updated" id="updated"></p>
 
+  <!-- 저장 바 (변경 시에만 보임) -->
+  <div id="save-bar" class="save-bar">
+    <div class="save-bar-text" id="save-bar-text">변경된 내용이 있어요</div>
+    <button class="save-bar-cancel" onclick="cancelChanges()">취소</button>
+    <button class="save-bar-btn" id="save-btn" onclick="saveToGitHub()">저장</button>
+  </div>
+
   <button class="refresh-btn" onclick="location.reload()">🔄 새로고침</button>
 
   <div id="content" class="loading">불러오는 중...</div>
@@ -263,6 +310,12 @@
   </div>
 
   <script>
+    // ── 깃허브 저장소 정보 ────────────────────
+    const REPO_OWNER = 'SHIN-3889';
+    const REPO_NAME  = 'stock-alert';
+    const FILE_PATH  = 'settings.json';
+    const BRANCH     = 'main';
+
     // ── 토큰 관리 ──────────────────────────────
     const TOKEN_KEY = 'gh_token_stock_alert';
 
@@ -309,10 +362,30 @@
 
     updateTokenStatus();
 
-    // ── 화면 수정 (임시, 단계 4-D 에서 깃허브 저장 연결) ──
-    let currentSettings = null;
+    // ── 화면 상태 관리 ─────────────────────────
+    let originalSettings = null;  // 깃허브에서 마지막으로 받은 원본
+    let currentSettings = null;   // 화면에서 수정 중인 것
     let currentLatest = null;
+    let fileSha = null;           // 깃허브 파일의 현재 SHA (저장 시 필요)
 
+    function markChanged() {
+      const bar = document.getElementById('save-bar');
+      const same = JSON.stringify(originalSettings) === JSON.stringify(currentSettings);
+      if (same) {
+        bar.classList.remove('show');
+      } else {
+        bar.classList.add('show');
+      }
+    }
+
+    function cancelChanges() {
+      if (!confirm('수정한 내용을 취소할까요?')) return;
+      currentSettings = JSON.parse(JSON.stringify(originalSettings));
+      renderContent(currentSettings, currentLatest);
+      markChanged();
+    }
+
+    // ── 시간 칩 ────────────────────────────
     function addTime() {
       const time = prompt('시간을 입력하세요 (예: 09:00, 14:30)', '12:00');
       if (!time) return;
@@ -333,6 +406,7 @@
       currentSettings.run_times.push(normalized);
       currentSettings.run_times.sort();
       renderContent(currentSettings, currentLatest);
+      markChanged();
     }
 
     function deleteTime(idx) {
@@ -343,8 +417,10 @@
       if (!confirm('이 시간을 삭제할까요?')) return;
       currentSettings.run_times.splice(idx, 1);
       renderContent(currentSettings, currentLatest);
+      markChanged();
     }
 
+    // ── 종목 수정 ──────────────────────────
     function editShares(code) {
       const h = currentSettings.holdings[code];
       const v = prompt(h.name + ' - 보유 수량을 입력하세요', h.shares);
@@ -356,6 +432,7 @@
       }
       h.shares = n;
       renderContent(currentSettings, currentLatest);
+      markChanged();
     }
 
     function editAvgPrice(code) {
@@ -370,22 +447,118 @@
       }
       h.avg_price = n;
       renderContent(currentSettings, currentLatest);
+      markChanged();
+    }
+
+    // ── 깃허브에 저장 ───────────────────────
+    async function saveToGitHub() {
+      const token = getToken();
+      if (!token) {
+        alert('먼저 화면 아래에서 GitHub 토큰을 저장해주세요');
+        return;
+      }
+      if (!fileSha) {
+        alert('파일 정보가 없어서 저장할 수 없어요. 페이지를 새로고침해주세요.');
+        return;
+      }
+
+      const btn = document.getElementById('save-btn');
+      const txt = document.getElementById('save-bar-text');
+      btn.disabled = true;
+      btn.textContent = '저장 중...';
+      txt.textContent = '깃허브에 저장하는 중...';
+
+      try {
+        // 새 내용을 JSON 문자열로
+        const newContent = JSON.stringify(currentSettings, null, 2);
+
+        // UTF-8 → base64 변환 (한글 안전)
+        const encoded = btoa(unescape(encodeURIComponent(newContent)));
+
+        const url = 'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/' + FILE_PATH;
+        const response = await fetch(url, {
+          method: 'PUT',
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Accept': 'application/vnd.github+json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: 'Update settings.json from dashboard',
+            content: encoded,
+            sha: fileSha,
+            branch: BRANCH,
+          }),
+        });
+
+        if (!response.ok) {
+          const errText = await response.text();
+          throw new Error('HTTP ' + response.status + ': ' + errText);
+        }
+
+        const result = await response.json();
+        fileSha = result.content.sha;  // 새 SHA 업데이트
+        originalSettings = JSON.parse(JSON.stringify(currentSettings));
+        markChanged();
+
+        alert('✓ 저장 완료!\n다음 자동 실행(06시·15시 30분·20시)부터 새 설정으로 메일이 와요.');
+        btn.disabled = false;
+        btn.textContent = '저장';
+      } catch (e) {
+        console.error(e);
+        let msg = '저장 실패: ' + e.message;
+        if (e.message.includes('401') || e.message.includes('403')) {
+          msg += '\n\n토큰이 올바른지, 권한(Contents: Read and write)이 있는지 확인해주세요.';
+        } else if (e.message.includes('409') || e.message.includes('sha')) {
+          msg += '\n\n다른 곳에서 파일이 바뀌었을 수 있어요. 페이지를 새로고침한 뒤 다시 시도해주세요.';
+        }
+        alert(msg);
+        btn.disabled = false;
+        btn.textContent = '저장';
+        txt.textContent = '변경된 내용이 있어요';
+      }
     }
 
     // ── 데이터 로드 ────────────────────────────
-    const settingsUrl = 'settings.json?t=' + Date.now();
-    const latestUrl   = 'latest.json?t=' + Date.now();
+    // settings.json 은 깃허브 API 로 가져옴 (sha 가 필요해서)
+    async function loadSettings() {
+      const token = getToken();
+      const url = 'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/' + FILE_PATH + '?ref=' + BRANCH + '&t=' + Date.now();
+      const headers = { 'Accept': 'application/vnd.github+json' };
+      if (token) headers['Authorization'] = 'Bearer ' + token;
 
-    Promise.all([
-      fetch(settingsUrl).then(r => r.ok ? r.json() : null),
-      fetch(latestUrl).then(r => r.ok ? r.json() : null),
-    ])
-      .then(([settings, latest]) => {
-        currentSettings = settings;
+      const response = await fetch(url, { headers });
+      if (!response.ok) {
+        // 토큰 없거나 실패 시: 그냥 raw 파일로 fallback
+        const fallback = await fetch('settings.json?t=' + Date.now());
+        if (!fallback.ok) throw new Error('settings.json 로드 실패');
+        return { content: await fallback.json(), sha: null };
+      }
+      const data = await response.json();
+      // base64 디코딩 (UTF-8)
+      const decoded = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
+      return { content: JSON.parse(decoded), sha: data.sha };
+    }
+
+    async function loadLatest() {
+      try {
+        const r = await fetch('latest.json?t=' + Date.now());
+        return r.ok ? await r.json() : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    Promise.all([loadSettings(), loadLatest()])
+      .then(([settingsResult, latest]) => {
+        originalSettings = settingsResult.content;
+        currentSettings = JSON.parse(JSON.stringify(settingsResult.content));
+        fileSha = settingsResult.sha;
         currentLatest = latest;
-        renderContent(settings, latest);
+        renderContent(currentSettings, latest);
       })
       .catch(error => {
+        console.error(error);
         document.getElementById('content').innerHTML =
           '<div class="error">⚠️ 데이터를 불러올 수 없어요<br><small>' + error.message + '</small></div>';
       });
