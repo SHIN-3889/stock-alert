@@ -215,20 +215,39 @@
       color: var(--color-text-secondary); margin-bottom: 12px;
     }
     .new-stock-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    }
+    .ns-field {
+      display: flex; flex-direction: column; gap: 6px;
+      background: var(--color-background-secondary);
+      border-radius: var(--border-radius-md);
+      padding: 10px 12px;
+    }
+    .ns-field .info-label {
+      font-size: 11px; font-weight: 500;
+      color: var(--color-text-secondary); margin-bottom: 0;
     }
     .ns-input {
       width: 100%; padding: 8px 10px; font-size: 13px;
       border: 0.5px solid var(--color-border-secondary);
       border-radius: var(--border-radius-md);
-      background: var(--color-background-secondary);
+      background: var(--color-background-primary);
       color: var(--color-text-primary);
-      margin-top: 4px;
     }
     .ns-input:focus { outline: none; border-color: #1967d2; }
+    .ns-full {
+      background: var(--color-background-secondary);
+      border-radius: var(--border-radius-md);
+      padding: 10px 12px; margin-top: 10px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .ns-full .info-label {
+      font-size: 11px; font-weight: 500;
+      color: var(--color-text-secondary);
+    }
     .new-stock-btns {
       display: grid; grid-template-columns: 1fr 1fr;
-      gap: 8px; margin-top: 14px;
+      gap: 8px; margin-top: 16px;
     }
     .ns-btn-cancel {
       padding: 10px; font-size: 13px;
@@ -806,19 +825,19 @@
         html += '<div class="card new-stock-card">';
         html += '<div class="new-stock-title"><i class="ti ti-pencil" style="font-size:13px;vertical-align:-1px;margin-right:4px;"></i>새 종목</div>';
         html += '<div class="new-stock-grid">';
-        html += '<div><div class="info-label">종목명</div><input type="text" id="ns-name" class="ns-input" placeholder="예: 애플" /></div>';
-        html += '<div><div class="info-label">종목코드</div><input type="text" id="ns-code" class="ns-input" placeholder="예: AAPL" /></div>';
+        html += '<div class="ns-field"><div class="info-label">종목명</div><input type="text" id="ns-name" class="ns-input" placeholder="예: 애플" /></div>';
+        html += '<div class="ns-field"><div class="info-label">종목코드</div><input type="text" id="ns-code" class="ns-input" placeholder="예: AAPL" /></div>';
         html += '</div>';
-        html += '<div class="new-stock-grid" style="margin-top:8px;">';
-        html += '<div><div class="info-label">시장</div><select id="ns-market" class="ns-input"><option value="US">미국</option><option value="KR">한국</option></select></div>';
-        html += '<div><div class="info-label">보유 수량</div><input type="number" id="ns-shares" class="ns-input" placeholder="0" min="0" /></div>';
+        html += '<div class="new-stock-grid" style="margin-top:10px;">';
+        html += '<div class="ns-field"><div class="info-label">시장</div><select id="ns-market" class="ns-input"><option value="US">미국</option><option value="KR">한국</option></select></div>';
+        html += '<div class="ns-field"><div class="info-label">보유 수량</div><input type="number" id="ns-shares" class="ns-input" placeholder="0" min="0" /></div>';
         html += '</div>';
-        html += '<div style="margin-top:8px;"><div class="info-label">평균 단가</div>';
-        html += '<input type="number" id="ns-avg" class="ns-input" placeholder="0" min="0" style="width:100%;" /></div>';
-        html += '<div style="margin-top:8px;"><div class="info-label">뉴스 검색어 (국내)</div>';
-        html += '<input type="text" id="ns-kr-query" class="ns-input" placeholder="예: 애플" style="width:100%;" /></div>';
-        html += '<div style="margin-top:8px;"><div class="info-label">뉴스 검색어 (해외, 미국 종목만)</div>';
-        html += '<input type="text" id="ns-en-query" class="ns-input" placeholder="예: Apple Inc (없으면 빈칸)" style="width:100%;" /></div>';
+        html += '<div class="ns-full"><div class="info-label">평균 단가</div>';
+        html += '<input type="number" id="ns-avg" class="ns-input" placeholder="0" min="0" /></div>';
+        html += '<div class="ns-full"><div class="info-label">뉴스 검색어 (국내)</div>';
+        html += '<input type="text" id="ns-kr-query" class="ns-input" placeholder="예: 애플" /></div>';
+        html += '<div class="ns-full"><div class="info-label">뉴스 검색어 (해외, 미국 종목만)</div>';
+        html += '<input type="text" id="ns-en-query" class="ns-input" placeholder="예: Apple Inc (없으면 빈칸)" /></div>';
         html += '<div class="new-stock-btns">';
         html += '<button onclick="cancelAddStock()" class="ns-btn-cancel">취소</button>';
         html += '<button onclick="confirmAddStock()" class="ns-btn-confirm">추가</button>';
