@@ -215,34 +215,30 @@
       color: var(--color-text-secondary); margin-bottom: 12px;
     }
     .new-stock-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
     }
     .ns-field {
-      display: flex; flex-direction: column; gap: 6px;
-      background: var(--color-background-secondary);
-      border-radius: var(--border-radius-md);
-      padding: 10px 12px;
+      display: flex; flex-direction: column;
     }
     .ns-field .info-label {
-      font-size: 11px; font-weight: 500;
+      font-size: 12px; font-weight: 500;
       color: var(--color-text-secondary); margin-bottom: 0;
     }
     .ns-input {
-      width: 100%; padding: 8px 10px; font-size: 13px;
-      border: 0.5px solid var(--color-border-secondary);
+      width: 100%; padding: 10px 12px; font-size: 13px;
+      border: 1.5px solid #b0b8c1;
       border-radius: var(--border-radius-md);
       background: var(--color-background-primary);
       color: var(--color-text-primary);
+      margin-top: 4px;
     }
-    .ns-input:focus { outline: none; border-color: #1967d2; }
+    .ns-input:focus { outline: none; border-color: #1967d2; background: white; }
     .ns-full {
-      background: var(--color-background-secondary);
-      border-radius: var(--border-radius-md);
-      padding: 10px 12px; margin-top: 10px;
-      display: flex; flex-direction: column; gap: 6px;
+      margin-top: 12px;
+      display: flex; flex-direction: column;
     }
     .ns-full .info-label {
-      font-size: 11px; font-weight: 500;
+      font-size: 12px; font-weight: 500;
       color: var(--color-text-secondary);
     }
     .new-stock-btns {
@@ -299,7 +295,7 @@
       <button class="save-bar-btn" id="save-btn" onclick="saveToGitHub()">저장</button>
     </div>
 
-    <button class="refresh-btn" onclick="location.reload()">🔄 새로고침</button>
+    <button class="refresh-btn" onclick="refreshData()">🔄 새로고침</button>
     <div id="content" class="loading">불러오는 중...</div>
 
     <div class="settings-section">
@@ -352,12 +348,15 @@
       return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
     }
 
+    const SESSION_KEY = 'gunho_unlocked';
+
     async function checkPassword() {
       const input = document.getElementById('lock-input');
       const err = document.getElementById('lock-error');
       if (!input.value) { err.textContent = '비밀번호를 입력하세요'; return; }
       const hash = await sha256(input.value);
       if (hash === PASSWORD_HASH) {
+        sessionStorage.setItem(SESSION_KEY, '1');
         document.body.classList.add('unlocked');
         err.textContent = '';
         input.value = '';
@@ -369,7 +368,34 @@
       }
     }
 
-    setTimeout(() => { const i = document.getElementById('lock-input'); if(i) i.focus(); }, 100);
+    // 이미 이번 세션에서 풀었으면 바로 통과
+    if (sessionStorage.getItem(SESSION_KEY) === '1') {
+      document.body.classList.add('unlocked');
+      setTimeout(startApp, 0);
+    } else {
+      setTimeout(() => { const i = document.getElementById('lock-input'); if(i) i.focus(); }, 100);
+    }
+
+    // ── 데이터만 새로고침 ──────────────────
+    function refreshData() {
+      document.getElementById('content').innerHTML = '<div class="loading">불러오는 중...</div>';
+      document.getElementById('subtitle').textContent = '불러오는 중...';
+      document.getElementById('updated').textContent = '';
+      addingStock = false;
+      Promise.all([loadSettings(), loadLatest()])
+        .then(([sr, latest]) => {
+          originalSettings = sr.content;
+          currentSettings = JSON.parse(JSON.stringify(sr.content));
+          fileSha = sr.sha;
+          currentLatest = latest;
+          renderContent(currentSettings, latest);
+          markChanged();
+        })
+        .catch(e => {
+          document.getElementById('content').innerHTML =
+            '<div class="error">⚠️ 새로고침 실패<br><small>' + e.message + '</small></div>';
+        });
+    }
 
     // ── 앱 시작 ────────────────────────────
     function startApp() {
