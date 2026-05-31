@@ -275,6 +275,20 @@
       text-transform: uppercase; letter-spacing: 0.5px;
       margin: 24px 0 10px;
     }
+    .section-divider {
+      display: flex; align-items: center;
+      margin: 24px 0 12px; gap: 12px;
+    }
+    .section-divider::before,
+    .section-divider::after {
+      content: ''; flex: 1;
+      height: 1px; background: var(--color-border-secondary);
+    }
+    .section-label {
+      font-size: 13px; font-weight: 500;
+      color: var(--color-text-secondary);
+      white-space: nowrap; padding: 0 4px;
+    }
     .watch-card {
       background: white; border-radius: 12px; padding: 16px 20px;
       margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
@@ -1006,7 +1020,7 @@
 
       // + 종목 추가 버튼
       if (!addingStock) {
-        html += '<button class="add-stock-btn" onclick="startAddStock()"><span style="font-size:16px;line-height:1;">+</span> 종목 추가</button>';
+        html += '<button class="add-stock-btn" onclick="startAddStock()"><span style="font-size:16px;line-height:1;">+</span> 보유 종목 추가</button>';
       }
 
       document.getElementById('content').innerHTML = html;
