@@ -227,6 +227,12 @@
     .token-status.none { background: #fff3e0; color: #e65100; }
     .loading, .error { text-align: center; padding: 40px 20px; color: #888; }
     .error { color: #d70015; }
+    .settings-section.hidden { display: none; }
+    .settings-toggle {
+      text-align: center; font-size: 12px; color: #aaa;
+      padding: 12px 0; cursor: pointer;
+    }
+    .settings-toggle:hover { color: #555; }
 
     /* 종목 평가 */
     .eval-btn {
@@ -291,7 +297,8 @@
     <div id="content" class="loading">불러오는 중...</div>
 
     <!-- 설정 -->
-    <div class="settings-section">
+    <div class="settings-toggle" id="settings-toggle" onclick="toggleSettings()">⚙️ 설정 보기</div>
+    <div class="settings-section" id="settings-section">
       <div class="settings-title">⚙️ 수정 권한 설정</div>
       <div class="token-card">
         <div id="token-status" class="token-status none">GitHub 토큰이 저장되지 않았어요</div>
@@ -386,6 +393,7 @@
     updateTokenStatus();
     updateCronjobStatus();
     updateGeminiStatus();
+    updateSettingsVisibility();
     refreshData();
   }
 
@@ -554,10 +562,11 @@
       return s.name + '(' + (s.market === 'US' ? '미국' : '한국') + ')';
     }).join(', ');
 
-    var prompt = '아래 종목들의 현재 주가를 조회하고 JSON으로만 답하세요. 다른 텍스트 없이 JSON만.' +
-      ' 종목: ' + stockList +
-      ' 형식: {"종목명":"현재가(단위포함, 예:$350.25 또는 125000원)"}' +
-      ' 모든 종목을 포함해서 한국어로 답하세요.';
+    var prompt = '아래 종목들의 현재 주가를 실시간으로 조회해서 JSON 형식으로만 답하세요.' +
+      ' 절대 다른 텍스트 없이 JSON만 반환하세요.' +
+      ' 종목 목록: ' + stockList +
+      ' 응답 형식 예시: {"삼성SDI":"125000원","GE버노바":"$350.25","애플":"$195.50"}' +
+      ' 반드시 모든 종목의 현재가를 포함하고, 미국 주식은 달러($), 한국 주식은 원(원) 단위로 작성하세요.';
 
     try {
       var res = await fetch(
@@ -581,10 +590,19 @@
 
       var parsed = JSON.parse(rawText.slice(jsonStart, jsonEnd + 1));
 
-      // 종목명 → { price, currency } 형태로 변환
+      // 종목명으로 매칭 (정확히 일치 or 포함 관계)
       var result = {};
       stocks.forEach(function(s) {
+        // 1) 정확한 종목명으로 찾기
         var val = parsed[s.name];
+        // 2) 못 찾으면 키 중에 종목명이 포함된 것 찾기
+        if (!val) {
+          Object.keys(parsed).forEach(function(k) {
+            if (!val && (k.indexOf(s.name) !== -1 || s.name.indexOf(k) !== -1)) {
+              val = parsed[k];
+            }
+          });
+        }
         if (val) {
           result[s.code] = {
             name: s.name,
@@ -851,6 +869,34 @@
       s.textContent = 'Gemini API 키가 저장되지 않았어요 (AI 종목 평가에 필요)';
       s.className   = 'token-status none';
     }
+    updateSettingsVisibility();
+  }
+
+  function updateSettingsVisibility() {
+    var allOk = getToken() && getCronjobKey() && getGeminiKey();
+    var section = document.getElementById('settings-section');
+    var toggle  = document.getElementById('settings-toggle');
+    if (!section || !toggle) return;
+    if (allOk) {
+      section.classList.add('hidden');
+      toggle.textContent = '⚙️ 설정 보기';
+    } else {
+      section.classList.remove('hidden');
+      toggle.textContent = '⚙️ 설정 닫기';
+    }
+  }
+
+  function toggleSettings() {
+    var section = document.getElementById('settings-section');
+    var toggle  = document.getElementById('settings-toggle');
+    if (!section) return;
+    if (section.classList.contains('hidden')) {
+      section.classList.remove('hidden');
+      toggle.textContent = '⚙️ 설정 닫기';
+    } else {
+      section.classList.add('hidden');
+      toggle.textContent = '⚙️ 설정 보기';
+    }
   }
 
   function updateCronjobStatus() {
@@ -870,7 +916,7 @@
     var html = '';
     document.getElementById('subtitle').textContent = '내 자산 현황';
     document.getElementById('updated').textContent  =
-      (latest && latest.updated_at) ? '최종 업데이트: ' + latest.updated_at : '아직 시세 데이터가 없어요';
+      (latest && latest.updated_at) ? '마지막 메일 발송: ' + latest.updated_at : '아직 메일 발송 기록이 없어요';
 
     // 평가손익
     if (latest && latest.portfolio && latest.portfolio.summary) {
