@@ -567,10 +567,46 @@
       var data = await res.json();
       if (!res.ok) throw new Error(data.error ? data.error.message : 'API 오류');
 
-      var text = data.candidates[0].content.parts[0].text.trim();
-      // JSON 파싱 (마크다운 코드블록 제거)
-      text = text.replace(/```json/g,'').replace(/```/g,'').trim();
-      var parsed = JSON.parse(text);
+      var rawText = data.candidates[0].content.parts[0].text.trim();
+
+      // 1) 마크다운 코드블록 제거
+      var text = rawText.replace(/```json/gi,'').replace(/```/g,'').trim();
+
+      // 2) JSON 객체 부분만 추출 ({ ... })
+      var jsonStart = text.indexOf('{');
+      var jsonEnd   = text.lastIndexOf('}');
+      if (jsonStart === -1 || jsonEnd === -1) throw new Error('JSON을 찾을 수 없어요. 다시 시도해주세요.');
+      text = text.slice(jsonStart, jsonEnd + 1);
+
+      // 3) 제어문자 제거
+      text = text.replace(/[ -]/g, function(c) {
+        if (c === '\n') return '\\n';
+        if (c === '\r') return '';
+        if (c === '\t') return '\\t';
+        return '';
+      });
+
+      var parsed;
+      try {
+        parsed = JSON.parse(text);
+      } catch(pe) {
+        // 4) 파싱 실패 시 필드별로 정규식으로 추출
+        function extractField(key) {
+          var rx = new RegExp('"' + key + '"\s*:\s*"([^"]*)"');
+          var m  = text.match(rx);
+          return m ? m[1] : '데이터 없음';
+        }
+        parsed = {
+          sotp_price:   extractField('sotp_price'),
+          ntm_pe_price: extractField('ntm_pe_price'),
+          target_1:     extractField('target_1'),
+          target_2:     extractField('target_2'),
+          gap_rate:     extractField('gap_rate'),
+          sell_point:   extractField('sell_point'),
+          stop_loss:    extractField('stop_loss'),
+          summary:      extractField('summary'),
+        };
+      }
 
       resultDiv.innerHTML =
         '<div class="eval-result">' +
