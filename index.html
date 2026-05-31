@@ -926,9 +926,9 @@
             html += '<div class="stock-change">시세 데이터 대기 중</div>';
           }
           html += '<div class="stock-info">';
-          html += '<div><div class="info-label">보유 수량</div><div class="info-value"><span class="editable-value" onclick="editShares('' + code + '')">' + h.shares.toLocaleString() + '주 <span class="edit-icon">✎</span></span></div></div>';
+          html += '<div><div class="info-label">보유 수량</div><div class="info-value"><span class="editable-value" onclick="editShares(\\'' + code + '\\')">' + h.shares.toLocaleString() + '주 <span class="edit-icon">✎</span></span></div></div>';
           const avgStr = h.market === 'US' ? '$' + h.avg_price.toLocaleString() : h.avg_price.toLocaleString() + '원';
-          html += '<div><div class="info-label">평균 단가</div><div class="info-value"><span class="editable-value" onclick="editAvgPrice('' + code + '')">' + avgStr + ' <span class="edit-icon">✎</span></span></div></div>';
+          html += '<div><div class="info-label">평균 단가</div><div class="info-value"><span class="editable-value" onclick="editAvgPrice(\\'' + code + '\\')">' + avgStr + ' <span class="edit-icon">✎</span></span></div></div>';
           html += '</div>';
           if (row && !row.error) {
             const plCls = row.pl_krw >= 0 ? 'profit-color' : 'loss-color';
