@@ -586,8 +586,8 @@
         '[3. 검증]',
         '계산한 적정주가가 현재가 ' + priceStr + '와 지나치게 동떨어지면(예: 1/10 수준) 자릿수나 EPS 단위를 잘못 본 것이니 다시 점검하세요. 적정주가는 보통 현재가와 같은 자릿수입니다.',
         '',
-        '반드시 아래 JSON 형식으로만 답하세요. 다른 텍스트 없이 JSON만 반환하세요.',
-        '{"breakdown":"실제 수치로 계산식 명시(예: Forward EPS $35 × 적정P/E 32배 = $1,120 / Peak 35.7배 = $1,250)","method1_label":"1차 적정가 (EPS×적정P/E)","method1_price":"1차 적정가 값($)","method2_label":"2차 적정가 (EPS×Peak P/E)","method2_price":"2차 적정가 값($)","target_1":"1차적정주가(1단계 값)","target_2":"2차적정주가(2단계 값)","gap_rate":"현재가 대비 2차 적정주가 괴리율(+ 또는 -)","sell_point":"차트 기술적 분석 매도 지점","stop_loss":"보수적 바닥선(DCF 하단)","summary":"핵심 투자의견"}',
+        '⚠️ 출력 규칙: 아래 JSON 하나만 반환하세요. 마크다운(**, \n, ```) 절대 사용 금지. 모든 값은 한 줄 문자열.',
+        '{"breakdown":"실제 수치로 계산식 명시(예: Forward EPS $35 × 적정P/E 32배 = $1,120 / Peak 35.7배 = $1,250)","method1_label":"1차 적정가 (EPS×적정P/E)","method1_price":"1차 적정가 값($)","method2_label":"2차 적정가 (EPS×Peak P/E)","method2_price":"2차 적정가 값($)","target_1":"1차적정주가(1단계 값)","target_2":"2차적정주가(2단계 값)","gap_rate":"현재가 대비 2차 적정주가 괴리율(+ 또는 -)","sell_point":"차트 기술적 분석 매도 지점","stop_loss":"보수적 바닥선(DCF 하단)","summary":"핵심 투자의견 한 문단"}',
         '모든 내용은 한국어로, 가격은 $ 단위 포함하여 작성하세요.'
       ];
     } else {
@@ -619,8 +619,8 @@
         '- 선택한 2가지 방법 중 높은 값 = 2차 적정주가(기본)',
         '- 괴리율 = (2차 적정주가 - 현재가) ÷ 현재가 × 100',
         '',
-        '반드시 아래 JSON 형식으로만 답하세요. 다른 텍스트 없이 JSON만 반환하세요.',
-        '{"breakdown":"선택한 방법과 이유, 실제 계산수치 명시","method1_label":"방법1 이름","method1_price":"방법1 적정주가","method2_label":"방법2 이름","method2_price":"방법2 적정주가","target_1":"1차적정주가(보수적,낮은값)","target_2":"2차적정주가(기본,높은값)","gap_rate":"현재가 대비 2차 적정주가 괴리율(+ 또는 -)","sell_point":"차트 기술적 분석 매도 지점","stop_loss":"손절 라인","summary":"핵심 투자의견"}',
+        '⚠️ 출력 규칙: 아래 JSON 하나만 반환하세요. 마크다운(**, \n, ```) 절대 사용 금지. 모든 값은 한 줄 문자열.',
+        '{"breakdown":"선택한 방법과 이유, 실제 계산수치 명시(한 줄로)","method1_label":"방법1 이름","method1_price":"방법1 적정주가","method2_label":"방법2 이름","method2_price":"방법2 적정주가","target_1":"1차적정주가(보수적,낮은값)","target_2":"2차적정주가(기본,높은값)","gap_rate":"현재가 대비 2차 적정주가 괴리율(+ 또는 -)","sell_point":"차트 기술적 분석 매도 지점","stop_loss":"손절 라인","summary":"핵심 투자의견 한 문단"}',
         '모든 내용은 한국어로, 가격은 원 단위 포함하여 작성하세요.'
       ];
     }
@@ -643,8 +643,12 @@
 
       var rawText = data.candidates[0].content.parts[0].text.trim();
 
-      // 1) { ... } 부분만 직접 추출
-      var text = rawText;
+      // 마크다운 및 제어문자 제거
+      var text = rawText
+        .replace(/```json/g, '').replace(/```/g, '')
+        .replace(/[*]{2}/g, '')
+        .replace(/[\r\n]+/g, ' ')
+        .trim();
       var jsonStart = text.indexOf('{');
       var jsonEnd   = text.lastIndexOf('}');
       if (jsonStart === -1 || jsonEnd === -1) {
