@@ -559,6 +559,39 @@
   }
 
   // ── 종목 평가 (Gemini) ────────────────────────────────────────────
+  // ── 컨센서스 데이터 자동 조회 ─────────────────────────────────────
+  async function fetchConsensus(code, name, market, key) {
+    var promptUS = '당신은 월가 리서치 전문가입니다. ' + name + '(' + code + ')의 최신 컨센서스 데이터를 조사하세요.' +
+      ' 반드시 JSON 형식으로만 답하세요. 마크다운 절대 금지.' +
+      ' {"op_income":"월가 애널리스트 컨센서스 연간 영업이익(예: $12.5B)","pe_avg":"해당 업계 글로벌 평균 P/E 배수(숫자만, 예: 28)","source":"참고한 데이터 출처 간단히"}';
+
+    var promptKR = '당신은 한국 증권사 리서치 전문가입니다. ' + name + '(' + code + ')의 최신 컨센서스 데이터를 조사하세요.' +
+      ' 최근 한국 애널리스트 보고서 기준 평균 연간 영업이익을 찾으세요.' +
+      ' 반드시 JSON 형식으로만 답하세요. 마크다운 절대 금지.' +
+      ' {"op_income":"한국 애널리스트 컨센서스 연간 영업이익(예: 170조원)","pe_avg":"","source":"참고한 증권사 보고서 간단히"}';
+
+    var prompt = market === 'US' ? promptUS : promptKR;
+
+    var res = await fetch(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + GEMINI_MODEL + ':generateContent?key=' + key,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0, maxOutputTokens: 512 }
+        })
+      }
+    );
+    var data = await res.json();
+    var raw = data.candidates[0].content.parts[0].text.trim()
+      .replace(/```json/g, '').replace(/```/g, '')
+      .replace(/[*]{2}/g, '').replace(/[\r\n]+/g, ' ').trim();
+    var s = raw.indexOf('{'), e = raw.lastIndexOf('}');
+    if (s === -1 || e === -1) return null;
+    try { return JSON.parse(raw.slice(s, e+1)); } catch(e) { return null; }
+  }
+
   function reEvaluate(btn) {
     var code   = btn.getAttribute('data-code');
     var name   = btn.getAttribute('data-name');
@@ -581,6 +614,23 @@
     var market= btn.getAttribute('data-market');
     var price = parseFloat(btn.getAttribute('data-price')) || 0;
     evaluateStock(code, name, market, price);
+    // 평가 시작과 동시에 컨센서스 데이터 비동기 조회 → 입력칸 자동 채우기
+    var key = getGeminiKey();
+    if (key) {
+      fetchConsensus(code, name, market, key).then(function(c) {
+        if (!c) return;
+        var opInput = document.getElementById('op-input-' + code);
+        var peInput = document.getElementById('pe-input-' + code);
+        if (opInput && c.op_income) {
+          opInput.value = c.op_income;
+          opInput.style.background = '#f0fff0';
+        }
+        if (peInput && market === 'US' && c.pe_avg) {
+          peInput.value = c.pe_avg;
+          peInput.style.background = '#f0fff0';
+        }
+      }).catch(function(){});
+    }
   }
 
   async function evaluateStock(code, name, market, currentPrice, operatingProfit, peRatio) {
@@ -806,11 +856,11 @@
         '</div>' +
         '<div style="margin-top:12px;padding:12px;background:#f8f9ff;border-radius:8px;border:1px solid #e0e4ff;">' +
         '<div style="font-size:12px;color:#555;margin-bottom:8px;font-weight:500;">📊 수동 입력으로 재계산</div>' +
-        '<div style="font-size:11px;color:#888;margin-bottom:6px;">값을 직접 입력하면 더 정확한 적정주가를 계산해요. 비워두면 AI가 자동 추정합니다.</div>' +
+        '<div style="font-size:11px;color:#888;margin-bottom:6px;">AI가 컨센서스를 자동 조회해요. 수정 후 재계산하면 그 값으로 분석해요.</div>' +
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">' +
         '<div>' +
         '<div style="font-size:11px;color:#666;margin-bottom:4px;">예상 연간 영업이익</div>' +
-        '<input type="text" id="op-input-' + code + '" placeholder="예: 170조원, $5B" style="width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid #ddd;border-radius:6px;font-size:12px;" />' +
+        '<input type="text" id="op-input-' + code + '" placeholder="조회 중..." style="width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid #ddd;border-radius:6px;font-size:12px;" />' +
         '</div>' +
         '<div>' +
         '<div style="font-size:11px;color:#666;margin-bottom:4px;">P/E 배수 (배)</div>' +
