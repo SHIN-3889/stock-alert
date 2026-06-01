@@ -901,8 +901,10 @@
   function renderContent(settings, latest) {
     var html = '';
     document.getElementById('subtitle').textContent = '내 자산 현황';
-    document.getElementById('updated').textContent  =
-      (latest && latest.updated_at) ? '마지막 메일 발송: ' + latest.updated_at : '아직 메일 발송 기록이 없어요';
+    var updatedStr = (latest && latest.updated_at)
+      ? '최근 업데이트: ' + latest.updated_at
+      : '최근 업데이트: 로딩 중...';
+    document.getElementById('updated').textContent = updatedStr + '  |  현재 버전 ' + DASHBOARD_VERSION;
 
     // 평가손익
     if (latest && latest.portfolio && latest.portfolio.summary) {
