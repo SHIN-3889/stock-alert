@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """보유 종목별 평가금액, 전일 대비 변동, 매입가 대비 손익 계산.
-관심 종목(watchlist)은 시세만 가져오고 자산 계산에는 포함하지 않음."""
+관심 종목(watchlist)은 시세만 가져오고 자산 계산에는 포함하지 않음.
+미국 주식 시간외 거래 세션 정보도 함께 저장.
+"""
 
 import config
 import prices
@@ -39,14 +41,15 @@ def build_portfolio() -> dict:
         total_cost_krw  += cost_krw
 
         rows.append({
-            "name":          h["name"],
-            "currency":      p["currency"],
-            "price":         cur,
+            "name":           h["name"],
+            "currency":       p["currency"],
+            "price":          cur,
             "day_change_pct": (cur - prev) / prev * 100 if prev else 0,
-            "shares":        shares,
-            "value_krw":     value_krw,
-            "pl_krw":        value_krw - cost_krw,
-            "pl_pct":        (cur - avg) / avg * 100 if avg else 0,
+            "shares":         shares,
+            "value_krw":      value_krw,
+            "pl_krw":         value_krw - cost_krw,
+            "pl_pct":         (cur - avg) / avg * 100 if avg else 0,
+            "session":        p.get("session"),  # 미국: 'pre'/'open'/'after'/'closed'
         })
 
     summary = {
@@ -67,13 +70,14 @@ def build_portfolio() -> dict:
         try:
             p = prices.get_price(code, w["market"])
             watchlist_rows.append({
-                "code":          code,
-                "name":          w["name"],
-                "market":        w["market"],
-                "currency":      p["currency"],
-                "price":         p["price"],
+                "code":           code,
+                "name":           w["name"],
+                "market":         w["market"],
+                "currency":       p["currency"],
+                "price":          p["price"],
                 "day_change_pct": (p["price"] - p["prev_close"]) / p["prev_close"] * 100
                                   if p["prev_close"] else 0,
+                "session":        p.get("session"),
             })
         except Exception as e:
             watchlist_rows.append({
@@ -83,7 +87,7 @@ def build_portfolio() -> dict:
             })
 
     return {
-        "rows":     rows,
-        "summary":  summary,
+        "rows":      rows,
+        "summary":   summary,
         "watchlist": watchlist_rows,
     }
