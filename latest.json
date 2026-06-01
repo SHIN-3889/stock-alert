@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-01 16:45:50",
+  "updated_at": "2026-06-01 17:01:12",
   "portfolio": {
     "rows": [
       {
@@ -16,13 +16,13 @@
       {
         "name": "GE버노바",
         "currency": "USD",
-        "price": 968.3200073242188,
-        "day_change_pct": -3.1079261818108472,
+        "price": 971.59,
+        "day_change_pct": 0.337698281559813,
         "shares": 42,
-        "value_krw": 61311216.721560806,
-        "pl_krw": -4852577.91545213,
-        "pl_pct": -7.334189252708813,
-        "session": "closed"
+        "value_krw": 61491737.77825928,
+        "pl_krw": -4643528.398372196,
+        "pl_pct": -7.021259105498172,
+        "session": "pre"
       },
       {
         "name": "삼성SDI",
@@ -37,12 +37,12 @@
       }
     ],
     "summary": {
-      "total_value_krw": 222052241.7215608,
-      "day_change_krw": -10652688.72594896,
-      "day_change_pct": -4.577766661610052,
-      "total_pl_krw": 11334345.084547877,
-      "total_pl_pct": 5.378919050275382,
-      "usdkrw": 1507.550048828125
+      "total_value_krw": 222232762.77825928,
+      "day_change_krw": -8479102.350646973,
+      "day_change_pct": -3.6751912806519167,
+      "total_pl_krw": 11543394.601627797,
+      "total_pl_pct": 5.478869058048715,
+      "usdkrw": 1506.9000244140625
     },
     "watchlist": [
       {
