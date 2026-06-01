@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-01 21:50';  // Actions가 자동으로 업데이트
-  const DASHBOARD_VERSION = 'v2.0';              // 수동으로 올려주세요 (v1.1, v1.2...)
+  const DASHBOARD_DATE    = '2026-06-01 21:05';  // Actions가 자동으로 업데이트
+  const DASHBOARD_VERSION = 'v1.0';              // 수동으로 올려주세요 (v1.1, v1.2...)
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -623,7 +623,8 @@
     }
     var prompt = promptLines.join("\n");
 
-    try {
+    // ── 단일 API 호출 함수 ──────────────────────────────────────
+    async function callGeminiOnce(prompt, key) {
       var res = await fetch(
         'https://generativelanguage.googleapis.com/v1beta/models/' + GEMINI_MODEL + ':generateContent?key=' + key,
         {
@@ -631,16 +632,13 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0, maxOutputTokens: 8192 }
+            generationConfig: { temperature: 0.3, maxOutputTokens: 8192 }
           })
         }
       );
       var data = await res.json();
       if (!res.ok) throw new Error(data.error ? data.error.message : 'API 오류');
-
       var rawText = data.candidates[0].content.parts[0].text.trim();
-
-      // 마크다운 및 제어문자 제거
       var text = rawText
         .replace(/```json/g, '').replace(/```/g, '')
         .replace(/[*]{2}/g, '')
@@ -648,37 +646,98 @@
         .trim();
       var jsonStart = text.indexOf('{');
       var jsonEnd   = text.lastIndexOf('}');
-      if (jsonStart === -1 || jsonEnd === -1) {
-        resultDiv.innerHTML = '<div class="eval-result" style="display:block;"><div style="color:#d70015;font-size:13px;">원본 응답:<br><small style="color:#555;">' + rawText.slice(0,300) + '</small></div></div>';
-        return;
-      }
+      if (jsonStart === -1 || jsonEnd === -1) return null;
       text = text.slice(jsonStart, jsonEnd + 1);
-
-
-      var parsed;
       try {
-        parsed = JSON.parse(text);
-      } catch(pe) {
-        // 4) 파싱 실패 시 필드별로 정규식으로 추출
-        function extractField(key) {
-          var rx = new RegExp('"' + key + '"\s*:\s*"([^"]*)"');
-          var m  = text.match(rx);
-          return m ? m[1] : '데이터 없음';
+        return JSON.parse(text);
+      } catch(e) {
+        function extractField(k) {
+          var rx = new RegExp('"' + k + '"\s*:\s*"([^"]*)"');
+          var m = text.match(rx);
+          return m ? m[1] : null;
         }
-        parsed = {
-          breakdown:     extractField('breakdown'),
-          method1_label: extractField('method1_label'),
-          method1_price: extractField('method1_price'),
-          method2_label: extractField('method2_label'),
-          method2_price: extractField('method2_price'),
-          target_1:      extractField('target_1'),
-          target_2:      extractField('target_2'),
-          gap_rate:      extractField('gap_rate'),
-          sell_point:    extractField('sell_point'),
-          stop_loss:     extractField('stop_loss'),
-          summary:       extractField('summary'),
+        return {
+          breakdown: extractField('breakdown'), method1_label: extractField('method1_label'),
+          method1_price: extractField('method1_price'), method2_label: extractField('method2_label'),
+          method2_price: extractField('method2_price'), target_1: extractField('target_1'),
+          target_2: extractField('target_2'), gap_rate: extractField('gap_rate'),
+          sell_point: extractField('sell_point'), stop_loss: extractField('stop_loss'),
+          summary: extractField('summary'),
         };
       }
+    }
+
+    // ── 숫자 파싱 헬퍼 ──────────────────────────────────────────
+    function parsePrice(str) {
+      if (!str) return null;
+      // 숫자, 콤마, 점만 남기고 추출
+      var n = parseFloat(String(str).replace(/[^0-9.]/g, ''));
+      return isNaN(n) ? null : n;
+    }
+
+    function avgPriceStr(values, isCurrency) {
+      // 유효한 숫자만
+      var nums = values.map(parsePrice).filter(function(v) { return v !== null && v > 0; });
+      if (nums.length === 0) return values[0] || '-';
+      // 최고·최저 1개씩 제거 (5개 → 3개)
+      if (nums.length >= 3) {
+        nums.sort(function(a,b){ return a-b; });
+        nums = nums.slice(1, nums.length - 1);
+      }
+      var avg = nums.reduce(function(a,b){ return a+b; }, 0) / nums.length;
+      if (isCurrency === 'USD') return '$' + avg.toLocaleString('en', {minimumFractionDigits:2, maximumFractionDigits:2});
+      return Math.round(avg).toLocaleString() + '원';
+    }
+
+    function avgGapRate(values) {
+      var nums = values.map(function(v) {
+        if (!v) return null;
+        var n = parseFloat(String(v).replace(/[^0-9.\-]/g, ''));
+        return isNaN(n) ? null : n;
+      }).filter(function(v) { return v !== null; });
+      if (nums.length === 0) return values[0] || '-';
+      if (nums.length >= 3) {
+        nums.sort(function(a,b){ return a-b; });
+        nums = nums.slice(1, nums.length - 1);
+      }
+      var avg = nums.reduce(function(a,b){ return a+b; }, 0) / nums.length;
+      return (avg >= 0 ? '+' : '') + avg.toFixed(2) + '%';
+    }
+
+    try {
+      // ── 5회 병렬 호출 ────────────────────────────────────────
+      resultDiv.innerHTML = '<div class="eval-loading">🤖 Gemini 5회 병렬 분석 중... (30~60초 소요)</div>';
+      resultDiv.style.display = 'block';
+
+      var promises = [];
+      for (var i = 0; i < 5; i++) {
+        promises.push(callGeminiOnce(prompt, key));
+      }
+      var results = await Promise.allSettled(promises);
+      var validResults = results
+        .filter(function(r) { return r.status === 'fulfilled' && r.value !== null; })
+        .map(function(r) { return r.value; });
+
+      if (validResults.length === 0) {
+        resultDiv.innerHTML = '<div class="eval-result"><div class="eval-error">⚠️ 분석 실패: 유효한 응답이 없어요.</div></div>';
+        return;
+      }
+
+      // ── 5회 결과에서 극단값 제거 후 평균 계산 ───────────────
+      var isCur = market === 'US' ? 'USD' : 'KRW';
+      var parsed = {
+        method1_label: validResults[0].method1_label || '방법1',
+        method2_label: validResults[0].method2_label || '방법2',
+        method1_price: avgPriceStr(validResults.map(function(r){ return r.method1_price; }), isCur),
+        method2_price: avgPriceStr(validResults.map(function(r){ return r.method2_price; }), isCur),
+        target_1:      avgPriceStr(validResults.map(function(r){ return r.target_1; }), isCur),
+        target_2:      avgPriceStr(validResults.map(function(r){ return r.target_2; }), isCur),
+        gap_rate:      avgGapRate(validResults.map(function(r){ return r.gap_rate; })),
+        sell_point:    avgPriceStr(validResults.map(function(r){ return r.sell_point; }), isCur),
+        stop_loss:     avgPriceStr(validResults.map(function(r){ return r.stop_loss; }), isCur),
+        breakdown:     validResults[0].breakdown || '',
+        summary:       validResults[Math.floor(validResults.length/2)].summary || '',
+      };
 
       var gapColor = (parsed.gap_rate && parsed.gap_rate.indexOf('-') === -1) ? '#d70015' : '#0066cc';
       resultDiv.innerHTML =
