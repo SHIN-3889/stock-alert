@@ -13,40 +13,38 @@ from datetime import datetime, timezone, timedelta
 # yfinance는 서머타임을 자동 처리하므로 여기선 UTC 기준으로 간단히 판별
 def _us_session_label() -> str:
     """현재 시각 기준 미국 주식 세션 레이블 반환.
-    'pre'  : 프리마켓  (ET 04:00~09:30)
-    'open' : 정규장    (ET 09:30~16:00)
-    'after': 애프터마켓 (ET 16:00~20:00)
-    'closed': 장 마감
+    'pre'          : 프리마켓       (ET 04:00~09:30)
+    'open'         : 정규장         (ET 09:30~16:00)
+    'after'        : 애프터마켓     (ET 16:00~20:00)
+    'market_closed': 장 마감        (ET 20:00~04:00, 주중)
+    'closed'       : 휴장           (토·일)
     """
-    # 서머타임 여부에 따라 UTC-4 또는 UTC-5 이지만
-    # 단순화를 위해 UTC-4(EDT, 3월~11월)와 UTC-5(EST) 기준으로 판별
     now_utc = datetime.now(timezone.utc)
     month = now_utc.month
-    # 서머타임 대략 3월~11월
     offset = 4 if 3 <= month <= 11 else 5
     et_hour = (now_utc.hour - offset) % 24
     et_min  = now_utc.minute
-    et_time = et_hour * 60 + et_min  # 분 단위
+    et_time = et_hour * 60 + et_min
 
     pre_start  = 4  * 60        # 04:00
     open_start = 9  * 60 + 30   # 09:30
     open_end   = 16 * 60        # 16:00
     after_end  = 20 * 60        # 20:00
 
-    # 주말 체크 (ET 기준 요일)
-    # UTC 날짜 → ET 날짜 (단순화)
-    et_weekday = (now_utc - timedelta(hours=offset)).weekday()  # 0=월 ~ 6=일
-    if et_weekday >= 5:  # 토·일
+    et_weekday = (now_utc - timedelta(hours=offset)).weekday()
+    if et_weekday >= 5:              # 토·일 → 휴장
         return 'closed'
 
-    if pre_start <= et_time < open_start:
+    if et_time < pre_start:          # 00:00~04:00 → 장 마감
+        return 'market_closed'
+    elif et_time < open_start:       # 04:00~09:30 → 프리마켓
         return 'pre'
-    elif open_start <= et_time < open_end:
+    elif et_time < open_end:         # 09:30~16:00 → 정규장
         return 'open'
-    elif open_end <= et_time < after_end:
+    elif et_time < after_end:        # 16:00~20:00 → 애프터마켓
         return 'after'
-    else:
-        return 'closed'
+    else:                            # 20:00~24:00 → 장 마감
+        return 'market_closed'
 
 
 def _yf_price(symbol: str, currency: str, extended_hours: bool = False) -> dict:
@@ -97,18 +95,25 @@ def get_us_price(ticker: str) -> dict:
 
 def _kr_session_label() -> str:
     """현재 시각 기준 한국 주식 세션 레이블 반환.
-    KST 기준: 정규장 09:00~15:30, 그 외 closed
+    'open'         : 정규장             (KST 09:00~15:30)
+    'nxt'          : 장 마감(NXT 오픈)  (KST 15:30~20:00)
+    'market_closed': 장 마감            (KST 20:00~09:00, 주중)
+    'closed'       : 휴장               (토·일)
     """
     now_kst = datetime.now(timezone(timedelta(hours=9)))
-    weekday = now_kst.weekday()  # 0=월 ~ 6=일
-    if weekday >= 5:  # 토·일
+    weekday = now_kst.weekday()
+    if weekday >= 5:  # 토·일 → 휴장
         return 'closed'
     kst_time = now_kst.hour * 60 + now_kst.minute
-    open_start = 9 * 60       # 09:00
-    open_end   = 15 * 60 + 30 # 15:30
-    if open_start <= kst_time < open_end:
+    open_start = 9  * 60        # 09:00
+    open_end   = 15 * 60 + 30   # 15:30
+    nxt_end    = 20 * 60        # 20:00
+    if open_start <= kst_time < open_end:   # 09:00~15:30 → 정규장
         return 'open'
-    return 'closed'
+    elif open_end <= kst_time < nxt_end:    # 15:30~20:00 → 장 마감(NXT 오픈)
+        return 'nxt'
+    else:                                   # 20:00~ 또는 ~09:00 → 장 마감
+        return 'market_closed'
 
 
 def get_kr_price(code: str) -> dict:
