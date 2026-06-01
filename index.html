@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-01 23:19';
-  const DASHBOARD_VERSION = 'v3.0';
+  const DASHBOARD_DATE    = '2026-06-01 23:02';
+  const DASHBOARD_VERSION = 'v2.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -853,6 +853,23 @@
         '<button data-code="' + code + '" data-name="' + name + '" data-market="' + market + '" data-price="' + currentPrice + '" onclick="reEvaluate(this)" style="width:100%;padding:8px;background:#1967d2;color:white;border:none;border-radius:6px;font-size:13px;cursor:pointer;">재계산 →</button>' +
         '</div>' +
         '</div>';
+
+      // 렌더링 완료 후 컨센서스 자동 조회 → 입력칸 채우기
+      fetchConsensus(code, name, market, key).then(function(c) {
+        if (!c) return;
+        var opEl = document.getElementById('op-input-' + code);
+        var peEl = document.getElementById('pe-input-' + code);
+        if (opEl && c.op_income) {
+          opEl.value = c.op_income;
+          opEl.style.background = '#f0fff0';
+          opEl.title = c.source || '';
+        }
+        if (peEl && market === 'US' && c.pe_avg) {
+          peEl.value = c.pe_avg;
+          peEl.style.background = '#f0fff0';
+        }
+      }).catch(function(){});
+
     } catch(e) {
       resultDiv.innerHTML = '<div class="eval-result"><div class="eval-error">⚠️ 분석 실패: ' + e.message + '<br><small>잠시 후 다시 시도해주세요.</small></div></div>';
     }
