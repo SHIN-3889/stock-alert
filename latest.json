@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-02 04:45:51",
+  "updated_at": "2026-06-02 05:01:08",
   "portfolio": {
     "rows": [
       {
@@ -16,13 +16,13 @@
       {
         "name": "GE버노바",
         "currency": "USD",
-        "price": 950.5999755859375,
-        "day_change_pct": -1.82997608373911,
+        "price": 950.54,
+        "day_change_pct": -1.836169861202917,
         "shares": 42,
-        "value_krw": 60420798.893488795,
-        "pl_krw": -5997544.614529736,
-        "pl_pct": -9.029952115270182,
-        "session": "open"
+        "value_krw": 60412595.893330075,
+        "pl_krw": -6000920.545617335,
+        "pl_pct": -9.035691629329488,
+        "session": "after"
       },
       {
         "name": "삼성SDI",
@@ -37,12 +37,12 @@
       }
     ],
     "summary": {
-      "total_value_krw": 221161823.8934888,
-      "day_change_krw": -9812357.137604952,
-      "day_change_pct": -4.248248481194533,
-      "total_pl_krw": 10189378.385470271,
-      "total_pl_pct": 4.829719995392953,
-      "usdkrw": 1513.3499755859375
+      "total_value_krw": 221153620.89333007,
+      "day_change_krw": -9816087.095107436,
+      "day_change_pct": -4.249945666294402,
+      "total_pl_krw": 10186002.454382658,
+      "total_pl_pct": 4.828230289441513,
+      "usdkrw": 1513.239990234375
     },
     "watchlist": [
       {
@@ -77,18 +77,18 @@
         "name": "구글",
         "market": "US",
         "currency": "USD",
-        "price": 373.489990234375,
-        "day_change_pct": -0.8948124183388447,
-        "session": "open"
+        "price": 372.64,
+        "day_change_pct": -1.1203564592044484,
+        "session": "after"
       },
       {
         "code": "MU",
         "name": "마이크론",
         "market": "US",
         "currency": "USD",
-        "price": 1030.800048828125,
-        "day_change_pct": 6.843060200290828,
-        "session": "open"
+        "price": 1033.65,
+        "day_change_pct": 7.138459395285734,
+        "session": "after"
       }
     ]
   },
