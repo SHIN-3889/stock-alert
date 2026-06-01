@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-01 21:01:10",
+  "updated_at": "2026-06-01 21:05:44",
   "portfolio": {
     "rows": [
       {
@@ -16,12 +16,12 @@
       {
         "name": "GE버노바",
         "currency": "USD",
-        "price": 957.72,
-        "day_change_pct": -1.0946794448116348,
+        "price": 960.1,
+        "day_change_pct": -0.8488929279577028,
         "shares": 42,
-        "value_krw": 60680681.851289056,
-        "pl_krw": -5527440.3878264725,
-        "pl_pct": -8.348583528564218,
+        "value_krw": 60844379.092895515,
+        "pl_krw": -5377785.04193078,
+        "pl_pct": -8.120823461736736,
         "session": "pre"
       },
       {
@@ -37,12 +37,12 @@
       }
     ],
     "summary": {
-      "total_value_krw": 221421706.85128906,
-      "day_change_krw": -9357670.938085943,
-      "day_change_pct": -4.054812448028347,
-      "total_pl_krw": 10659482.612173527,
-      "total_pl_pct": 5.057586885247544,
-      "usdkrw": 1508.56005859375
+      "total_value_krw": 221585404.0928955,
+      "day_change_krw": -9206985.732885748,
+      "day_change_pct": -3.989293468400689,
+      "total_pl_krw": 10809137.958069205,
+      "total_pl_pct": 5.128251940450911,
+      "usdkrw": 1508.8800048828125
     },
     "watchlist": [
       {
@@ -73,13 +73,13 @@
         "session": "market_closed"
       },
       {
-        "code": "009150",
-        "name": "삼성전기",
-        "market": "KR",
-        "currency": "KRW",
-        "price": 2005000.0,
-        "day_change_pct": -5.7357780912082745,
-        "session": "market_closed"
+        "code": "GOOG",
+        "name": "구글",
+        "market": "US",
+        "currency": "USD",
+        "price": 374.1,
+        "day_change_pct": -0.732946949840008,
+        "session": "pre"
       }
     ]
   },
