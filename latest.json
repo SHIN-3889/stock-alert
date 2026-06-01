@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-01 20:30:58",
+  "updated_at": "2026-06-01 20:45:49",
   "portfolio": {
     "rows": [
       {
@@ -16,12 +16,12 @@
       {
         "name": "GE버노바",
         "currency": "USD",
-        "price": 956.6008,
-        "day_change_pct": -1.210261070720423,
+        "price": 960.3,
+        "day_change_pct": -0.8282385988103205,
         "shares": 42,
-        "value_krw": 60619009.852767184,
-        "pl_krw": -5599205.835993171,
-        "pl_pct": -8.455688178477375,
+        "value_krw": 40332.6,
+        "pl_krw": -3555.6906000000017,
+        "pl_pct": -8.101683960322669,
         "session": "pre"
       },
       {
@@ -37,12 +37,12 @@
       }
     ],
     "summary": {
-      "total_value_krw": 221360034.85276717,
-      "day_change_krw": -9428696.113482833,
-      "day_change_pct": -4.085423094103179,
-      "total_pl_krw": 10587717.16400683,
-      "total_pl_pct": 5.023295886341829,
-      "usdkrw": 1508.7900390625
+      "total_value_krw": 160781357.6,
+      "day_change_krw": -8686396.840000004,
+      "day_change_pct": -5.125693007914033,
+      "total_pl_krw": 16183367.309399992,
+      "total_pl_pct": 11.191972500361947,
+      "usdkrw": null
     },
     "watchlist": [
       {
