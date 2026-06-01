@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-01 23:30';
-  const DASHBOARD_VERSION = 'v3.0';
+  const DASHBOARD_DATE    = '2026-06-01 23:02';
+  const DASHBOARD_VERSION = 'v2.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -584,12 +584,12 @@
       }
     );
     var data = await res.json();
-    var raw = data.candidates[0].content.parts[0].text.trim()
-      .replace(/```json/g, '').replace(/```/g, '')
-      .replace(/[*]{2}/g, '').replace(/[\r\n]+/g, ' ').trim();
+    var raw = data.candidates[0].content.parts[0].text;
+    // { } 사이 JSON만 추출 (코드블록·마크다운 무시)
     var s = raw.indexOf('{'), e = raw.lastIndexOf('}');
     if (s === -1 || e === -1) return null;
-    try { return JSON.parse(raw.slice(s, e+1)); } catch(e) { return null; }
+    var jsonStr = raw.slice(s, e + 1);
+    try { return JSON.parse(jsonStr); } catch(err) { return null; }
   }
 
   function reEvaluate(btn) {
