@@ -932,7 +932,11 @@
             ? '$' + row.price.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})
             : Math.round(row.price).toLocaleString() + '원';
           var dCls2 = row.day_change_pct >= 0 ? 'profit-color' : 'loss-color';
-          html += '<div class="stock-price">' + priceStr + '</div>';
+          // 미국 시간외 세션 표시
+          var sessionBadge = '';
+          if (row.session === 'pre')   sessionBadge = ' <span style="font-size:11px;background:#e8f0fe;color:#1967d2;padding:2px 6px;border-radius:8px;font-weight:500;">프리마켓</span>';
+          if (row.session === 'after') sessionBadge = ' <span style="font-size:11px;background:#fff3e0;color:#e65100;padding:2px 6px;border-radius:8px;font-weight:500;">애프터마켓</span>';
+          html += '<div class="stock-price">' + priceStr + sessionBadge + '</div>';
           html += '<div class="stock-change ' + dCls2 + '">일간 ' + mark(row.day_change_pct) + ' ' + fmtPct(row.day_change_pct) + '</div>';
         } else {
           html += '<div class="stock-change">시세 데이터 대기 중</div>';
