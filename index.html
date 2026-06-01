@@ -525,6 +525,20 @@
   }
 
   // ── 종목 평가 (Gemini) ────────────────────────────────────────────
+  function reEvaluate(btn) {
+    var code   = btn.getAttribute('data-code');
+    var name   = btn.getAttribute('data-name');
+    var market = btn.getAttribute('data-market');
+    var price  = parseFloat(btn.getAttribute('data-price')) || 0;
+    var input  = document.getElementById('op-input-' + code);
+    var opVal  = input ? input.value.trim() : '';
+    if (!opVal) {
+      alert('예상 영업이익을 입력해주세요. (예: 170조원, $5B)');
+      return;
+    }
+    evaluateStock(code, name, market, price, opVal);
+  }
+
   function onEvalClick(btn) {
     var code  = btn.getAttribute('data-code');
     var name  = btn.getAttribute('data-name');
@@ -533,7 +547,7 @@
     evaluateStock(code, name, market, price);
   }
 
-  async function evaluateStock(code, name, market, currentPrice) {
+  async function evaluateStock(code, name, market, currentPrice, operatingProfit) {
     var key = getGeminiKey();
     if (!key) {
       alert('먼저 화면 아래 설정에서 Gemini API 키를 저장해주세요.');
@@ -556,7 +570,7 @@
     if (market === 'US') {
       // 미국 주식: Forward EPS x P/E 배수 방식 (3단계) - 정확도 강화
       promptLines = [
-        '당신은 월가의 미국 주식 전문 애널리스트입니다. ' + name + '의 적정주가를 아래 방식대로 정확히 계산하세요.',
+        '당신은 월가의 미국 주식 전문 애널리스트입니다. ' + name + '의 적정주가를 아래 방식대로 정확히 계산하세요.' + (operatingProfit ? ' 사용자가 직접 입력한 예상 연간 영업이익: ' + operatingProfit + ' (이 수치를 반드시 Forward EPS 계산에 활용하세요. 임의로 다른 수치로 바꾸지 마세요.)' : ''),
         priceWarn,
         '',
         '[1. 데이터 수집 - 반드시 최신 실제 데이터 사용]',
@@ -579,7 +593,7 @@
     } else {
       // 한국 주식: 기업 특성에 따라 SOTP 또는 NTM P/E 선택
       promptLines = [
-        '당신은 전문 주식 애널리스트입니다. ' + name + '(한국 주식)의 적정주가를 계산하세요.',
+        '당신은 전문 주식 애널리스트입니다. ' + name + '(한국 주식)의 적정주가를 계산하세요.' + (operatingProfit ? ' 사용자가 직접 입력한 예상 연간 영업이익: ' + operatingProfit + ' (이 수치를 반드시 계산에 사용하세요. 임의로 다른 수치로 바꾸지 마세요.)' : ''),
         priceWarn,
         '',
         '[밸류에이션 방법 선택 기준]',
@@ -679,6 +693,14 @@
         '<div class="eval-row"><span class="eval-label">🛡️ 손절 라인</span><span class="eval-value">' + parsed.stop_loss + '</span></div>' +
         '<div style="margin-top:10px;padding:10px;background:#fff;border-radius:8px;font-size:12px;color:#333;line-height:1.6;">' + parsed.summary + '</div>' +
         '<div class="eval-disclaimer">⚠️ AI 추정값으로 투자 참고용이에요. 실제 투자 결정은 본인 판단으로 해주세요.</div>' +
+        '<div style="margin-top:12px;padding:12px;background:#f8f9ff;border-radius:8px;border:1px solid #e0e4ff;">' +
+        '<div style="font-size:12px;color:#555;margin-bottom:8px;font-weight:500;">📊 예상 영업이익으로 재계산</div>' +
+        '<div style="font-size:11px;color:#888;margin-bottom:8px;">직접 조사한 연간 영업이익을 입력하면 더 정확한 적정주가를 계산해요.</div>' +
+        '<div style="display:flex;gap:8px;align-items:center;">' +
+        '<input type="text" id="op-input-' + code + '" placeholder="예: 170조원, $5B" style="flex:1;padding:7px 10px;border:1px solid #ddd;border-radius:6px;font-size:13px;" />' +
+        '<button data-code="' + code + '" data-name="' + name + '" data-market="' + market + '" data-price="' + currentPrice + '" onclick="reEvaluate(this)" style="padding:7px 14px;background:#1967d2;color:white;border:none;border-radius:6px;font-size:13px;cursor:pointer;white-space:nowrap;">재계산 →</button>' +
+        '</div>' +
+        '</div>' +
         '</div>';
     } catch(e) {
       resultDiv.innerHTML = '<div class="eval-result"><div class="eval-error">⚠️ 분석 실패: ' + e.message + '<br><small>잠시 후 다시 시도해주세요.</small></div></div>';
