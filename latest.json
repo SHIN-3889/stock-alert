@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-01 16:15:51",
+  "updated_at": "2026-06-01 16:23:25",
   "portfolio": {
     "rows": [
       {
@@ -10,7 +10,8 @@
         "shares": 503,
         "value_krw": 3609025.0,
         "pl_krw": 9557.0,
-        "pl_pct": 0.2655114589155953
+        "pl_pct": 0.2655114589155953,
+        "session": null
       },
       {
         "name": "GE버노바",
@@ -18,9 +19,10 @@
         "price": 968.3200073242188,
         "day_change_pct": -3.1079261818108472,
         "shares": 42,
-        "value_krw": 61288032.36044794,
-        "pl_krw": -4850742.950746879,
-        "pl_pct": -7.334189252708813
+        "value_krw": 61288439.45201352,
+        "pl_krw": -4850775.170683891,
+        "pl_pct": -7.334189252708813,
+        "session": "closed"
       },
       {
         "name": "삼성SDI",
@@ -30,16 +32,17 @@
         "shares": 241,
         "value_krw": 157132000.0,
         "pl_krw": 16177366.0,
-        "pl_pct": 11.477001884166505
+        "pl_pct": 11.477001884166505,
+        "session": null
       }
     ],
     "summary": {
-      "total_value_krw": 222029057.36044794,
-      "day_change_krw": -10651945.060548156,
-      "day_change_pct": -4.57791781439694,
-      "total_pl_krw": 11336180.049253106,
-      "total_pl_pct": 5.380428704530666,
-      "usdkrw": 1506.97998046875
+      "total_value_krw": 222029464.45201352,
+      "day_change_krw": -10651958.118484527,
+      "day_change_pct": -4.577915160054166,
+      "total_pl_krw": 11336147.82931611,
+      "total_pl_pct": 5.380402193590462,
+      "usdkrw": 1506.989990234375
     },
     "watchlist": [
       {
@@ -48,7 +51,8 @@
         "market": "KR",
         "currency": "KRW",
         "price": 2363000.0,
-        "day_change_pct": 1.2858979854264894
+        "day_change_pct": 1.2858979854264894,
+        "session": null
       },
       {
         "code": "012330",
@@ -56,7 +60,8 @@
         "market": "KR",
         "currency": "KRW",
         "price": 761000.0,
-        "day_change_pct": -0.9114583333333334
+        "day_change_pct": -0.9114583333333334,
+        "session": null
       },
       {
         "code": "005930",
@@ -64,7 +69,8 @@
         "market": "KR",
         "currency": "KRW",
         "price": 349000.0,
-        "day_change_pct": 10.094637223974763
+        "day_change_pct": 10.094637223974763,
+        "session": null
       }
     ]
   },
