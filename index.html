@@ -350,7 +350,6 @@
   let originalSettings = null;
   let currentSettings  = null;
   let currentLatest    = null;
-  let currentLivePrices = {};
   let fileSha          = null;
   let addingStock      = false;
   let addingWatch      = false;
@@ -413,25 +412,10 @@
         fileSha          = sr.sha;
         currentLatest    = latest;
 
-        // Gemini 키 있으면 실시간 시세도 가져오기
-        var geminiKey = getGeminiKey();
-        if (geminiKey) {
-          document.getElementById('content').innerHTML = '<div class="loading">📡 Gemini로 실시간 시세 가져오는 중...</div>';
-          fetchLivePrices(currentSettings)
-            .then(function(livePrices) {
-              currentLivePrices = livePrices || {};
-              renderContent(currentSettings, currentLatest);
-              markChanged();
-              document.getElementById('refresh-btn').textContent = '🔄 새로고침';
-              document.getElementById('refresh-btn').disabled = false;
-            });
-        } else {
-          currentLivePrices = {};
-          renderContent(currentSettings, currentLatest);
-          markChanged();
-          document.getElementById('refresh-btn').textContent = '🔄 새로고침';
-          document.getElementById('refresh-btn').disabled = false;
-        }
+        renderContent(currentSettings, currentLatest);
+        markChanged();
+        document.getElementById('refresh-btn').textContent = '🔄 새로고침';
+        document.getElementById('refresh-btn').disabled = false;
       })
       .catch(function(e) {
         document.getElementById('content').innerHTML =
@@ -539,85 +523,6 @@
     alert('✓ ' + name + ' 추가됐어요! 저장 버튼을 눌러 반영하세요.');
   }
 
-  // ── Gemini 실시간 시세 업데이트 ───────────────────────────────────
-  async function fetchLivePrices(settings) {
-    var key = getGeminiKey();
-    if (!key) return null;
-
-    // 전체 종목 목록 만들기
-    var stocks = [];
-    if (settings && settings.holdings) {
-      Object.entries(settings.holdings).forEach(function(e) {
-        stocks.push({ code: e[0], name: e[1].name, market: e[1].market });
-      });
-    }
-    if (settings && settings.watchlist) {
-      Object.entries(settings.watchlist).forEach(function(e) {
-        stocks.push({ code: e[0], name: e[1].name, market: e[1].market });
-      });
-    }
-    if (stocks.length === 0) return null;
-
-    var stockList = stocks.map(function(s) {
-      return s.name + '(' + (s.market === 'US' ? '미국' : '한국') + ')';
-    }).join(', ');
-
-    var prompt = '아래 종목들의 현재 주가를 실시간으로 조회해서 JSON 형식으로만 답하세요.' +
-      ' 절대 다른 텍스트 없이 JSON만 반환하세요.' +
-      ' 종목 목록: ' + stockList +
-      ' 응답 형식 예시: {"삼성SDI":"125000원","GE버노바":"$350.25","애플":"$195.50"}' +
-      ' 반드시 모든 종목의 현재가를 포함하고, 미국 주식은 달러($), 한국 주식은 원(원) 단위로 작성하세요.';
-
-    try {
-
-      var res = await fetch(
-        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + key,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0.1, maxOutputTokens: 1024 }
-          })
-        }
-      );
-      var data = await res.json();
-      if (!res.ok || !data.candidates) return null;
-
-      var rawText = data.candidates[0].content.parts[0].text.trim();
-      var jsonStart = rawText.indexOf('{');
-      var jsonEnd   = rawText.lastIndexOf('}');
-      if (jsonStart === -1 || jsonEnd === -1) return null;
-
-      var parsed = JSON.parse(rawText.slice(jsonStart, jsonEnd + 1));
-
-      // 종목명으로 매칭 (정확히 일치 or 포함 관계)
-      var result = {};
-      stocks.forEach(function(s) {
-        // 1) 정확한 종목명으로 찾기
-        var val = parsed[s.name];
-        // 2) 못 찾으면 키 중에 종목명이 포함된 것 찾기
-        if (!val) {
-          Object.keys(parsed).forEach(function(k) {
-            if (!val && (k.indexOf(s.name) !== -1 || s.name.indexOf(k) !== -1)) {
-              val = parsed[k];
-            }
-          });
-        }
-        if (val) {
-          result[s.code] = {
-            name: s.name,
-            rawPrice: val,
-            market: s.market
-          };
-        }
-      });
-      return result;
-    } catch(e) {
-      return null;
-    }
-  }
-
   // ── 종목 평가 (Gemini) ────────────────────────────────────────────
   function onEvalClick(btn) {
     var code  = btn.getAttribute('data-code');
@@ -639,40 +544,67 @@
     resultDiv.innerHTML = '<div class="eval-loading">🤖 Gemini가 분석 중이에요... (10~30초 소요)</div>';
     resultDiv.style.display = 'block';
 
-    var priceStr = market === 'US'
-      ? '$' + currentPrice.toFixed(2)
-      : Math.round(currentPrice).toLocaleString() + '원';
-
     var marketStr = market === 'US' ? '미국 주식' : '한국 주식';
     var priceStr = market === 'US'
       ? '$' + currentPrice.toFixed(2)
       : Math.round(currentPrice).toLocaleString() + '원';
 
-    var promptLines = [
-      '당신은 전문 주식 애널리스트입니다. ' + name + '(' + marketStr + ', 현재가:' + priceStr + ')의 적정주가를 아래 SOTP 방식과 NTM P/E 방식으로 계산하세요.',
-      '',
-      '[SOTP 계산 방식 - 반드시 이 단계를 따르세요]',
-      '1단계: 이 종목의 5대 핵심 데이터를 최신 자료 기반으로 수집하세요.',
-      '  - 본업 가치 (주력 사업부문의 가치)',
-      '  - 자회사 가치 (보유 지분 가치)',
-      '  - 미래 기술 가치 (성장 프리미엄)',
-      '  - 순부채 (총부채 - 현금성자산)',
-      '  - 총 발행주식수',
-      '2단계: 총 기업가치 = 본업 가치 + 자회사 가치 + 미래 기술 가치',
-      '3단계: 적정 주주가치 = 총 기업가치 - 순부채',
-      '4단계: SOTP 적정주가 = 적정 주주가치 ÷ 총 발행주식수',
-      '',
-      '[NTM P/E 방식]',
-      '향후 12개월 예상 EPS × 적정 P/E 배수 = NTM P/E 적정주가',
-      '',
-      '[최종 판정]',
-      '- 1차 적정주가(보수적) = SOTP와 NTM P/E 중 낮은 값',
-      '- 2차 적정주가(기본) = SOTP와 NTM P/E 중 높은 값',
-      '',
-      '반드시 아래 JSON 형식으로만 답하세요. 다른 텍스트 없이 JSON만 반환하세요.',
-      '{"sotp_breakdown":"SOTP 계산내역(본업+자회사+기술가치-순부채÷주식수를 실제 숫자로 간단히)","sotp_price":"SOTP 적정주가","ntm_pe_price":"NTM PE 적정주가","target_1":"1차적정주가(보수적,낮은값)","target_2":"2차적정주가(기본,높은값)","gap_rate":"현재가 대비 2차 적정주가 괴리율","sell_point":"차트 기술적 분석 매도 지점","stop_loss":"손절 라인","summary":"핵심 투자의견"}',
-      '모든 내용은 한국어로, 가격은 단위(원/$) 포함하여 작성하세요.'
-    ];
+    var priceWarn = '⚠️ 매우 중요: 제공된 현재가 ' + priceStr + '는 실제 시장에서 거래되는 정확한 가격입니다. 이 가격을 절대 오기(오타)로 판단하지 말고, 임의로 자릿수를 바꾸거나 수정하지 마세요. 반드시 ' + priceStr + ' 를 현재가로 그대로 사용하여 괴리율을 계산하세요.';
+
+    var promptLines;
+    if (market === 'US') {
+      // 미국 주식: DCF + EV/EBITDA + PEG 등 적합한 방법으로 평가
+      promptLines = [
+        '당신은 미국 주식 전문 애널리스트입니다. ' + name + '(미국 주식)의 적정주가를 평가하세요.',
+        priceWarn,
+        '',
+        '[밸류에이션 방법 - 미국 주식]',
+        '이 기업의 산업/특성에 가장 적합한 2가지 방법을 골라 적정주가를 계산하세요.',
+        '- DCF(현금흐름할인): 미래 잉여현금흐름을 현재가치로 환산 (안정적 현금흐름 기업)',
+        '- EV/EBITDA: 동종업계 배수 비교 (에너지·산업재·자본집약 기업)',
+        '- PEG(성장조정 P/E): P/E ÷ 이익성장률 (성장주)',
+        '- P/S(주가매출비율): 매출 기준 (고성장 적자기업)',
+        '각 방법의 실제 수치(현금흐름, EBITDA 배수, 성장률 등)를 최신 자료로 수집해 계산하세요.',
+        '',
+        '[최종 판정]',
+        '- 1차 적정주가(보수적) = 두 방법 중 낮은 값',
+        '- 2차 적정주가(기본) = 두 방법 중 높은 값',
+        '- 괴리율 = (2차 적정주가 - 현재가) ÷ 현재가 × 100',
+        '',
+        '반드시 아래 JSON 형식으로만 답하세요. 다른 텍스트 없이 JSON만 반환하세요.',
+        '{"breakdown":"사용한 2가지 방법과 핵심 계산근거를 실제 숫자로 간단히","method1_label":"방법1 이름(예: DCF)","method1_price":"방법1 적정주가","method2_label":"방법2 이름(예: EV/EBITDA)","method2_price":"방법2 적정주가","target_1":"1차적정주가(보수적,낮은값)","target_2":"2차적정주가(기본,높은값)","gap_rate":"현재가 대비 2차 적정주가 괴리율(+ 또는 -)","sell_point":"차트 기술적 분석 매도 지점","stop_loss":"손절 라인","summary":"핵심 투자의견"}',
+        '모든 내용은 한국어로, 가격은 $ 단위 포함하여 작성하세요.'
+      ];
+    } else {
+      // 한국 주식: SOTP + NTM P/E
+      promptLines = [
+        '당신은 전문 주식 애널리스트입니다. ' + name + '(한국 주식)의 적정주가를 아래 SOTP 방식과 NTM P/E 방식으로 계산하세요.',
+        priceWarn,
+        '',
+        '[SOTP 계산 방식 - 반드시 이 단계를 따르세요]',
+        '1단계: 이 종목의 5대 핵심 데이터를 최신 자료 기반으로 수집하세요.',
+        '  - 본업 가치 (주력 사업부문의 가치)',
+        '  - 자회사 가치 (보유 지분 가치)',
+        '  - 미래 기술 가치 (성장 프리미엄)',
+        '  - 순부채 (총부채 - 현금성자산)',
+        '  - 총 발행주식수',
+        '2단계: 총 기업가치 = 본업 가치 + 자회사 가치 + 미래 기술 가치',
+        '3단계: 적정 주주가치 = 총 기업가치 - 순부채',
+        '4단계: SOTP 적정주가 = 적정 주주가치 ÷ 총 발행주식수',
+        '',
+        '[NTM P/E 방식]',
+        '향후 12개월 예상 EPS × 적정 P/E 배수 = NTM P/E 적정주가',
+        '',
+        '[최종 판정]',
+        '- 1차 적정주가(보수적) = SOTP와 NTM P/E 중 낮은 값',
+        '- 2차 적정주가(기본) = SOTP와 NTM P/E 중 높은 값',
+        '- 괴리율 = (2차 적정주가 - 현재가) ÷ 현재가 × 100',
+        '',
+        '반드시 아래 JSON 형식으로만 답하세요. 다른 텍스트 없이 JSON만 반환하세요.',
+        '{"breakdown":"SOTP 계산내역(본업+자회사+기술가치-순부채÷주식수를 실제 숫자로)","method1_label":"SOTP 적정주가","method1_price":"SOTP 적정주가 값","method2_label":"NTM P/E 적정주가","method2_price":"NTM PE 적정주가 값","target_1":"1차적정주가(보수적,낮은값)","target_2":"2차적정주가(기본,높은값)","gap_rate":"현재가 대비 2차 적정주가 괴리율(+ 또는 -)","sell_point":"차트 기술적 분석 매도 지점","stop_loss":"손절 라인","summary":"핵심 투자의견"}',
+        '모든 내용은 한국어로, 가격은 원 단위 포함하여 작성하세요.'
+      ];
+    }
     var prompt = promptLines.join("\n");
 
     try {
@@ -714,27 +646,30 @@
           return m ? m[1] : '데이터 없음';
         }
         parsed = {
-          sotp_breakdown: extractField('sotp_breakdown'),
-          sotp_price:   extractField('sotp_price'),
-          ntm_pe_price: extractField('ntm_pe_price'),
-          target_1:     extractField('target_1'),
-          target_2:     extractField('target_2'),
-          gap_rate:     extractField('gap_rate'),
-          sell_point:   extractField('sell_point'),
-          stop_loss:    extractField('stop_loss'),
-          summary:      extractField('summary'),
+          breakdown:     extractField('breakdown'),
+          method1_label: extractField('method1_label'),
+          method1_price: extractField('method1_price'),
+          method2_label: extractField('method2_label'),
+          method2_price: extractField('method2_price'),
+          target_1:      extractField('target_1'),
+          target_2:      extractField('target_2'),
+          gap_rate:      extractField('gap_rate'),
+          sell_point:    extractField('sell_point'),
+          stop_loss:     extractField('stop_loss'),
+          summary:       extractField('summary'),
         };
       }
 
+      var gapColor = (parsed.gap_rate && parsed.gap_rate.indexOf('-') === -1) ? '#d70015' : '#0066cc';
       resultDiv.innerHTML =
         '<div class="eval-result">' +
         '<div class="eval-title">🤖 AI 종목 평가 — ' + name + '</div>' +
-        (parsed.sotp_breakdown ? '<div style="font-size:11px;color:#666;background:#fff;padding:8px;border-radius:6px;margin-bottom:8px;line-height:1.5;">📐 SOTP 계산: ' + parsed.sotp_breakdown + '</div>' : '') +
-        '<div class="eval-row"><span class="eval-label">SOTP 적정주가</span><span class="eval-value">' + parsed.sotp_price + '</span></div>' +
-        '<div class="eval-row"><span class="eval-label">NTM P/E 적정주가</span><span class="eval-value">' + parsed.ntm_pe_price + '</span></div>' +
+        (parsed.breakdown ? '<div style="font-size:11px;color:#666;background:#fff;padding:8px;border-radius:6px;margin-bottom:8px;line-height:1.5;">📐 계산 근거: ' + parsed.breakdown + '</div>' : '') +
+        '<div class="eval-row"><span class="eval-label">' + (parsed.method1_label || '방법1') + '</span><span class="eval-value">' + parsed.method1_price + '</span></div>' +
+        '<div class="eval-row"><span class="eval-label">' + (parsed.method2_label || '방법2') + '</span><span class="eval-value">' + parsed.method2_price + '</span></div>' +
         '<div class="eval-row"><span class="eval-label">1차 적정주가 (보수적)</span><span class="eval-value" style="color:#0066cc;">' + parsed.target_1 + '</span></div>' +
         '<div class="eval-row"><span class="eval-label">2차 적정주가 (기본)</span><span class="eval-value" style="color:#1967d2;">' + parsed.target_2 + '</span></div>' +
-        '<div class="eval-row"><span class="eval-label">현재가 대비 괴리율</span><span class="eval-value" style="color:' + (parsed.gap_rate.startsWith('+') ? '#d70015' : '#0066cc') + ';">' + parsed.gap_rate + '</span></div>' +
+        '<div class="eval-row"><span class="eval-label">현재가 대비 괴리율</span><span class="eval-value" style="color:' + gapColor + ';">' + parsed.gap_rate + '</span></div>' +
         '<div class="eval-row"><span class="eval-label">📈 차트 매도 지점</span><span class="eval-value">' + parsed.sell_point + '</span></div>' +
         '<div class="eval-row"><span class="eval-label">🛡️ 손절 라인</span><span class="eval-value">' + parsed.stop_loss + '</span></div>' +
         '<div style="margin-top:10px;padding:10px;background:#fff;border-radius:8px;font-size:12px;color:#333;line-height:1.6;">' + parsed.summary + '</div>' +
@@ -992,11 +927,7 @@
         html += '<span class="market-badge ' + mCls + '">' + mTxt + '</span>';
         html += '<button class="delete-stock-btn" onclick="deleteStock(' + "'" + code + "'" + ')">✕</button>';
         html += '</div></div>';
-        var live = currentLivePrices && currentLivePrices[code];
-        if (live) {
-          html += '<div class="stock-price">' + live.rawPrice + ' <span style="font-size:11px;color:#888;font-weight:400;">(AI 참고용)</span></div>';
-          html += '<div class="stock-change" style="color:#aaa;font-size:12px;">Gemini 추정가 · 실제 주가와 차이 있을 수 있어요</div>';
-        } else if (row && !row.error) {
+        if (row && !row.error) {
           var priceStr = row.currency === 'USD'
             ? '$' + row.price.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})
             : Math.round(row.price).toLocaleString() + '원';
@@ -1065,11 +996,7 @@
       html += '<span class="market-badge ' + mCls + '">' + mTxt + '</span>';
       html += '<button class="delete-stock-btn" onclick="deleteWatch(' + "'" + code + "'" + ')">✕</button>';
       html += '</div></div>';
-      var liveW = currentLivePrices && currentLivePrices[code];
-      if (liveW) {
-        html += '<div class="watch-price">' + liveW.rawPrice + ' <span style="font-size:11px;color:#888;font-weight:400;">(AI 참고용)</span></div>';
-        html += '<div class="watch-change" style="color:#aaa;font-size:12px;">Gemini 추정가 · 실제 주가와 차이 있을 수 있어요</div>';
-      } else if (row && !row.error) {
+      if (row && !row.error) {
         var priceStr2 = row.currency === 'USD'
           ? '$' + row.price.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})
           : Math.round(row.price).toLocaleString() + '원';
