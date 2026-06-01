@@ -95,9 +95,27 @@ def get_us_price(ticker: str) -> dict:
     return _yf_price(ticker, "USD", extended_hours=True)
 
 
+def _kr_session_label() -> str:
+    """현재 시각 기준 한국 주식 세션 레이블 반환.
+    KST 기준: 정규장 09:00~15:30, 그 외 closed
+    """
+    now_kst = datetime.now(timezone(timedelta(hours=9)))
+    weekday = now_kst.weekday()  # 0=월 ~ 6=일
+    if weekday >= 5:  # 토·일
+        return 'closed'
+    kst_time = now_kst.hour * 60 + now_kst.minute
+    open_start = 9 * 60       # 09:00
+    open_end   = 15 * 60 + 30 # 15:30
+    if open_start <= kst_time < open_end:
+        return 'open'
+    return 'closed'
+
+
 def get_kr_price(code: str) -> dict:
     """국내 종목/ETF — 코드 뒤에 .KS 붙여 yfinance 로 조회."""
-    return _yf_price(f"{code}.KS", "KRW", extended_hours=False)
+    result = _yf_price(f"{code}.KS", "KRW", extended_hours=False)
+    result["session"] = _kr_session_label()
+    return result
 
 
 def get_usdkrw() -> float:
