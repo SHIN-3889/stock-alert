@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-01 22:58';
-  const DASHBOARD_VERSION = 'v2.0';
+  const DASHBOARD_DATE    = '2026-06-01 21:05';
+  const DASHBOARD_VERSION = 'v1.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -1161,7 +1161,14 @@
           ? '$' + row.price.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})
           : Math.round(row.price).toLocaleString() + '원';
         var dCls3 = row.day_change_pct >= 0 ? 'profit-color' : 'loss-color';
-        html += '<div class="watch-price">' + priceStr2 + '</div>';
+        var sessionBadge2 = '';
+        if (row.session === 'open')          sessionBadge2 = ' <span style="font-size:11px;background:#e8f5e9;color:#2e7d32;padding:2px 6px;border-radius:8px;font-weight:500;">정규장</span>';
+        if (row.session === 'pre')           sessionBadge2 = ' <span style="font-size:11px;background:#e8f0fe;color:#1967d2;padding:2px 6px;border-radius:8px;font-weight:500;">프리마켓</span>';
+        if (row.session === 'after')         sessionBadge2 = ' <span style="font-size:11px;background:#fff3e0;color:#e65100;padding:2px 6px;border-radius:8px;font-weight:500;">애프터마켓</span>';
+        if (row.session === 'nxt')           sessionBadge2 = ' <span style="font-size:11px;background:#fce4ec;color:#c62828;padding:2px 6px;border-radius:8px;font-weight:500;">장 마감 (NXT)</span>';
+        if (row.session === 'market_closed') sessionBadge2 = ' <span style="font-size:11px;background:#f5f5f5;color:#666;padding:2px 6px;border-radius:8px;font-weight:500;">장 마감</span>';
+        if (row.session === 'closed')        sessionBadge2 = ' <span style="font-size:11px;background:#eeeeee;color:#999;padding:2px 6px;border-radius:8px;font-weight:500;">휴장</span>';
+        html += '<div class="watch-price">' + priceStr2 + sessionBadge2 + '</div>';
         html += '<div class="watch-change ' + dCls3 + '">일간 ' + mark(row.day_change_pct) + ' ' + fmtPct(row.day_change_pct) + '</div>';
       } else {
         html += '<div class="watch-change">시세 데이터 대기 중</div>';
