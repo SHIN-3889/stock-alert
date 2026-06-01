@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-01 16:23:25",
+  "updated_at": "2026-06-01 16:30:58",
   "portfolio": {
     "rows": [
       {
@@ -11,7 +11,7 @@
         "value_krw": 3609025.0,
         "pl_krw": 9557.0,
         "pl_pct": 0.2655114589155953,
-        "session": null
+        "session": "closed"
       },
       {
         "name": "GE버노바",
@@ -19,8 +19,8 @@
         "price": 968.3200073242188,
         "day_change_pct": -3.1079261818108472,
         "shares": 42,
-        "value_krw": 61288439.45201352,
-        "pl_krw": -4850775.170683891,
+        "value_krw": 61263631.68916963,
+        "pl_krw": -4848811.719156668,
         "pl_pct": -7.334189252708813,
         "session": "closed"
       },
@@ -33,16 +33,16 @@
         "value_krw": 157132000.0,
         "pl_krw": 16177366.0,
         "pl_pct": 11.477001884166505,
-        "session": null
+        "session": "closed"
       }
     ],
     "summary": {
-      "total_value_krw": 222029464.45201352,
-      "day_change_krw": -10651958.118484527,
-      "day_change_pct": -4.577915160054166,
-      "total_pl_krw": 11336147.82931611,
-      "total_pl_pct": 5.380402193590462,
-      "usdkrw": 1506.989990234375
+      "total_value_krw": 222004656.68916965,
+      "day_change_krw": -10651162.38058132,
+      "day_change_pct": -4.578076930621738,
+      "total_pl_krw": 11338111.280843347,
+      "total_pl_pct": 5.382017946355532,
+      "usdkrw": 1506.3800048828125
     },
     "watchlist": [
       {
@@ -52,7 +52,7 @@
         "currency": "KRW",
         "price": 2363000.0,
         "day_change_pct": 1.2858979854264894,
-        "session": null
+        "session": "closed"
       },
       {
         "code": "012330",
@@ -61,7 +61,7 @@
         "currency": "KRW",
         "price": 761000.0,
         "day_change_pct": -0.9114583333333334,
-        "session": null
+        "session": "closed"
       },
       {
         "code": "005930",
@@ -70,7 +70,7 @@
         "currency": "KRW",
         "price": 349000.0,
         "day_change_pct": 10.094637223974763,
-        "session": null
+        "session": "closed"
       }
     ]
   },
