@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-01 20:45:49",
+  "updated_at": "2026-06-01 21:01:10",
   "portfolio": {
     "rows": [
       {
@@ -11,17 +11,17 @@
         "value_krw": 3609025.0,
         "pl_krw": 9557.0,
         "pl_pct": 0.2655114589155953,
-        "session": "closed"
+        "session": "market_closed"
       },
       {
         "name": "GE버노바",
         "currency": "USD",
-        "price": 960.3,
-        "day_change_pct": -0.8282385988103205,
+        "price": 957.72,
+        "day_change_pct": -1.0946794448116348,
         "shares": 42,
-        "value_krw": 40332.6,
-        "pl_krw": -3555.6906000000017,
-        "pl_pct": -8.101683960322669,
+        "value_krw": 60680681.851289056,
+        "pl_krw": -5527440.3878264725,
+        "pl_pct": -8.348583528564218,
         "session": "pre"
       },
       {
@@ -33,16 +33,16 @@
         "value_krw": 157132000.0,
         "pl_krw": 16177366.0,
         "pl_pct": 11.477001884166505,
-        "session": "closed"
+        "session": "market_closed"
       }
     ],
     "summary": {
-      "total_value_krw": 160781357.6,
-      "day_change_krw": -8686396.840000004,
-      "day_change_pct": -5.125693007914033,
-      "total_pl_krw": 16183367.309399992,
-      "total_pl_pct": 11.191972500361947,
-      "usdkrw": null
+      "total_value_krw": 221421706.85128906,
+      "day_change_krw": -9357670.938085943,
+      "day_change_pct": -4.054812448028347,
+      "total_pl_krw": 10659482.612173527,
+      "total_pl_pct": 5.057586885247544,
+      "usdkrw": 1508.56005859375
     },
     "watchlist": [
       {
@@ -52,7 +52,7 @@
         "currency": "KRW",
         "price": 2363000.0,
         "day_change_pct": 1.2858979854264894,
-        "session": "closed"
+        "session": "market_closed"
       },
       {
         "code": "012330",
@@ -61,7 +61,7 @@
         "currency": "KRW",
         "price": 761000.0,
         "day_change_pct": -0.9114583333333334,
-        "session": "closed"
+        "session": "market_closed"
       },
       {
         "code": "005930",
@@ -70,7 +70,16 @@
         "currency": "KRW",
         "price": 349000.0,
         "day_change_pct": 10.094637223974763,
-        "session": "closed"
+        "session": "market_closed"
+      },
+      {
+        "code": "009150",
+        "name": "삼성전기",
+        "market": "KR",
+        "currency": "KRW",
+        "price": 2005000.0,
+        "day_change_pct": -5.7357780912082745,
+        "session": "market_closed"
       }
     ]
   },
