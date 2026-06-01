@@ -8,6 +8,7 @@ on:
       - 'last_mail.json'
       - 'latest.json'
       - 'settings.json'
+      - 'version.txt'
     branches:
       - main
 
@@ -26,24 +27,28 @@ jobs:
       - name: 최신 상태 동기화
         run: git pull origin main
 
-      - name: 날짜 + 소수점 버전 업데이트
+      - name: 버전 파일 읽기 및 소수점 업데이트
         run: |
           DATE=$(TZ='Asia/Seoul' date '+%Y-%m-%d %H:%M')
 
-          CURRENT=$(grep -o "DASHBOARD_VERSION = 'v[^']*'" index.html | grep -o "v[0-9]*\.[0-9]*" | head -1)
-          echo "현재 버전: $CURRENT"
+          if [ -f version.txt ]; then
+            CURRENT=$(cat version.txt)
+          else
+            CURRENT="1.0"
+          fi
+          echo "현재 버전: v$CURRENT"
 
-          MAJOR=$(echo $CURRENT | tr -d 'v' | cut -d'.' -f1)
-          MINOR=$(echo $CURRENT | tr -d 'v' | cut -d'.' -f2)
-          if [ -z "$MAJOR" ]; then MAJOR=1; fi
-          if [ -z "$MINOR" ]; then MINOR=0; fi
+          MAJOR=$(echo $CURRENT | cut -d'.' -f1)
+          MINOR=$(echo $CURRENT | cut -d'.' -f2)
           NEW_MINOR=$((MINOR + 1))
-          NEW_VERSION="v${MAJOR}.${NEW_MINOR}"
+          NEW_VERSION="${MAJOR}.${NEW_MINOR}"
 
-          echo "날짜: $DATE / 버전: $CURRENT → $NEW_VERSION"
+          echo "새 버전: v$NEW_VERSION"
+
+          echo $NEW_VERSION > version.txt
 
           sed -i "s/const DASHBOARD_DATE    = '[^']*';/const DASHBOARD_DATE    = '$DATE';/" index.html
-          sed -i "s/const DASHBOARD_VERSION = '[^']*';/const DASHBOARD_VERSION = '$NEW_VERSION';/" index.html
+          sed -i "s/const DASHBOARD_VERSION = '[^']*';/const DASHBOARD_VERSION = 'v$NEW_VERSION';/" index.html
 
           echo "교체 결과:"
           grep "DASHBOARD_DATE\|DASHBOARD_VERSION" index.html
@@ -52,9 +57,9 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add index.html
+          git add index.html version.txt
           if git diff --staged --quiet; then
-            echo "변경사항 없음 - 커밋 스킵"
+            echo "변경사항 없음"
           else
             git commit -m "auto: 버전 업데이트 [skip ci]"
             git push origin main
