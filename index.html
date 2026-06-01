@@ -1015,6 +1015,9 @@
       } else {
         html += '<div class="watch-change">시세 데이터 대기 중</div>';
       }
+      var watchPrice = (row && !row.error) ? row.price : 0;
+      html += '<button class="eval-btn" data-code="' + code + '" data-name="' + w.name + '" data-market="' + w.market + '" data-price="' + watchPrice + '" onclick="onEvalClick(this)">🤖 AI 종목 평가</button>';
+      html += '<div id="eval-' + code + '" class="eval-result" style="display:none;"></div>';
       html += '</div>';
     });
     // 관심 종목 추가 카드
