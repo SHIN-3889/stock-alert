@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-02 07:37';
-  const DASHBOARD_VERSION = 'v5.0';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -563,7 +563,7 @@
   async function fetchConsensus(code, name, market, key) {
     var promptUS = '당신은 월가 리서치 전문가입니다. ' + name + '(' + code + ')의 최신 컨센서스 데이터를 조사하세요.' +
       ' 반드시 JSON 형식으로만 답하세요. 마크다운 절대 금지.' +
-      ' {"op_income":"월가 애널리스트 컨센서스 연간 영업이익(예: $12.5B)","pe_avg":"해당 업계 글로벌 평균 P/E 배수(숫자만, 예: 28)","source":"참고한 데이터 출처 간단히"}';
+      ' {"op_income":"월가 애널리스트 컨센서스 연간 영업이익을 반드시 한국어로 표기(예: 125억달러, 1조 2500억달러)","pe_avg":"해당 종목이 속한 섹터의 글로벌 평균 P/E 배수(숫자만, 예: 28)","source":"참고한 데이터 출처 간단히"}';
 
     var promptKR = '당신은 한국 증권사 리서치 전문가입니다. ' + name + '(' + code + ')의 최신 컨센서스 데이터를 조사하세요.' +
       ' 최근 한국 애널리스트 보고서 기준 평균 연간 영업이익을 찾으세요.' +
@@ -863,7 +863,7 @@
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">' +
         '<div>' +
         '<div style="font-size:11px;color:#666;margin-bottom:4px;">예상 연간 영업이익</div>' +
-        '<input type="text" id="op-input-' + code + '" placeholder="예: 125억달러, 1.9조원, $1.9B" style="width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid #ddd;border-radius:6px;font-size:12px;" />' +
+        '<input type="text" id="op-input-' + code + '" placeholder="조회 중..." style="width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid #ddd;border-radius:6px;font-size:12px;" />' +
         '</div>' +
         '<div>' +
         '<div style="font-size:11px;color:#666;margin-bottom:4px;">P/E 배수 (배)</div>' +
