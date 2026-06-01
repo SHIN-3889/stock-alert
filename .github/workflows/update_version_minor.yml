@@ -6,22 +6,32 @@ on:
       - 'index.html'
       - '.github/**'
       - '*.json'
+      - 'last_mail.json'
+      - 'latest.json'
+      - 'settings.json'
 
 jobs:
   update-version-minor:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: 체크아웃
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 날짜 + 소수점 버전 업데이트
         run: |
           DATE=$(TZ='Asia/Seoul' date '+%Y-%m-%d %H:%M')
 
-          # 현재 버전 읽기 (예: v2.1 → major=2, minor=1)
-          CURRENT=$(grep "DASHBOARD_VERSION" index.html | grep -o "v[0-9]*\.[0-9]*" | head -1)
+          CURRENT=$(grep -o "DASHBOARD_VERSION = '[^']*'" index.html | grep -o "v[0-9]*\.[0-9]*" | head -1)
+          echo "현재 버전: $CURRENT"
+
           MAJOR=$(echo $CURRENT | grep -o "^v[0-9]*" | tr -d 'v')
           MINOR=$(echo $CURRENT | grep -o "\.[0-9]*$" | tr -d '.')
+          if [ -z "$MAJOR" ]; then MAJOR=1; fi
+          if [ -z "$MINOR" ]; then MINOR=0; fi
           NEW_MINOR=$((MINOR + 1))
           NEW_VERSION="v${MAJOR}.${NEW_MINOR}"
 
@@ -38,5 +48,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git diff --staged --quiet || git commit -m "auto: 버전 업데이트 (기타 파일 수정)"
-          git push
+          if git diff --staged --quiet; then
+            echo "변경사항 없음 - 커밋 스킵"
+          else
+            git commit -m "auto: 버전 업데이트 [skip ci]"
+            git push
+          fi
