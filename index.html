@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-01 22:22';  // Actions가 자동으로 업데이트
-  const DASHBOARD_VERSION = 'v2.0';              // 수동으로 올려주세요 (v1.1, v1.2...)
+  const DASHBOARD_DATE    = '2026-06-01 21:05';  // Actions가 자동으로 업데이트
+  const DASHBOARD_VERSION = 'v1.0';              // 수동으로 올려주세요 (v1.1, v1.2...)
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -526,6 +526,38 @@
     alert('✓ ' + name + ' 추가됐어요! 저장 버튼을 눌러 반영하세요.');
   }
 
+  // ── 종목 평가 결과 저장/불러오기 ───────────────────────────────────
+  var EVAL_STORAGE_KEY = 'saved_eval_';
+
+  function saveEvalResult(code, htmlContent) {
+    try {
+      localStorage.setItem(EVAL_STORAGE_KEY + code, htmlContent);
+    } catch(e) {}
+  }
+
+  function loadEvalResult(code) {
+    try {
+      return localStorage.getItem(EVAL_STORAGE_KEY + code);
+    } catch(e) { return null; }
+  }
+
+  function clearEvalResult(code) {
+    try {
+      localStorage.removeItem(EVAL_STORAGE_KEY + code);
+    } catch(e) {}
+  }
+
+  function onSaveEvalCheck(chk) {
+    var code = chk.id.replace('save-eval-', '');
+    var resultDiv = document.getElementById('eval-' + code);
+    if (!resultDiv) return;
+    if (chk.checked) {
+      saveEvalResult(code, resultDiv.innerHTML);
+    } else {
+      clearEvalResult(code);
+    }
+  }
+
   // ── 종목 평가 (Gemini) ────────────────────────────────────────────
   function reEvaluate(btn) {
     var code   = btn.getAttribute('data-code');
@@ -709,8 +741,12 @@
 
     try {
       // ── 5회 병렬 호출 ────────────────────────────────────────
-      resultDiv.innerHTML = '<div class="eval-loading">🤖 Gemini 5회 병렬 분석 중... (30~60초 소요)</div>';
-      resultDiv.style.display = 'block';
+      // 새로 분석 시작하면 저장 체크 해제
+    var saveChk = document.getElementById('save-eval-' + code);
+    if (saveChk) { saveChk.checked = false; }
+    clearEvalResult(code);
+    resultDiv.innerHTML = '<div class="eval-loading">🤖 Gemini 5회 병렬 분석 중... (30~60초 소요)</div>';
+    resultDiv.style.display = 'block';
 
       var promises = [];
       for (var i = 0; i < 5; i++) {
@@ -756,6 +792,10 @@
         '<div class="eval-row"><span class="eval-label">🛡️ 손절 라인</span><span class="eval-value">' + parsed.stop_loss + '</span></div>' +
         '<div style="margin-top:10px;padding:10px;background:#fff;border-radius:8px;font-size:12px;color:#333;line-height:1.6;">' + parsed.summary + '</div>' +
         '<div class="eval-disclaimer">⚠️ AI 추정값으로 투자 참고용이에요. 실제 투자 결정은 본인 판단으로 해주세요.</div>' +
+        '<div style="margin-top:10px;display:flex;align-items:center;gap:8px;">' +
+        '<input type="checkbox" id="save-eval-' + code + '" onchange="onSaveEvalCheck(this)" style="width:16px;height:16px;cursor:pointer;" />' +
+        '<label for="save-eval-' + code + '" style="font-size:12px;color:#555;cursor:pointer;">이 결과 저장 (새로고침 후에도 유지)</label>' +
+        '</div>' +
         '<div style="margin-top:12px;padding:12px;background:#f8f9ff;border-radius:8px;border:1px solid #e0e4ff;">' +
         '<div style="font-size:12px;color:#555;margin-bottom:8px;font-weight:500;">📊 수동 입력으로 재계산</div>' +
         '<div style="font-size:11px;color:#888;margin-bottom:6px;">값을 직접 입력하면 더 정확한 적정주가를 계산해요. 비워두면 AI가 자동 추정합니다.</div>' +
@@ -1054,8 +1094,13 @@
           html += '<div class="stock-pl ' + plCls + '">평가손익 ' + mark(row.pl_krw) + ' ' + fmtWon(row.pl_krw) + ' (' + fmtPct(row.pl_pct) + ')</div>';
         }
         var curPrice = (row && !row.error) ? row.price : 0;
+        var savedEval = loadEvalResult(code);
         html += '<button class="eval-btn" data-code="' + code + '" data-name="' + h.name + '" data-market="' + h.market + '" data-price="' + curPrice + '" onclick="onEvalClick(this)">🤖 AI 종목 평가</button>';
-        html += '<div id="eval-' + code + '" class="eval-result" style="display:none;"></div>';
+        if (savedEval) {
+          html += '<div id="eval-' + code + '" class="eval-result" style="display:block;">' + savedEval + '</div>';
+        } else {
+          html += '<div id="eval-' + code + '" class="eval-result" style="display:none;"></div>';
+        }
         html += '</div>';
       });
     }
@@ -1114,8 +1159,13 @@
         html += '<div class="watch-change">시세 데이터 대기 중</div>';
       }
       var watchPrice = (row && !row.error) ? row.price : 0;
+      var savedEvalW = loadEvalResult(code);
       html += '<button class="eval-btn" data-code="' + code + '" data-name="' + w.name + '" data-market="' + w.market + '" data-price="' + watchPrice + '" onclick="onEvalClick(this)">🤖 AI 종목 평가</button>';
-      html += '<div id="eval-' + code + '" class="eval-result" style="display:none;"></div>';
+      if (savedEvalW) {
+        html += '<div id="eval-' + code + '" class="eval-result" style="display:block;">' + savedEvalW + '</div>';
+      } else {
+        html += '<div id="eval-' + code + '" class="eval-result" style="display:none;"></div>';
+      }
       html += '</div>';
     });
     // 관심 종목 추가 카드
@@ -1134,6 +1184,24 @@
     }
 
     document.getElementById('content').innerHTML = html;
+
+    // 저장된 결과가 있는 종목은 체크박스 자동 체크
+    if (settings && settings.holdings) {
+      Object.keys(settings.holdings).forEach(function(code) {
+        if (loadEvalResult(code)) {
+          var chk = document.getElementById('save-eval-' + code);
+          if (chk) chk.checked = true;
+        }
+      });
+    }
+    if (settings && settings.watchlist) {
+      Object.keys(settings.watchlist).forEach(function(code) {
+        if (loadEvalResult(code)) {
+          var chk = document.getElementById('save-eval-' + code);
+          if (chk) chk.checked = true;
+        }
+      });
+    }
   }
 
   // ── 이벤트 등록 (DOM 로드 후) ──────────────────────────────────────
