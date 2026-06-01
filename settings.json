@@ -45,6 +45,10 @@
     "GOOG": {
       "name": "구글",
       "market": "US"
+    },
+    "MU": {
+      "name": "마이크론",
+      "market": "US"
     }
   }
 }
