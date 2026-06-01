@@ -673,7 +673,7 @@
       '{"sotp_breakdown":"SOTP 계산내역(본업+자회사+기술가치-순부채÷주식수를 실제 숫자로 간단히)","sotp_price":"SOTP 적정주가","ntm_pe_price":"NTM PE 적정주가","target_1":"1차적정주가(보수적,낮은값)","target_2":"2차적정주가(기본,높은값)","gap_rate":"현재가 대비 2차 적정주가 괴리율","sell_point":"차트 기술적 분석 매도 지점","stop_loss":"손절 라인","summary":"핵심 투자의견"}',
       '모든 내용은 한국어로, 가격은 단위(원/$) 포함하여 작성하세요.'
     ];
-    var prompt = promptLines.join("\\n");
+    var prompt = promptLines.join("\n");
 
     try {
       var res = await fetch(
@@ -994,8 +994,8 @@
         html += '</div></div>';
         var live = currentLivePrices && currentLivePrices[code];
         if (live) {
-          html += '<div class="stock-price">' + live.rawPrice + ' <span style="font-size:11px;color:#1967d2;font-weight:400;">📡 실시간</span></div>';
-          html += '<div class="stock-change" style="color:#888;">이전 시세 기준 등락률은 다음 자동실행 후 갱신돼요</div>';
+          html += '<div class="stock-price">' + live.rawPrice + ' <span style="font-size:11px;color:#888;font-weight:400;">(AI 참고용)</span></div>';
+          html += '<div class="stock-change" style="color:#aaa;font-size:12px;">Gemini 추정가 · 실제 주가와 차이 있을 수 있어요</div>';
         } else if (row && !row.error) {
           var priceStr = row.currency === 'USD'
             ? '$' + row.price.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})
@@ -1067,7 +1067,8 @@
       html += '</div></div>';
       var liveW = currentLivePrices && currentLivePrices[code];
       if (liveW) {
-        html += '<div class="watch-price">' + liveW.rawPrice + ' <span style="font-size:11px;color:#1967d2;font-weight:400;">📡 실시간</span></div>';
+        html += '<div class="watch-price">' + liveW.rawPrice + ' <span style="font-size:11px;color:#888;font-weight:400;">(AI 참고용)</span></div>';
+        html += '<div class="watch-change" style="color:#aaa;font-size:12px;">Gemini 추정가 · 실제 주가와 차이 있을 수 있어요</div>';
       } else if (row && !row.error) {
         var priceStr2 = row.currency === 'USD'
           ? '$' + row.price.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})
