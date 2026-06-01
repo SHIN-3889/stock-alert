@@ -569,6 +569,7 @@
       ' 반드시 모든 종목의 현재가를 포함하고, 미국 주식은 달러($), 한국 주식은 원(원) 단위로 작성하세요.';
 
     try {
+
       var res = await fetch(
         'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + key,
         {
@@ -613,7 +614,6 @@
       });
       return result;
     } catch(e) {
-      console.log('시세 업데이트 실패:', e.message);
       return null;
     }
   }
@@ -648,9 +648,32 @@
       ? '$' + currentPrice.toFixed(2)
       : Math.round(currentPrice).toLocaleString() + '원';
 
-    var prompt = '주식 애널리스트로서 ' + name + '(' + marketStr + ', 현재가:' + priceStr + ')를 분석하고 아래 JSON 형식으로만 답하세요. 다른 텍스트 없이 JSON만 반환하세요.' +
-      ' {"sotp_price":"SOTP적정주가","ntm_pe_price":"NTM PE적정주가","target_1":"1차적정주가(보수적,낮은값)","target_2":"2차적정주가(기본,높은값)","gap_rate":"현재가대비2차괴리율","sell_point":"차트매도지점","stop_loss":"손절라인","summary":"핵심투자의견"}' +
-      ' 모든 내용은 한국어로, 가격은 단위 포함하여 작성하세요.';
+    var promptLines = [
+      '당신은 전문 주식 애널리스트입니다. ' + name + '(' + marketStr + ', 현재가:' + priceStr + ')의 적정주가를 아래 SOTP 방식과 NTM P/E 방식으로 계산하세요.',
+      '',
+      '[SOTP 계산 방식 - 반드시 이 단계를 따르세요]',
+      '1단계: 이 종목의 5대 핵심 데이터를 최신 자료 기반으로 수집하세요.',
+      '  - 본업 가치 (주력 사업부문의 가치)',
+      '  - 자회사 가치 (보유 지분 가치)',
+      '  - 미래 기술 가치 (성장 프리미엄)',
+      '  - 순부채 (총부채 - 현금성자산)',
+      '  - 총 발행주식수',
+      '2단계: 총 기업가치 = 본업 가치 + 자회사 가치 + 미래 기술 가치',
+      '3단계: 적정 주주가치 = 총 기업가치 - 순부채',
+      '4단계: SOTP 적정주가 = 적정 주주가치 ÷ 총 발행주식수',
+      '',
+      '[NTM P/E 방식]',
+      '향후 12개월 예상 EPS × 적정 P/E 배수 = NTM P/E 적정주가',
+      '',
+      '[최종 판정]',
+      '- 1차 적정주가(보수적) = SOTP와 NTM P/E 중 낮은 값',
+      '- 2차 적정주가(기본) = SOTP와 NTM P/E 중 높은 값',
+      '',
+      '반드시 아래 JSON 형식으로만 답하세요. 다른 텍스트 없이 JSON만 반환하세요.',
+      '{"sotp_breakdown":"SOTP 계산내역(본업+자회사+기술가치-순부채÷주식수를 실제 숫자로 간단히)","sotp_price":"SOTP 적정주가","ntm_pe_price":"NTM PE 적정주가","target_1":"1차적정주가(보수적,낮은값)","target_2":"2차적정주가(기본,높은값)","gap_rate":"현재가 대비 2차 적정주가 괴리율","sell_point":"차트 기술적 분석 매도 지점","stop_loss":"손절 라인","summary":"핵심 투자의견"}',
+      '모든 내용은 한국어로, 가격은 단위(원/$) 포함하여 작성하세요.'
+    ];
+    var prompt = promptLines.join("\\n");
 
     try {
       var res = await fetch(
@@ -691,6 +714,7 @@
           return m ? m[1] : '데이터 없음';
         }
         parsed = {
+          sotp_breakdown: extractField('sotp_breakdown'),
           sotp_price:   extractField('sotp_price'),
           ntm_pe_price: extractField('ntm_pe_price'),
           target_1:     extractField('target_1'),
@@ -705,6 +729,7 @@
       resultDiv.innerHTML =
         '<div class="eval-result">' +
         '<div class="eval-title">🤖 AI 종목 평가 — ' + name + '</div>' +
+        (parsed.sotp_breakdown ? '<div style="font-size:11px;color:#666;background:#fff;padding:8px;border-radius:6px;margin-bottom:8px;line-height:1.5;">📐 SOTP 계산: ' + parsed.sotp_breakdown + '</div>' : '') +
         '<div class="eval-row"><span class="eval-label">SOTP 적정주가</span><span class="eval-value">' + parsed.sotp_price + '</span></div>' +
         '<div class="eval-row"><span class="eval-label">NTM P/E 적정주가</span><span class="eval-value">' + parsed.ntm_pe_price + '</span></div>' +
         '<div class="eval-row"><span class="eval-label">1차 적정주가 (보수적)</span><span class="eval-value" style="color:#0066cc;">' + parsed.target_1 + '</span></div>' +
@@ -1040,7 +1065,10 @@
       html += '<span class="market-badge ' + mCls + '">' + mTxt + '</span>';
       html += '<button class="delete-stock-btn" onclick="deleteWatch(' + "'" + code + "'" + ')">✕</button>';
       html += '</div></div>';
-      if (row && !row.error) {
+      var liveW = currentLivePrices && currentLivePrices[code];
+      if (liveW) {
+        html += '<div class="watch-price">' + liveW.rawPrice + ' <span style="font-size:11px;color:#1967d2;font-weight:400;">📡 실시간</span></div>';
+      } else if (row && !row.error) {
         var priceStr2 = row.currency === 'USD'
           ? '$' + row.price.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})
           : Math.round(row.price).toLocaleString() + '원';
