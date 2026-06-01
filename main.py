@@ -2,7 +2,7 @@
 """메인 — 실행 시각에 따라 다르게 작동.
 
 06:00 (KST) → 시세 + 뉴스 + 번역 + 메일 + latest.json 저장
-15:30, 20:00 (KST) → 시세 + 메일 + latest.json 저장 (뉴스 생략)
+15:30 (KST) → 시세 + 메일 + latest.json 저장 (뉴스 생략)
 """
 
 import json
