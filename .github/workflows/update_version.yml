@@ -4,6 +4,8 @@ on:
   push:
     paths:
       - 'index.html'
+    branches:
+      - main
 
 jobs:
   update-version:
@@ -15,15 +17,19 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: 최신 상태 동기화
+        run: git pull origin main
 
       - name: 날짜 + 정수 버전 업데이트
         run: |
           DATE=$(TZ='Asia/Seoul' date '+%Y-%m-%d %H:%M')
 
-          CURRENT=$(grep -o "DASHBOARD_VERSION = '[^']*'" index.html | grep -o "v[0-9]*\.[0-9]*" | head -1)
+          CURRENT=$(grep -o "DASHBOARD_VERSION = 'v[^']*'" index.html | grep -o "v[0-9]*\.[0-9]*" | head -1)
           echo "현재 버전: $CURRENT"
 
-          MAJOR=$(echo $CURRENT | grep -o "[0-9]*" | head -1)
+          MAJOR=$(echo $CURRENT | tr -d 'v' | cut -d'.' -f1)
           if [ -z "$MAJOR" ]; then MAJOR=1; fi
           NEW_MAJOR=$((MAJOR + 1))
           NEW_VERSION="v${NEW_MAJOR}.0"
@@ -45,5 +51,5 @@ jobs:
             echo "변경사항 없음 - 커밋 스킵"
           else
             git commit -m "auto: index.html 버전 업데이트 [skip ci]"
-            git push
+            git push origin main
           fi
