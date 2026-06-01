@@ -932,10 +932,11 @@
             ? '$' + row.price.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})
             : Math.round(row.price).toLocaleString() + '원';
           var dCls2 = row.day_change_pct >= 0 ? 'profit-color' : 'loss-color';
-          // 미국 시간외 세션 표시
+          // 세션 배지
           var sessionBadge = '';
-          if (row.session === 'pre')   sessionBadge = ' <span style="font-size:11px;background:#e8f0fe;color:#1967d2;padding:2px 6px;border-radius:8px;font-weight:500;">프리마켓</span>';
-          if (row.session === 'after') sessionBadge = ' <span style="font-size:11px;background:#fff3e0;color:#e65100;padding:2px 6px;border-radius:8px;font-weight:500;">애프터마켓</span>';
+          if (row.session === 'pre')    sessionBadge = ' <span style="font-size:11px;background:#e8f0fe;color:#1967d2;padding:2px 6px;border-radius:8px;font-weight:500;">프리마켓</span>';
+          if (row.session === 'after')  sessionBadge = ' <span style="font-size:11px;background:#fff3e0;color:#e65100;padding:2px 6px;border-radius:8px;font-weight:500;">애프터마켓</span>';
+          if (row.session === 'closed') sessionBadge = ' <span style="font-size:11px;background:#f5f5f5;color:#888;padding:2px 6px;border-radius:8px;font-weight:500;">휴장</span>';
           html += '<div class="stock-price">' + priceStr + sessionBadge + '</div>';
           html += '<div class="stock-change ' + dCls2 + '">일간 ' + mark(row.day_change_pct) + ' ' + fmtPct(row.day_change_pct) + '</div>';
         } else {
