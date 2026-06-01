@@ -1,0 +1,39 @@
+name: index.html 버전 자동 업데이트
+
+on:
+  push:
+    paths:
+      - 'index.html'
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 체크아웃
+        uses: actions/checkout@v4
+
+      - name: 날짜 + 정수 버전 업데이트
+        run: |
+          DATE=$(TZ='Asia/Seoul' date '+%Y-%m-%d %H:%M')
+
+          # 현재 버전 읽기 (예: v1.0 → 정수 1 추출)
+          CURRENT=$(grep "DASHBOARD_VERSION" index.html | grep -o "v[0-9]*\.[0-9]*" | head -1)
+          MAJOR=$(echo $CURRENT | grep -o "^v[0-9]*" | tr -d 'v')
+          NEW_MAJOR=$((MAJOR + 1))
+          NEW_VERSION="v${NEW_MAJOR}.0"
+
+          echo "날짜: $DATE / 버전: $CURRENT → $NEW_VERSION"
+
+          sed -i "s/const DASHBOARD_DATE    = '[^']*';/const DASHBOARD_DATE    = '$DATE';/" index.html
+          sed -i "s/const DASHBOARD_VERSION = '[^']*';/const DASHBOARD_VERSION = '$NEW_VERSION';/" index.html
+
+          echo "교체 결과:"
+          grep "DASHBOARD_DATE\|DASHBOARD_VERSION" index.html
+
+      - name: 변경사항 커밋
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --staged --quiet || git commit -m "auto: index.html 버전 업데이트"
+          git push
