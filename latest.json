@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-01 11:30:50",
+  "updated_at": "2026-06-01 11:45:44",
   "portfolio": {
     "rows": [
       {
@@ -18,28 +18,28 @@
         "price": 968.3200073242188,
         "day_change_pct": -3.1079261818108472,
         "shares": 42,
-        "value_krw": 61690660.81239961,
-        "pl_krw": -4882609.647226684,
+        "value_krw": 61717911.12463698,
+        "pl_krw": -4884766.4183759615,
         "pl_pct": -7.334189252708813
       },
       {
         "name": "삼성SDI",
         "currency": "KRW",
-        "price": 653500.0,
-        "day_change_pct": -4.319180087847731,
+        "price": 659000.0,
+        "day_change_pct": -3.513909224011713,
         "shares": 241,
-        "value_krw": 157493500.0,
-        "pl_krw": 16538866.0,
-        "pl_pct": 11.73346737929879
+        "value_krw": 158819000.0,
+        "pl_krw": 17864366.0,
+        "pl_pct": 12.6738408614505
       }
     ],
     "summary": {
-      "total_value_krw": 222780610.81239963,
-      "day_change_krw": -9110934.837351352,
-      "day_change_pct": -3.928963779952767,
-      "total_pl_krw": 11653238.352773339,
-      "total_pl_pct": 5.519529853951921,
-      "usdkrw": 1516.8800048828125
+      "total_value_krw": 224133361.12463698,
+      "day_change_krw": -7786308.922872782,
+      "day_change_pct": -3.357330114033761,
+      "total_pl_krw": 12976581.581624031,
+      "total_pl_pct": 6.145472387724441,
+      "usdkrw": 1517.550048828125
     },
     "watchlist": [
       {
@@ -47,8 +47,8 @@
         "name": "SK하이닉스",
         "market": "KR",
         "currency": "KRW",
-        "price": 2388000.0,
-        "day_change_pct": 3.826086956521739
+        "price": 2381000.0,
+        "day_change_pct": 3.5217391304347827
       },
       {
         "code": "012330",
@@ -63,8 +63,8 @@
         "name": "삼성전자",
         "market": "KR",
         "currency": "KRW",
-        "price": 347500.0,
-        "day_change_pct": 9.448818897637794
+        "price": 346000.0,
+        "day_change_pct": 8.976377952755906
       }
     ]
   },
