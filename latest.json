@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-01 11:19:48",
+  "updated_at": "2026-06-01 11:30:50",
   "portfolio": {
     "rows": [
       {
@@ -18,28 +18,28 @@
         "price": 968.3200073242188,
         "day_change_pct": -3.1079261818108472,
         "shares": 42,
-        "value_krw": 61654057.3232165,
-        "pl_krw": -4879712.603378326,
+        "value_krw": 61690660.81239961,
+        "pl_krw": -4882609.647226684,
         "pl_pct": -7.334189252708813
       },
       {
         "name": "삼성SDI",
         "currency": "KRW",
-        "price": 654000.0,
-        "day_change_pct": -4.24597364568082,
+        "price": 653500.0,
+        "day_change_pct": -4.319180087847731,
         "shares": 241,
-        "value_krw": 157614000.0,
-        "pl_krw": 16659366.0,
-        "pl_pct": 11.818955877676217
+        "value_krw": 157493500.0,
+        "pl_krw": 16538866.0,
+        "pl_pct": 11.73346737929879
       }
     ],
     "summary": {
-      "total_value_krw": 222864507.3232165,
-      "day_change_krw": -8989260.737779588,
-      "day_change_pct": -3.877125143558026,
-      "total_pl_krw": 11776635.396621674,
-      "total_pl_pct": 5.579020381008419,
-      "usdkrw": 1515.97998046875
+      "total_value_krw": 222780610.81239963,
+      "day_change_krw": -9110934.837351352,
+      "day_change_pct": -3.928963779952767,
+      "total_pl_krw": 11653238.352773339,
+      "total_pl_pct": 5.519529853951921,
+      "usdkrw": 1516.8800048828125
     },
     "watchlist": [
       {
@@ -47,24 +47,24 @@
         "name": "SK하이닉스",
         "market": "KR",
         "currency": "KRW",
-        "price": 2395000.0,
-        "day_change_pct": 4.130434782608695
+        "price": 2388000.0,
+        "day_change_pct": 3.826086956521739
       },
       {
         "code": "012330",
         "name": "현대모비스",
         "market": "KR",
         "currency": "KRW",
-        "price": 768000.0,
-        "day_change_pct": -0.5181347150259068
+        "price": 771000.0,
+        "day_change_pct": -0.1295336787564767
       },
       {
         "code": "005930",
         "name": "삼성전자",
         "market": "KR",
         "currency": "KRW",
-        "price": 345750.0,
-        "day_change_pct": 8.89763779527559
+        "price": 347500.0,
+        "day_change_pct": 9.448818897637794
       }
     ]
   },
