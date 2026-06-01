@@ -42,9 +42,9 @@
       "name": "삼성전자",
       "market": "KR"
     },
-    "009150": {
-      "name": "삼성전기",
-      "market": "KR"
+    "GOOG": {
+      "name": "구글",
+      "market": "US"
     }
   }
 }
