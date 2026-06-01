@@ -553,26 +553,29 @@
 
     var promptLines;
     if (market === 'US') {
-      // 미국 주식: DCF + EV/EBITDA + PEG 등 적합한 방법으로 평가
+      // 미국 주식: Forward EPS x P/E 배수 방식 (3단계)
       promptLines = [
-        '당신은 미국 주식 전문 애널리스트입니다. ' + name + '(미국 주식)의 적정주가를 평가하세요.',
+        '당신은 미국 주식 전문 애널리스트입니다. ' + name + '의 적정주가를 아래 정해진 방식으로 계산하세요.',
         priceWarn,
         '',
-        '[밸류에이션 방법 - 미국 주식]',
-        '이 기업의 산업/특성에 가장 적합한 2가지 방법을 골라 적정주가를 계산하세요.',
-        '- DCF(현금흐름할인): 미래 잉여현금흐름을 현재가치로 환산 (안정적 현금흐름 기업)',
-        '- EV/EBITDA: 동종업계 배수 비교 (에너지·산업재·자본집약 기업)',
-        '- PEG(성장조정 P/E): P/E ÷ 이익성장률 (성장주)',
-        '- P/S(주가매출비율): 매출 기준 (고성장 적자기업)',
-        '각 방법의 실제 수치(현금흐름, EBITDA 배수, 성장률 등)를 최신 자료로 수집해 계산하세요.',
+        '[데이터 수집 - 최신 월가 컨센서스 기준]',
+        '1) 향후 12개월 예상 주당순이익(Forward EPS)을 월가 컨센서스에서 추출',
+        '2) 성장주 적정 P/E 배수 (해당 섹터의 성장성·경쟁우위 반영)',
+        '3) 초호황기 Peak P/E 배수 (업황이 정점일 때의 프리미엄 배수)',
+        '',
+        '[3단계 계산 - 반드시 이 공식대로]',
+        '1단계(1차 적정가, 단기목표): Forward EPS × 성장주 적정 P/E 배수',
+        '2단계(2차 적정가, 장기목표): Forward EPS × Peak P/E 배수',
+        '3단계(보수적 바닥선): DCF로 보수적으로 할인한 하단 가치',
         '',
         '[최종 판정]',
-        '- 1차 적정주가(보수적) = 두 방법 중 낮은 값',
-        '- 2차 적정주가(기본) = 두 방법 중 높은 값',
+        '- 1차 적정주가(보수적) = 1단계 값 (Forward EPS × 적정 P/E)',
+        '- 2차 적정주가(기본) = 2단계 값 (Forward EPS × Peak P/E)',
+        '- 손절 라인 = 3단계 보수적 바닥선(DCF 하단)',
         '- 괴리율 = (2차 적정주가 - 현재가) ÷ 현재가 × 100',
         '',
         '반드시 아래 JSON 형식으로만 답하세요. 다른 텍스트 없이 JSON만 반환하세요.',
-        '{"breakdown":"사용한 2가지 방법과 핵심 계산근거를 실제 숫자로 간단히","method1_label":"방법1 이름(예: DCF)","method1_price":"방법1 적정주가","method2_label":"방법2 이름(예: EV/EBITDA)","method2_price":"방법2 적정주가","target_1":"1차적정주가(보수적,낮은값)","target_2":"2차적정주가(기본,높은값)","gap_rate":"현재가 대비 2차 적정주가 괴리율(+ 또는 -)","sell_point":"차트 기술적 분석 매도 지점","stop_loss":"손절 라인","summary":"핵심 투자의견"}',
+        '{"breakdown":"Forward EPS와 적용 배수를 실제 숫자로(예: EPS $35 × 적정P/E 32배 = $1120)","method1_label":"1차 적정가 (EPS×적정P/E)","method1_price":"1차 적정가 값","method2_label":"2차 적정가 (EPS×Peak P/E)","method2_price":"2차 적정가 값","target_1":"1차적정주가(1단계 값)","target_2":"2차적정주가(2단계 값)","gap_rate":"현재가 대비 2차 적정주가 괴리율(+ 또는 -)","sell_point":"차트 기술적 분석 매도 지점","stop_loss":"보수적 바닥선(DCF 하단, 3단계 값)","summary":"핵심 투자의견"}',
         '모든 내용은 한국어로, 가격은 $ 단위 포함하여 작성하세요.'
       ];
     } else {
@@ -615,7 +618,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0.3, maxOutputTokens: 8192 }
+            generationConfig: { temperature: 0, maxOutputTokens: 8192 }
           })
         }
       );
