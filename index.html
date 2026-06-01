@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-01 22:38';  // Actions가 자동으로 업데이트
-  const DASHBOARD_VERSION = 'v2.0';              // 수동으로 올려주세요 (v1.1, v1.2...)
+  const DASHBOARD_DATE    = '2026-06-01 21:05';  // Actions가 자동으로 업데이트
+  const DASHBOARD_VERSION = 'v1.0';              // 수동으로 올려주세요 (v1.1, v1.2...)
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -776,6 +776,10 @@
         stop_loss:     avgPriceStr(validResults.map(function(r){ return r.stop_loss; }), isCur),
         breakdown:     validResults[0].breakdown || '',
         summary:       validResults[Math.floor(validResults.length/2)].summary || '',
+        // 요약용 실제 평균값 (summary 텍스트 재구성용)
+        _target1_avg:  avgPriceStr(validResults.map(function(r){ return r.target_1; }), isCur),
+        _target2_avg:  avgPriceStr(validResults.map(function(r){ return r.target_2; }), isCur),
+        _gap_avg:      avgGapRate(validResults.map(function(r){ return r.gap_rate; })),
       };
 
       var gapColor = (parsed.gap_rate && parsed.gap_rate.indexOf('-') === -1) ? '#d70015' : '#0066cc';
@@ -790,7 +794,11 @@
         '<div class="eval-row"><span class="eval-label">현재가 대비 괴리율</span><span class="eval-value" style="color:' + gapColor + ';">' + parsed.gap_rate + '</span></div>' +
         '<div class="eval-row"><span class="eval-label">📈 차트 매도 지점</span><span class="eval-value">' + parsed.sell_point + '</span></div>' +
         '<div class="eval-row"><span class="eval-label">🛡️ 손절 라인</span><span class="eval-value">' + parsed.stop_loss + '</span></div>' +
-        '<div style="margin-top:10px;padding:10px;background:#fff;border-radius:8px;font-size:12px;color:#333;line-height:1.6;">' + parsed.summary + '</div>' +
+        '<div style="margin-top:10px;padding:10px;background:#fff;border-radius:8px;font-size:12px;color:#333;line-height:1.6;">' +
+        '<div style="font-size:11px;color:#999;margin-bottom:6px;">📊 아래 수치는 5회 분석 평균값 기준이에요.</div>' +
+        '1차 적정주가 <b>' + parsed.target_1 + '</b> / 2차 적정주가 <b>' + parsed.target_2 + '</b> / 현재가 대비 괴리율 <b>' + parsed.gap_rate + '</b><br><br>' +
+        parsed.summary.replace(/[0-9,]+원/g, '').replace(/\$[0-9,.]+/g, '') +
+        '</div>' +
         '<div class="eval-disclaimer">⚠️ AI 추정값으로 투자 참고용이에요. 실제 투자 결정은 본인 판단으로 해주세요.</div>' +
         '<div style="margin-top:10px;display:flex;align-items:center;gap:8px;">' +
         '<input type="checkbox" id="save-eval-' + code + '" onchange="onSaveEvalCheck(this)" style="width:16px;height:16px;cursor:pointer;" />' +
