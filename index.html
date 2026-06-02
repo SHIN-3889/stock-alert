@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-02 11:32';
-  const DASHBOARD_VERSION = 'v13.1';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -410,6 +410,8 @@
       .then(function(results) {
         var sr     = results[0];
         var latest = results[1];
+        var sotpData = results[2] || {};
+        window.sotpData = sotpData;  // 전역으로 저장
         originalSettings = sr.content;
         currentSettings  = deepCopy(sr.content);
         fileSha          = sr.sha;
@@ -733,7 +735,22 @@
     } else {
       // 한국 주식: SOTP + NTM P/E
       promptLines = [
-        '당신은 전문 주식 애널리스트입니다. ' + name + '(한국 주식)의 적정주가를 SOTP 방식과 NTM P/E 방식으로 계산하세요.' + (operatingProfit ? ' 사용자가 직접 입력한 예상 연간 영업이익: ' + operatingProfit + ' (다양한 표현 허용: 125억달러, 1.25조원, $12.5B 등 어떤 형태든 원화로 환산하여 계산하세요. 이 수치를 반드시 계산에 사용하세요. 임의로 다른 수치로 바꾸지 마세요.)' : ''),
+        (function() {
+          var dartInfo = (window.sotpData && window.sotpData[code]) || null;
+          var dartStr = '';
+          if (dartInfo && !dartInfo.error) {
+            var nd = dartInfo.net_debt || {};
+            dartStr = ' [DART 실제 재무데이터] ' +
+              '순부채: ' + (nd.net_debt || 0).toLocaleString() + '원 ' +
+              '(총차입금 ' + (nd.total_debt || 0).toLocaleString() + '원 - 현금성자산 ' + (nd.total_cash || 0).toLocaleString() + '원), ' +
+              '영업이익: ' + (dartInfo.operating_income || 0).toLocaleString() + '원, ' +
+              '발행주식수: ' + (dartInfo.shares_outstanding || 0).toLocaleString() + '주. ' +
+              '이 DART 데이터를 반드시 우선 사용하세요. 임의로 바꾸지 마세요.';
+          }
+          return '당신은 전문 주식 애널리스트입니다. ' + name + '(한국 주식)의 적정주가를 SOTP 방식과 NTM P/E 방식으로 계산하세요.' +
+            dartStr +
+            (operatingProfit ? ' 사용자가 직접 입력한 예상 연간 영업이익: ' + operatingProfit + ' (어떤 형태든 원화로 환산하여 사용하세요.)' : '');
+        })(),
         priceWarn,
         '',
         '[SOTP 계산 방식 - 반드시 이 순서대로]',
