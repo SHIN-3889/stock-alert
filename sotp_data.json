@@ -1,14 +1,128 @@
 {
   "006400": {
-    "error": "get_financial_data() takes from 2 to 3 positional arguments but 4 were given"
+    "stock_code": "006400",
+    "name": "삼성SDI",
+    "bsns_year": "2025",
+    "reprt_name": "사업보고서(연간)",
+    "operating_income": 1722360788760,
+    "shares_outstanding": 77254139,
+    "net_debt": {
+      "net_debt": 9079915269470,
+      "total_debt": 10883909507417,
+      "total_cash": 1803994237947,
+      "detail": {
+        "short_borrowings": 5390568184387,
+        "current_ltd": 0,
+        "long_borrowings": 5493341323030,
+        "bonds": 0,
+        "cash": 1803994237947,
+        "short_financial": 0
+      }
+    },
+    "subsidiaries": [
+      {
+        "name": "삼성SDI",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "book_value": "0"
+      }
+    ],
+    "updated_at": "2026-06-02 12:29:42"
   },
   "000660": {
-    "error": "get_financial_data() takes from 2 to 3 positional arguments but 4 were given"
+    "stock_code": "000660",
+    "name": "SK하이닉스",
+    "bsns_year": "2025",
+    "reprt_name": "사업보고서(연간)",
+    "operating_income": 47206319000000,
+    "shares_outstanding": 701691520,
+    "net_debt": {
+      "net_debt": -29603485000000,
+      "total_debt": 0,
+      "total_cash": 29603485000000,
+      "detail": {
+        "short_borrowings": 0,
+        "current_ltd": 0,
+        "long_borrowings": 0,
+        "bonds": 0,
+        "cash": 14923766000000,
+        "short_financial": 14679719000000
+      }
+    },
+    "subsidiaries": [
+      {
+        "name": "SK하이닉스",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "book_value": "0"
+      }
+    ],
+    "updated_at": "2026-06-02 12:29:54"
   },
   "012330": {
-    "error": "get_financial_data() takes from 2 to 3 positional arguments but 4 were given"
+    "stock_code": "012330",
+    "name": "현대모비스",
+    "bsns_year": "2025",
+    "reprt_name": "사업보고서(연간)",
+    "operating_income": 3357456000000,
+    "shares_outstanding": 89176783,
+    "net_debt": {
+      "net_debt": -2411472000000,
+      "total_debt": 2510906000000,
+      "total_cash": 4922378000000,
+      "detail": {
+        "short_borrowings": 473085000000,
+        "current_ltd": 473085000000,
+        "long_borrowings": 437672000000,
+        "bonds": 1127064000000,
+        "cash": 4922378000000,
+        "short_financial": 0
+      }
+    },
+    "subsidiaries": [
+      {
+        "name": "현대모비스",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "book_value": "0"
+      }
+    ],
+    "updated_at": "2026-06-02 12:30:04"
   },
   "005930": {
-    "error": "get_financial_data() takes from 2 to 3 positional arguments but 4 were given"
+    "stock_code": "005930",
+    "name": "삼성전자",
+    "bsns_year": "2025",
+    "reprt_name": "사업보고서(연간)",
+    "operating_income": 43601051000000,
+    "shares_outstanding": 5827808935,
+    "net_debt": {
+      "net_debt": -100582260000000,
+      "total_debt": 25239139000000,
+      "total_cash": 125821399000000,
+      "detail": {
+        "short_borrowings": 17574980000000,
+        "current_ltd": 1177508000000,
+        "long_borrowings": 6479517000000,
+        "bonds": 7134000000,
+        "cash": 57856378000000,
+        "short_financial": 67965021000000
+      }
+    },
+    "subsidiaries": [
+      {
+        "name": "삼성전자",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "book_value": "0"
+      },
+      {
+        "name": "삼성전자",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "book_value": "0"
+      }
+    ],
+    "updated_at": "2026-06-02 12:30:17"
   }
 }
