@@ -1,7 +1,7 @@
 {
   "006400": {
     "stock_code": "006400",
-    "name": "신기술투자조합15호",
+    "name": "피엠그로우",
     "bsns_year": "2025",
     "reprt_name": "사업보고서(연간)",
     "operating_income": 1722360788760,
@@ -22,115 +22,150 @@
     "subsidiaries": [
       {
         "name": "삼성E&A(구, 삼성엔지니어링)",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 11.7,
+        "shares_held": 22918000,
+        "book_value": 551188000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "아이마켓코리아",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 1.5,
+        "shares_held": 511000,
+        "book_value": 4027000000,
+        "investment_purpose": "일반투자"
       },
       {
         "name": "Ganfeng Lithium Co., Ltd.",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 0.8,
+        "shares_held": 16622000,
+        "book_value": 159240000000,
+        "investment_purpose": "일반투자"
       },
       {
         "name": "Intellectual Keystone Technology LLC",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 41.0,
+        "shares_held": 10250000,
+        "book_value": 8835000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "한국경제신문",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 8.7,
+        "shares_held": 1631000,
+        "book_value": 24883000000,
+        "investment_purpose": "일반투자"
       },
       {
         "name": "로지피아",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 19.0,
+        "shares_held": 11000,
+        "book_value": 57000000,
+        "investment_purpose": "일반투자"
       },
       {
         "name": "에코프로이엠",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 40.0,
+        "shares_held": 12800000,
+        "book_value": 128000000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "필에너지",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 14.0,
+        "shares_held": 3000000,
+        "book_value": 5000000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "이차전지성장펀드",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 33.3,
+        "shares_held": 0,
+        "book_value": 4450000000,
+        "investment_purpose": "일반투자"
       },
       {
         "name": "DS ASIA HOLDINGS",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 0.5,
+        "shares_held": 898000,
+        "book_value": 0,
+        "investment_purpose": "일반투자"
       },
       {
         "name": "Intellectual Discovery Co., Ltd.",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 0.2,
+        "shares_held": 7000,
+        "book_value": 250000000,
+        "investment_purpose": "일반투자"
       },
       {
         "name": "호텔신라",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 0.1,
+        "shares_held": 29000,
+        "book_value": 1307000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "iMarketAsia Co., Limited",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 8.7,
+        "shares_held": 348000,
+        "book_value": 6007000000,
+        "investment_purpose": "일반투자"
       },
       {
         "name": "Polyplus(*1)",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 8.3,
+        "shares_held": 226000,
+        "book_value": 345000000,
+        "investment_purpose": "일반투자"
       },
       {
         "name": "신기술투자조합15호",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 99.0,
+        "shares_held": 0,
+        "book_value": 9669000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "신기술투자조합24호",
+        "ownership_ratio": 99.0,
+        "shares_held": 0,
+        "book_value": 0,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "신기술투자조합49호",
+        "ownership_ratio": 99.0,
+        "shares_held": 0,
+        "book_value": 33908000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "신기술투자조합76호",
+        "ownership_ratio": 6.7,
+        "shares_held": 0,
+        "book_value": 100000000,
+        "investment_purpose": "일반투자"
+      },
+      {
+        "name": "성일하이텍",
+        "ownership_ratio": 8.6,
+        "shares_held": 1048000,
+        "book_value": 42877000000,
+        "investment_purpose": "일반투자"
+      },
+      {
+        "name": "피엠그로우",
+        "ownership_ratio": 4.9,
+        "shares_held": 516000,
+        "book_value": 1440000000,
+        "investment_purpose": "경영참여"
       }
     ],
-    "updated_at": "2026-06-02 12:44:47"
+    "updated_at": "2026-06-02 12:51:50"
   },
   "000660": {
     "stock_code": "000660",
-    "name": "SK China Company Limited",
+    "name": "GigaIO Networks, Inc.",
     "bsns_year": "2025",
     "reprt_name": "사업보고서(연간)",
     "operating_income": 47206319000000,
@@ -151,115 +186,150 @@
     "subsidiaries": [
       {
         "name": "에스케이하이이엔지㈜",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 500689,
+        "book_value": 7521000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "SK hynix Semiconductor Asia Pte.Ltd.",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 196303500,
+        "book_value": 52380000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "SK hynix Semiconductor HongKong Ltd.",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 170693661,
+        "book_value": 32623000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "SK hynix Japan Inc.",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 20000,
+        "book_value": 42905000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "SK hynix Semiconductor Taiwan Inc.",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 35725000,
+        "book_value": 37562000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "SK hynix Semiconductor India Private Ltd.",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 1.0,
+        "shares_held": 270,
+        "book_value": 5000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "SK hynix Semiconductor (China) Ltd.",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 5679587000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "HITECH Semiconductor (Wuxi) Co., Ltd.",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 45.0,
+        "shares_held": 0,
+        "book_value": 92608000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "SK hynix (Wuxi) Semiconductor Sales Ltd.",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 237000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "SK hynix memory solutions Taiwan, Inc.",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 7819000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "SK APTECH Ltd.",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 407000000,
+        "book_value": 440770000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "에스케이하이스텍㈜",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 277203,
+        "book_value": 6760000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "STRATIO,INC.",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 9.3,
+        "shares_held": 1136013,
+        "book_value": 394000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "SK South East Asia Investment Pte. Ltd.",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 20.0,
+        "shares_held": 0,
+        "book_value": 345800000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "SK China Company Limited",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 11.9,
+        "shares_held": 4754868,
+        "book_value": 257169000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SK hynix Ventures Hong Kong Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 9800001,
+        "book_value": 10941000000,
+        "investment_purpose": "일반투자"
+      },
+      {
+        "name": "MEMS Drive, Inc.",
+        "ownership_ratio": 2.4,
+        "shares_held": 305826,
+        "book_value": 1251000000,
+        "investment_purpose": "일반투자"
+      },
+      {
+        "name": "FemtoMetrix, Inc.",
+        "ownership_ratio": 10.0,
+        "shares_held": 31645570,
+        "book_value": 6820000000,
+        "investment_purpose": "일반투자"
+      },
+      {
+        "name": "ProMOS Technologies Inc.",
+        "ownership_ratio": 13.3,
+        "shares_held": 6000932,
+        "book_value": 1983000000,
+        "investment_purpose": "일반투자"
+      },
+      {
+        "name": "GigaIO Networks, Inc.",
+        "ownership_ratio": 7.5,
+        "shares_held": 1334152,
+        "book_value": 3242000000,
+        "investment_purpose": "일반투자"
       }
     ],
-    "updated_at": "2026-06-02 12:45:02"
+    "updated_at": "2026-06-02 12:52:06"
   },
   "012330": {
     "stock_code": "012330",
-    "name": "Hyundai Motor (Shanghai) Co., Ltd.",
+    "name": "Hyundai Motor Group (China) Ltd.",
     "bsns_year": "2025",
     "reprt_name": "사업보고서(연간)",
     "operating_income": 3357456000000,
@@ -280,115 +350,143 @@
     "subsidiaries": [
       {
         "name": "현대자동차",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
-      },
-      {
-        "name": "해비치컨트리클럽",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 22.0,
+        "shares_held": 45782000,
+        "book_value": 3880191000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "현대트랜시스",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 16.0,
+        "shares_held": 12893000,
+        "book_value": 285678000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "현대아이에이치엘",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 99.0,
+        "shares_held": 19080000,
+        "book_value": 0,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "푸본현대생명보험",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 5.0,
+        "shares_held": 23051000,
+        "book_value": 23097000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "에이치그린파워",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 29933000,
+        "book_value": 169746000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "지아이티",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 46.0,
+        "shares_held": 4231000,
+        "book_value": 48450000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "모트라스",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 36232000,
+        "book_value": 167302000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "유니투스",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 59839000,
+        "book_value": 277902000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "에이치엠지에스 유한회사",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 20.0,
+        "shares_held": 1836000,
+        "book_value": 18363000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "모아빛",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 160000,
+        "book_value": 800000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "현대건설",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 9.0,
+        "shares_held": 9720000,
+        "book_value": 1167118000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "Mobis Parts Middle East FZE",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 0,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "Mobis Parts Europe N.V.",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 3000,
+        "book_value": 59107000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "Hyundai Motor (Shanghai) Co., Ltd.",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 18228000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "Shanghai Hyundai Mobis Automotive Parts Co., Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 116069000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "Jiangsu Mobis Automotive Parts Co., Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 85000000,
+        "book_value": 96915000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "Beijing Hyundai Mobis Automotive Parts Co., Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 223061000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "Beijing Hyundai Mobis Parts Co., Ltd.",
+        "ownership_ratio": 50.0,
+        "shares_held": 0,
+        "book_value": 20983000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "Hyundai Motor Group (China) Ltd.",
+        "ownership_ratio": 0.0,
+        "shares_held": 0,
+        "book_value": 0,
+        "investment_purpose": "경영참여"
       }
     ],
-    "updated_at": "2026-06-02 12:45:16"
+    "updated_at": "2026-06-02 12:52:21"
   },
   "005930": {
     "stock_code": "005930",
-    "name": "SEHK",
+    "name": "SSS",
     "bsns_year": "2025",
     "reprt_name": "사업보고서(연간)",
     "operating_income": 43601051000000,
@@ -409,110 +507,145 @@
     "subsidiaries": [
       {
         "name": "삼성전기㈜",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 23.7,
+        "shares_held": 17693000,
+        "book_value": 445244000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "스테코㈜",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 70.0,
+        "shares_held": 2590000,
+        "book_value": 35861000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "SDMA",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 75.0,
+        "shares_held": 71400000,
+        "book_value": 18741000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "SEMA",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 16247000,
+        "book_value": 103402000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "SAVINA",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 28365000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "SEIN",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 46000,
+        "book_value": 118909000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "TSE",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 91.8,
+        "shares_held": 11020000,
+        "book_value": 279163000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "SEAU",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 53200000,
+        "book_value": 111964000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "SIEL",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 216787000,
+        "book_value": 75263000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "SRI-Bangalore",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 17000,
+        "book_value": 31787000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "SJC",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 1560000,
+        "book_value": 253108000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "SRJ",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 122000,
+        "book_value": 1482000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "세메스㈜",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 91.5,
+        "shares_held": 2173000,
+        "book_value": 71906000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "SCIC",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 640452000000,
+        "investment_purpose": "경영참여"
       },
       {
         "name": "SEHK",
-        "stock_code": "",
-        "ownership_ratio": "",
-        "shares_held": "0",
-        "book_value": "0"
+        "ownership_ratio": 100.0,
+        "shares_held": 274250000,
+        "book_value": 79033000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SET",
+        "ownership_ratio": 100.0,
+        "shares_held": 27270000,
+        "book_value": 112949000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SSEC",
+        "ownership_ratio": 69.1,
+        "shares_held": 0,
+        "book_value": 130551000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SESC",
+        "ownership_ratio": 73.7,
+        "shares_held": 0,
+        "book_value": 34028000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "TSTC",
+        "ownership_ratio": 90.0,
+        "shares_held": 0,
+        "book_value": 260092000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SSS",
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 19189000000,
+        "investment_purpose": "경영참여"
       }
     ],
-    "updated_at": "2026-06-02 12:45:34"
+    "updated_at": "2026-06-02 12:52:40"
   }
 }
