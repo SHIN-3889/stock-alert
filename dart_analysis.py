@@ -307,32 +307,35 @@ def analyze_stock(stock_code, name, corp_code):
     # 자회사
     subs = get_subsidiaries(corp_code, bsns_year, reprt_code)
     sub_list = []
-    # 첫 번째 항목 전체 필드 출력 (디버깅)
-    if subs:
-        print(f"  자회사 첫 항목 전체 필드: {dict(list(subs[0].items()))}")
-    for sub in subs[:15]:
-        # 여러 가능한 필드명 시도
-        name  = (sub.get("inv_prm") or sub.get("corp_nm") or
-                 sub.get("sub_corp_nm") or sub.get("subs_corp_nm") or "")
-        ratio = (sub.get("inv_rat") or sub.get("hold_rate") or
-                 sub.get("prnt_own_rate") or sub.get("own_rate") or "")
-        book  = (sub.get("bsis_posesn_stock_qota_rt") or
-                 sub.get("inv_asset_blnc") or sub.get("bsis_blnc") or "0")
-        stock = sub.get("stock_code") or sub.get("stkcd") or ""
-        qty   = sub.get("bsis_posesn_stock_co") or sub.get("trmend_posesn_stock_co") or "0"
+    for sub in subs[:20]:
+        name  = sub.get("inv_prm", "").strip()
+        ratio = sub.get("trmend_blce_qota_rt", "").strip()  # 기말 지분율
+        qty   = sub.get("trmend_blce_qy", "0").replace(",", "").strip()  # 기말 보유주식수
+        book  = sub.get("trmend_blce_acntbk_amount", "0").replace(",", "").strip()  # 기말 장부가액
+        purps = sub.get("invstmnt_purps", "")  # 투자목적
 
-        if not name or name == corp_code:
-            print(f"    자회사 키 목록: {list(sub.keys())[:8]}")
+        if not name:
             continue
+
+        # 경영참여 목적인 것만 포함 (단순투자 제외)
+        if purps and "단순투자" in purps:
+            continue
+
+        try:
+            ratio_f = float(ratio) if ratio and ratio != "-" else 0.0
+            qty_i   = int(qty) if qty and qty.isdigit() else 0
+            book_i  = int(book) if book and book.lstrip("-").isdigit() else 0
+        except:
+            ratio_f, qty_i, book_i = 0.0, 0, 0
 
         sub_list.append({
             "name":            name,
-            "stock_code":      stock,
-            "ownership_ratio": str(ratio),
-            "shares_held":     str(qty).replace(",", ""),
-            "book_value":      str(book).replace(",", ""),
+            "ownership_ratio": ratio_f,
+            "shares_held":     qty_i,
+            "book_value":      book_i,
+            "investment_purpose": purps,
         })
-        print(f"    자회사: {name} ({ratio}%) 보유주식: {qty}주")
+        print(f"    자회사: {name} ({ratio_f}%) 보유주식: {qty_i:,}주 장부가: {book_i:,}원")
 
     return {
         "stock_code":        stock_code,
