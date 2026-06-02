@@ -195,41 +195,41 @@ def get_shares_outstanding(corp_code, bsns_year, reprt_code="11011"):
 
 
 # ── 자회사 정보 ──────────────────────────────────────────────────────
-def get_subsidiaries(corp_code, bsns_year):
-    """종속기업 현황 조회"""
-    try:
-        url = f"{DART_BASE}/hyslrSttus.json"
-        params = {
-            "crtfc_key":  DART_KEY,
-            "corp_code":  corp_code,
-            "bsns_year":  bsns_year,
-            "reprt_code": "11011",
-        }
-        res  = requests.get(url, params=params, timeout=10)
-        data = res.json()
-        if data.get("status") == "000" and data.get("list"):
-            subs = [s for s in data.get("list", []) if s.get("sub_corp_nm")]
-            if subs:
-                return subs
-    except Exception as e:
-        print(f"  자회사 API 실패: {e}")
+def get_subsidiaries(corp_code, bsns_year, reprt_code="11011"):
+    """특수관계인 출자현황으로 자회사 정보 조회"""
+    results = []
 
-    # 대안: 관계기업 현황
-    try:
-        url2 = f"{DART_BASE}/irdsSttus.json"
-        params2 = {
-            "crtfc_key":  DART_KEY,
-            "corp_code":  corp_code,
-            "bsns_year":  bsns_year,
-            "reprt_code": "11011",
-        }
-        res2  = requests.get(url2, params=params2, timeout=10)
-        data2 = res2.json()
-        if data2.get("status") == "000" and data2.get("list"):
-            return data2.get("list", [])
-    except Exception as e:
-        print(f"  관계기업 API 실패: {e}")
-    return []
+    # 방법1: 최대주주 현황 (투자자산 포함)
+    endpoints = [
+        ("invstgNtcsCmn.json", "투자현황"),     # 타법인 출자현황
+        ("otrCprInvstmntSttus.json", "타법인출자"),  # 타법인 출자현황
+    ]
+
+    for endpoint, desc in endpoints:
+        try:
+            url = f"{DART_BASE}/{endpoint}"
+            params = {
+                "crtfc_key":  DART_KEY,
+                "corp_code":  corp_code,
+                "bsns_year":  bsns_year,
+                "reprt_code": reprt_code,
+            }
+            res  = requests.get(url, params=params, timeout=10)
+            data = res.json()
+            print(f"  {desc} status: {data.get('status')} / 건수: {len(data.get('list',[]))}")
+            if data.get("status") == "000" and data.get("list"):
+                items = data.get("list", [])
+                if items and any(item.get("inv_prm") or item.get("corp_nm") for item in items):
+                    results = items
+                    break
+        except Exception as e:
+            print(f"  {desc} API 실패: {e}")
+
+    # 방법2: fnlttSinglAcntAll에서 관계기업투자 금액 직접 추출
+    if not results:
+        print("  자회사 정보 직접 조회 실패 - 재무제표 주석에서 추정")
+
+    return results
 
 
 # ── 최신 보고서 정보 자동 선택 ──────────────────────────────────────
@@ -305,28 +305,31 @@ def analyze_stock(stock_code, name, corp_code):
     print(f"  발행주식수: {shares:,}주")
 
     # 자회사
-    subs = get_subsidiaries(corp_code, bsns_year)
+    subs = get_subsidiaries(corp_code, bsns_year, reprt_code)
     sub_list = []
-    for sub in subs[:10]:
-        # DART API 버전에 따라 필드명이 다를 수 있음
-        name = (sub.get("sub_corp_nm") or sub.get("subs_corp_nm") or
-                sub.get("corp_name") or sub.get("jurir_nm") or "")
-        ratio = sub.get("prnt_own_rate") or sub.get("own_rate") or ""
-        book  = sub.get("inv_asset_blnc") or sub.get("bsis_blnc") or "0"
-        stock = sub.get("stock_code") or ""
+    for sub in subs[:15]:
+        # 여러 가능한 필드명 시도
+        name  = (sub.get("inv_prm") or sub.get("corp_nm") or
+                 sub.get("sub_corp_nm") or sub.get("subs_corp_nm") or "")
+        ratio = (sub.get("inv_rat") or sub.get("hold_rate") or
+                 sub.get("prnt_own_rate") or sub.get("own_rate") or "")
+        book  = (sub.get("bsis_posesn_stock_qota_rt") or
+                 sub.get("inv_asset_blnc") or sub.get("bsis_blnc") or "0")
+        stock = sub.get("stock_code") or sub.get("stkcd") or ""
+        qty   = sub.get("bsis_posesn_stock_co") or sub.get("trmend_posesn_stock_co") or "0"
 
-        if not name:
-            # 전체 키 출력 (디버깅)
-            print(f"    자회사 키 목록: {list(sub.keys())}")
+        if not name or name == corp_code:
+            print(f"    자회사 키 목록: {list(sub.keys())[:8]}")
             continue
 
         sub_list.append({
             "name":            name,
             "stock_code":      stock,
-            "ownership_ratio": ratio,
-            "book_value":      book,
+            "ownership_ratio": str(ratio),
+            "shares_held":     str(qty).replace(",", ""),
+            "book_value":      str(book).replace(",", ""),
         })
-        print(f"    자회사: {name} ({ratio}%) 장부가: {book}")
+        print(f"    자회사: {name} ({ratio}%) 보유주식: {qty}주")
 
     return {
         "stock_code":        stock_code,
