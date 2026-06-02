@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-02 17:42';
-  const DASHBOARD_VERSION = 'v24.0';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -587,8 +587,9 @@
       ' 지금은 ' + nowY + '년 ' + nowM + '월입니다.' +
       ' ⚠️ 반드시 ' + cy + '년 전망치(예상치)를 반환하세요. ' + prevY + '년이나 ' + prevY2 + '년 실적을 반환하면 안 됩니다.' +
       ' ' + cy + '년 컨센서스가 없으면 op_income을 "NOT_FOUND"로 반환하세요.' +
+      ' 그리고 최신 월가 애널리스트 목표주가 평균(target price)도 찾으세요. 이 값에는 미래 성장 기대가 반영되어 있습니다.' +
       ' 반드시 JSON만 반환. 마크다운 절대 금지.' +
-      ' {"op_income":"' + cy + '년 월가 컨센서스 연간 영업이익을 한국어로(예: 190억달러)","pe_avg":"이 종목 섹터 글로벌 평균P/E(숫자만)","source":"출처"}';
+      ' {"op_income":"' + cy + '년 월가 컨센서스 연간 영업이익을 한국어로(예: 190억달러)","pe_avg":"이 종목 섹터 글로벌 평균P/E(숫자만)","target_price":"목표주가 평균(숫자+$, 없으면 NOT_FOUND)","target_source":"출처","source":"출처"}';
 
     var promptKR = '당신은 한국 증권사 리서치 전문가입니다. ' + name + '(' + code + ')의 ' + cy + '년 예상 연간 영업이익 컨센서스를 찾으세요.' +
       ' 지금은 ' + nowY + '년 ' + nowM + '월입니다.' +
@@ -596,8 +597,9 @@
       ' ' + cy + '년 컨센서스가 없으면 op_income을 "NOT_FOUND"로 반환하세요.' +
       ' 또한 이 기업이 속한 산업의 글로벌 동종업계 평균 P/E를 조사하고,' +
       ' KOSPI 시가총액 상위 10개 기업(삼성전자,SK하이닉스,LG에너지솔루션,삼성바이오로직스,현대차,기아,셀트리온,POSCO홀딩스,삼성SDI,KB금융)이면 글로벌 평균P/E × 0.8, 아니면 × 0.6 적용.' +
+      ' 그리고 최신 증권사 애널리스트 목표주가 평균(target price consensus)도 찾으세요. 이 값에는 미래 신기술/성장 기대가 반영되어 있습니다.' +
       ' 반드시 JSON만 반환. 마크다운 절대 금지.' +
-      ' {"op_income":"' + cy + '년 예상 영업이익(예: 84조원)","pe_avg":"적정P/E 배수(숫자만)","pe_detail":"근거","source":"출처"}';
+      ' {"op_income":"' + cy + '년 예상 영업이익(예: 84조원)","pe_avg":"적정P/E 배수(숫자만)","pe_detail":"근거","target_price":"증권사 목표주가 평균(숫자+원, 없으면 NOT_FOUND)","target_source":"목표주가 출처 증권사","source":"출처"}';
 
     var prompt = market === 'US' ? promptUS : promptKR;
     var res = await fetch(
@@ -761,7 +763,7 @@
         '계산한 적정주가가 현재가 ' + priceStr + '와 지나치게 동떨어지면(예: 1/10 수준) 자릿수나 EPS 단위를 잘못 본 것이니 다시 점검하세요. 적정주가는 보통 현재가와 같은 자릿수입니다.',
         '',
         '⚠️ 출력 규칙: 아래 JSON 하나만 반환하세요. 마크다운(**, \n, ```) 절대 사용 금지. 모든 값은 한 줄 문자열.',
-        '{"breakdown":"실제 수치로 계산식 명시(예: Forward EPS $35 × 적정P/E 32배 = $1,120 / Peak 35.7배 = $1,250)","method1_label":"1차 적정가 (EPS×적정P/E)","method1_price":"1차 적정가 값($)","method2_label":"2차 적정가 (EPS×Peak P/E)","method2_price":"2차 적정가 값($)","target_1":"1차적정주가(1단계 값)","target_2":"2차적정주가(2단계 값)","gap_rate":"현재가 대비 2차 적정주가 괴리율(+ 또는 -)","sell_point":"차트 기술적 분석 매도 지점","stop_loss":"보수적 바닥선(DCF 하단)","summary":"핵심 투자의견 한 문단"}',
+        '{"breakdown":"실제 수치로 계산식 명시(예: Forward EPS $35 × 적정P/E 32배 = $1,120)","method1_label":"적정가 (EPS×적정P/E)","method1_price":"적정가 값($)","method2_label":"낙관가 (EPS×Peak P/E)","method2_price":"낙관가 값($)","method3_label":"애널리스트 목표주가 (전문가 컨센서스)","method3_price":"최신 월가 목표주가 평균($, 미래기술 기대 반영)","target_1":"가장 낮은값","target_2":"가장 높은값","gap_rate":"현재가 대비 애널리스트 목표주가 괴리율(+ 또는 -)","sell_point":"차트 기술적 분석 매도 지점","stop_loss":"보수적 바닥선(DCF 하단)","summary":"핵심 투자의견: 적정가/낙관가/전문가목표 사이 현재가 위치 해석"}',
         '모든 내용은 한국어로, 가격은 $ 단위 포함하여 작성하세요.'
       ];
     } else {
@@ -810,15 +812,19 @@
         '[SOTP 계산 방식 - 반드시 이 순서대로]',
         '모든 금액은 반드시 원(KRW) 단위로 통일하세요. 데이터는 DART(금융감독원 전자공시) 최신 재무제표 기준.',
         '',
-        '【1단계: 본업 가치 - 사업부문별 EBITDA 멀티플 방식】',
+        '【1단계: 본업 가치 - 사업부문별 EBITDA 멀티플 방식 (2가지 시나리오)】',
         '실제 애널리스트처럼 사업부문을 나눠서 계산하세요. 전사 단일 영업이익으로 계산하면 안 됩니다.',
         '  (1) 이 회사의 주요 사업부문을 2~4개로 구분하세요 (예: 삼성SDI = 배터리/전자재료).',
         '  (2) 각 부문의 매출 비중을 추정하고, 부문별 영업이익을 계산하세요.',
-        '  (3) 부문별 감가상각비+무형자산상각비를 추정하세요. 자료가 없으면 해당 부문 매출 대비 순수 경쟁사의 D&A 비율을 적용하세요 (자본집약 산업은 매출의 8~15%, 경공업은 3~5%).',
-        '  (4) 부문별 EBITDA = 부문 영업이익 + 부문 감가상각비 + 부문 무형자산상각비.',
-        '  (5) 각 부문에 해당 산업 순수 경쟁사(pure-play peer)의 EV/EBITDA 배수를 적용하세요. ⚠️ 자의적 고배수 금지. 실제 글로벌 경쟁사 평균을 쓰세요. (예: 2차전지 셀 6~9배, 양극재 8~12배, 반도체 5~8배, 자동차부품 4~6배, 화학 5~7배).',
-        '  (6) 부문별 가치 = 부문 EBITDA × 해당 부문 EV/EBITDA 배수. 모든 부문 합산 = 본업 가치.',
-        '  ⚠️ 계산 근거(breakdown)에 반드시 각 부문명/EBITDA/적용배수를 명시하세요.',
+        '  (3) 부문별 감가상각비+무형자산상각비를 추정하세요. 자료가 없으면 매출 대비 순수 경쟁사 D&A 비율 적용 (자본집약 8~15%, 경공업 3~5%).',
+        '  (4) 부문별 현재 EBITDA = 부문 영업이익 + 감가상각비 + 무형자산상각비.',
+        '  (5) ⚠️ 중요: 이 회사가 경기민감 업종(배터리, 반도체, 화학, 철강, 조선, 해운 등)인지 판단하세요.',
+        '      - 경기민감 업종이면: 현재 실적이 사이클 저점/고점일 수 있으므로 정상화 EBITDA를 별도 추정하세요. 정상화 EBITDA = 과거 3~5년 평균 또는 정상 업황 기준 추정치. 또한 1~2년 후 예상 회복/정상화된 포워드 EBITDA도 추정하세요.',
+        '      - 안정 업종(필수소비재, 통신, 유틸리티 등)이면: 현재 EBITDA = 정상화 EBITDA로 동일하게 보세요.',
+        '  (6) 각 부문에 순수 경쟁사(pure-play peer) EV/EBITDA 배수 적용. ⚠️ 자의적 고배수 금지. (2차전지 셀 6~9배, 양극재 8~12배, 반도체 5~8배, 자동차부품 4~6배, 화학 5~7배).',
+        '  (7) ▶ 시나리오A (보수적 바닥) = 부문별 [현재 EBITDA × 배수] 합산.',
+        '  (8) ▶ 시나리오B (정상화/포워드) = 부문별 [정상화 또는 1~2년 후 포워드 EBITDA × 배수] 합산.',
+        '  ⚠️ segments에 각 부문의 현재EBITDA와 정상화EBITDA를 모두 명시하세요.',
         '',
         '【2단계: 자회사 가치】',
         '위 DART 자회사 보유현황을 사용하세요. 상장 자회사는 보유주식수×현재주가×(1-지주할인 0.4), 비상장은 장부가액×(1-할인 0.3)으로 계산.',
@@ -829,11 +835,11 @@
         '【4단계: 미래 기술 가치】',
         '아직 실적화되지 않은 신사업·기술 프리미엄을 보수적으로 추정 (전체 기업가치의 5~15% 이내).',
         '',
-        '【5단계: 최종 계산】',
-        '  총 기업가치 = 본업 가치 + 자회사 가치 + 미래 기술 가치',
-        '  적정 주주가치 = 총 기업가치 - 순부채',
-        '  SOTP 적정주가 = 적정 주주가치 ÷ 총 발행주식수',
-        '  ⚠️ 반드시 (적정 주주가치 전체)를 발행주식수로 나누세요. 결과가 현재가 ' + priceStr + '와 같은 자릿수인지 검증.',
+        '【5단계: 최종 계산 - 3가지 적정주가】',
+        '  ▶ SOTP-보수적 = (시나리오A 본업 + 자회사 + 미래기술 - 순부채) ÷ 발행주식수',
+        '  ▶ SOTP-정상화 = (시나리오B 본업 + 자회사 + 미래기술 - 순부채) ÷ 발행주식수',
+        '  ▶ NTM P/E = 아래 NTM 방식 결과',
+        '  ⚠️ 반드시 (주주가치 전체)를 발행주식수로 나누세요. 세 값 모두 현재가 ' + priceStr + '와 같은 자릿수인지 검증.',
         '',
         '[NTM P/E 방식]',
         '⚠️ NTM P/E 계산 시 반드시 결과값이 현재가 ' + priceStr + '의 0.3배~5배 범위 안에 있어야 합니다. 이 범위를 벗어나면 계산 오류이므로 다시 계산하세요.',
@@ -847,7 +853,7 @@
         '괴리율 = (2차 적정주가 - 현재가) ÷ 현재가 × 100',
         '',
         '⚠️ 출력 규칙: 아래 JSON 하나만 반환하세요. 마크다운(**, \n, ```) 절대 사용 금지. 모든 값은 한 줄 문자열.',
-        '{"segments":"부문1: 이름|영업이익|D&A|EBITDA|배수|부문가치 / 부문2: 이름|영업이익|D&A|EBITDA|배수|부문가치","breakdown":"(본업 X원 + 자회사 Y원 + 미래기술 Z원 - 순부채 W원) ÷ 발행주식수 N주 = 적정주가 P원","method1_label":"SOTP 적정주가","method1_price":"SOTP 값","method2_label":"NTM P/E 적정주가","method2_price":"NTM P/E 값","target_1":"1차적정주가(보수적)","target_2":"2차적정주가(기본)","gap_rate":"괴리율(+ 또는 -)","sell_point":"매도 지점","stop_loss":"손절 라인","summary":"핵심 투자의견 한 문단"}',
+        '{"segments":"부문1: 이름|현재EBITDA|정상화EBITDA|배수|보수적가치|정상화가치 / 부문2: 동일형식","breakdown":"SOTP보수적=(본업A+자회사+미래기술-순부채)÷주식수=P원, SOTP정상화=(본업B+자회사+미래기술-순부채)÷주식수=Q원","method1_label":"SOTP 적정주가 (보수적 바닥)","method1_price":"SOTP보수적 값","method2_label":"SOTP 적정주가 (정상화/포워드)","method2_price":"SOTP정상화 값","method3_label":"NTM P/E 적정주가 (시장기대)","method3_price":"NTM PE 값","method4_label":"애널리스트 목표주가 (전문가 컨센서스)","method4_price":"최신 증권사 목표주가 평균값(전고체 등 장기 성장기대 반영된 값)","target_1":"3가지 중 가장 낮은값(보수적)","target_2":"3가지 중 가장 높은값(낙관적)","gap_rate":"현재가 대비 정상화SOTP 괴리율(+ 또는 -)","sell_point":"매도 지점","stop_loss":"손절 라인","summary":"핵심 투자의견: 보수적바닥/정상화/시장기대 3개 값 사이에서 현재가 위치 해석 포함"}',
         '모든 내용은 한국어로, 가격은 원 단위 포함하여 작성하세요.'
       ];
     }
@@ -888,7 +894,7 @@
         }
         return {
           segments: extractField('segments'), breakdown: extractField('breakdown'), method1_label: extractField('method1_label'),
-          method1_price: extractField('method1_price'), method2_label: extractField('method2_label'),
+          method1_price: extractField('method1_price'), method2_label: extractField('method2_label'), method3_label: extractField('method3_label'), method3_price: extractField('method3_price'), method4_label: extractField('method4_label'), method4_price: extractField('method4_price'), method4_label: extractField('method4_label'), method4_price: extractField('method4_price'),
           method2_price: extractField('method2_price'), target_1: extractField('target_1'),
           target_2: extractField('target_2'), gap_rate: extractField('gap_rate'),
           sell_point: extractField('sell_point'), stop_loss: extractField('stop_loss'),
@@ -970,8 +976,12 @@
       var parsed = {
         method1_label: validResults[0].method1_label || '방법1',
         method2_label: validResults[0].method2_label || '방법2',
+        method3_label: validResults[0].method3_label || '',
+        method4_label: validResults[0].method4_label || '',
         method1_price: avgPriceStr(validResults.map(function(r){ return r.method1_price; }), isCur),
         method2_price: avgPriceStr(validResults.map(function(r){ return r.method2_price; }), isCur),
+        method3_price: avgPriceStr(validResults.map(function(r){ return r.method3_price; }), isCur),
+        method4_price: avgPriceStr(validResults.map(function(r){ return r.method4_price; }), isCur),
         target_1:      avgPriceStr(validResults.map(function(r){ return r.target_1; }), isCur),
         target_2:      avgPriceStr(validResults.map(function(r){ return r.target_2; }), isCur),
         gap_rate:      avgGapRate(validResults.map(function(r){ return r.gap_rate; })),
@@ -994,6 +1004,9 @@
         (parsed.breakdown ? '<div style="font-size:11px;color:#666;background:#fff;padding:8px;border-radius:6px;margin-bottom:8px;line-height:1.5;">📐 계산 근거: ' + parsed.breakdown + '</div>' : '') +
         '<div class="eval-row"><span class="eval-label">' + (parsed.method1_label || '방법1') + '</span><span class="eval-value">' + parsed.method1_price + '</span></div>' +
         '<div class="eval-row"><span class="eval-label">' + (parsed.method2_label || '방법2') + '</span><span class="eval-value">' + parsed.method2_price + '</span></div>' +
+        (parsed.method3_label && parsed.method3_price && parsed.method3_price !== '-' ? '<div class="eval-row"><span class="eval-label">' + parsed.method3_label + '</span><span class="eval-value">' + parsed.method3_price + '</span></div>' : '') +
+        (parsed.method4_label && parsed.method4_price && parsed.method4_price !== '-' ? '<div class="eval-row" style="background:#f0f7ff;"><span class="eval-label">' + parsed.method4_label + '</span><span class="eval-value">' + parsed.method4_price + '</span></div>' : '') +
+        (parsed.method4_label && parsed.method4_price && parsed.method4_price !== '-' ? '<div class="eval-row" style="background:#f0f7ff;"><span class="eval-label">' + parsed.method4_label + '</span><span class="eval-value">' + parsed.method4_price + '</span></div>' : '') +
         '<div class="eval-row"><span class="eval-label">1차 적정주가 (보수적)</span><span class="eval-value" style="color:#0066cc;">' + parsed.target_1 + '</span></div>' +
         '<div class="eval-row"><span class="eval-label">2차 적정주가 (기본)</span><span class="eval-value" style="color:#1967d2;">' + parsed.target_2 + '</span></div>' +
         '<div class="eval-row"><span class="eval-label">현재가 대비 괴리율</span><span class="eval-value" style="color:' + gapColor + ';">' + parsed.gap_rate + '</span></div>' +
