@@ -307,6 +307,9 @@ def analyze_stock(stock_code, name, corp_code):
     # 자회사
     subs = get_subsidiaries(corp_code, bsns_year, reprt_code)
     sub_list = []
+    # 첫 번째 항목 전체 필드 출력 (디버깅)
+    if subs:
+        print(f"  자회사 첫 항목 전체 필드: {dict(list(subs[0].items()))}")
     for sub in subs[:15]:
         # 여러 가능한 필드명 시도
         name  = (sub.get("inv_prm") or sub.get("corp_nm") or
