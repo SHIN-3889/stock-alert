@@ -308,12 +308,25 @@ def analyze_stock(stock_code, name, corp_code):
     subs = get_subsidiaries(corp_code, bsns_year)
     sub_list = []
     for sub in subs[:10]:
+        # DART API 버전에 따라 필드명이 다를 수 있음
+        name = (sub.get("sub_corp_nm") or sub.get("subs_corp_nm") or
+                sub.get("corp_name") or sub.get("jurir_nm") or "")
+        ratio = sub.get("prnt_own_rate") or sub.get("own_rate") or ""
+        book  = sub.get("inv_asset_blnc") or sub.get("bsis_blnc") or "0"
+        stock = sub.get("stock_code") or ""
+
+        if not name:
+            # 전체 키 출력 (디버깅)
+            print(f"    자회사 키 목록: {list(sub.keys())}")
+            continue
+
         sub_list.append({
-            "name":            sub.get("sub_corp_nm", ""),
-            "ownership_ratio": sub.get("prnt_own_rate", ""),
-            "book_value":      sub.get("inv_asset_blnc", "0"),
+            "name":            name,
+            "stock_code":      stock,
+            "ownership_ratio": ratio,
+            "book_value":      book,
         })
-        print(f"    자회사: {sub.get('sub_corp_nm','')} ({sub.get('prnt_own_rate','')}%)")
+        print(f"    자회사: {name} ({ratio}%) 장부가: {book}")
 
     return {
         "stock_code":        stock_code,
