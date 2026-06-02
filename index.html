@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-02 08:33';
-  const DASHBOARD_VERSION = 'v7.0';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -648,10 +648,14 @@
       resultDiv.innerHTML = '<div class="eval-loading">📡 컨센서스 5회 조회 중... (10~20초)</div>';
     }
 
-    // 1단계: 컨센서스 5회 조회 → 극단값 제거 → 평균 → 입력칸 표시
-    var consensus = null;
-    try { consensus = await fetchConsensus(code, name, market, key); } catch(e) {}
+    // 1단계: 컨센서스 5회 조회와 AI 분석을 동시에 시작
+    var consensusPromise = fetchConsensus(code, name, market, key).catch(function(){ return null; });
 
+    // 2단계: 백지 상태로 AI 종목 평가 5회 시작
+    await evaluateStock(code, name, market, price, null, null);
+
+    // 3단계: 분석 완료 후(입력칸 생성됨) 컨센서스 결과를 입력칸에 표시
+    var consensus = await consensusPromise;
     if (consensus) {
       var opEl = document.getElementById('op-input-' + code);
       var peEl = document.getElementById('pe-input-' + code);
@@ -665,9 +669,6 @@
         peEl.style.background = '#f0fff0';
       }
     }
-
-    // 2단계: 백지 상태로 AI 종목 평가 5회 시작
-    evaluateStock(code, name, market, price, null, null);
   }
 
   async function evaluateStock(code, name, market, currentPrice, operatingProfit, peRatio) {
