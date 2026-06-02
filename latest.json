@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-02 12:45:42",
+  "updated_at": "2026-06-02 13:01:03",
   "portfolio": {
     "rows": [
       {
@@ -19,8 +19,8 @@
         "price": 950.5399780273438,
         "day_change_pct": -1.8361721303552854,
         "shares": 42,
-        "value_krw": 60581466.6495907,
-        "pl_krw": -6017696.401401535,
+        "value_krw": 60585857.55948432,
+        "pl_krw": -6018132.560579039,
         "pl_pct": -9.035693732057911,
         "session": "market_closed"
       },
@@ -37,12 +37,12 @@
       }
     ],
     "summary": {
-      "total_value_krw": 210246551.6495907,
-      "day_change_krw": -12447612.275721818,
-      "day_change_pct": -5.589554776072406,
-      "total_pl_krw": -906713.4014015496,
-      "total_pl_pct": -0.429410078590347,
-      "usdkrw": 1517.469970703125
+      "total_value_krw": 210250942.5594843,
+      "day_change_krw": -12447694.408484459,
+      "day_change_pct": -5.5894793870134185,
+      "total_pl_krw": -907149.5605790615,
+      "total_pl_pct": -0.42960681803435746,
+      "usdkrw": 1517.5799560546875
     },
     "watchlist": [
       {
@@ -59,8 +59,8 @@
         "name": "현대모비스",
         "market": "KR",
         "currency": "KRW",
-        "price": 722000.0,
-        "day_change_pct": -5.867014341590613,
+        "price": 723000.0,
+        "day_change_pct": -5.736636245110821,
         "session": "open"
       },
       {
@@ -68,8 +68,8 @@
         "name": "삼성전자",
         "market": "KR",
         "currency": "KRW",
-        "price": 349000.0,
-        "day_change_pct": -0.6405693950177936,
+        "price": 349500.0,
+        "day_change_pct": -0.498220640569395,
         "session": "open"
       },
       {
