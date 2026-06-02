@@ -65,7 +65,7 @@ def build_corp_map():
 
 
 # ── 재무제표 조회 ────────────────────────────────────────────────────
-def get_financial_data(corp_code, bsns_year, fs_div="CFS"):
+def get_financial_data(corp_code, bsns_year, fs_div="CFS", reprt_code="11011"):
     try:
         url = f"{DART_BASE}/fnlttSinglAcntAll.json"
         params = {
