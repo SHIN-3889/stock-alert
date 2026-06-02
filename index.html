@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-02 17:30';
-  const DASHBOARD_VERSION = 'v21.0';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -1000,7 +1000,7 @@
         '<div style="margin-top:10px;padding:10px;background:#fff;border-radius:8px;font-size:12px;color:#333;line-height:1.6;">' +
         '<div style="font-size:11px;color:#999;margin-bottom:6px;">📊 아래 수치는 5회 분석 평균값 기준이에요.</div>' +
         '1차 적정주가 <b>' + parsed.target_1 + '</b> / 2차 적정주가 <b>' + parsed.target_2 + '</b> / 현재가 대비 괴리율 <b>' + parsed.gap_rate + '</b><br><br>' +
-        parsed.summary.replace(/[0-9,]+원/g, '').replace(/\$[0-9,.]+/g, '') +
+        parsed.summary +
         '</div>' +
         '<div class="eval-disclaimer">⚠️ AI 추정값으로 투자 참고용이에요. 실제 투자 결정은 본인 판단으로 해주세요.</div>' +
         '<div style="margin-top:10px;display:flex;align-items:center;gap:8px;">' +
