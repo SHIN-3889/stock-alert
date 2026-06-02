@@ -145,7 +145,7 @@ def get_operating_income(fin_list):
 
 
 # ── 발행주식수 ───────────────────────────────────────────────────────
-def get_shares_outstanding(corp_code, bsns_year):
+def get_shares_outstanding(corp_code, bsns_year, reprt_code="11011"):
     """주식총수 현황에서 발행주식수 조회"""
     try:
         # 방법1: 주식총수 현황 API
@@ -154,7 +154,7 @@ def get_shares_outstanding(corp_code, bsns_year):
             "crtfc_key":  DART_KEY,
             "corp_code":  corp_code,
             "bsns_year":  bsns_year,
-            "reprt_code": "11011",
+            "reprt_code": reprt_code,
         }
         res  = requests.get(url, params=params, timeout=10)
         data = res.json()
@@ -232,10 +232,35 @@ def get_subsidiaries(corp_code, bsns_year):
     return []
 
 
-# ── 최신 사업연도 ────────────────────────────────────────────────────
-def get_latest_year():
+# ── 최신 보고서 정보 자동 선택 ──────────────────────────────────────
+def get_latest_report():
+    """현재 시점 기준 가장 최신 보고서 코드와 사업연도 반환.
+    월별 기준:
+    - 1~3월: 전년도 3분기보고서 (11014)
+    - 4월:   전년도 사업보고서 (11011) - 아직 1분기 미공시
+    - 5~7월: 당해연도 1분기보고서 (11013)
+    - 8~10월: 당해연도 반기보고서 (11012)
+    - 11~12월: 당해연도 3분기보고서 (11014)
+    """
     now = datetime.now(KST)
-    return str(now.year - 1) if now.month < 4 else str(now.year - 1)
+    m, y = now.month, now.year
+    if m <= 3:
+        return str(y - 1), "11014"   # 전년도 3분기
+    elif m == 4:
+        return str(y - 1), "11011"   # 전년도 사업보고서
+    elif m <= 7:
+        return str(y), "11013"       # 당해 1분기
+    elif m <= 10:
+        return str(y), "11012"       # 당해 반기
+    else:
+        return str(y), "11014"       # 당해 3분기
+
+REPRT_NAMES = {
+    "11011": "사업보고서(연간)",
+    "11012": "반기보고서",
+    "11013": "1분기보고서",
+    "11014": "3분기보고서",
+}
 
 
 # ── 종목 분석 ────────────────────────────────────────────────────────
@@ -243,14 +268,25 @@ def analyze_stock(stock_code, name, corp_code):
     print(f"\n{'='*50}")
     print(f"분석 중: {name} ({stock_code}) / corp_code: {corp_code}")
 
-    bsns_year = get_latest_year()
-    print(f"  기준 사업연도: {bsns_year}")
+    bsns_year, reprt_code = get_latest_report()
+    reprt_name = REPRT_NAMES.get(reprt_code, reprt_code)
+    print(f"  기준: {bsns_year}년 {reprt_name} ({reprt_code})")
 
     # 연결재무제표 우선, 없으면 개별
-    fin_list = get_financial_data(corp_code, bsns_year, "CFS")
+    fin_list = get_financial_data(corp_code, bsns_year, "CFS", reprt_code)
     if not fin_list:
         print("  연결재무제표 없음 → 개별재무제표 시도")
-        fin_list = get_financial_data(corp_code, bsns_year, "OFS")
+        fin_list = get_financial_data(corp_code, bsns_year, "OFS", reprt_code)
+    if not fin_list:
+        # 폴백: 직전 보고서 시도 (사업보고서)
+        print("  최신 보고서 없음 → 직전 사업보고서 시도")
+        prev_year = str(int(bsns_year) - 1) if reprt_code != "11011" else bsns_year
+        fin_list = get_financial_data(corp_code, prev_year, "CFS", "11011")
+        if fin_list:
+            bsns_year = prev_year
+            reprt_code = "11011"
+            reprt_name = "사업보고서(연간)"
+            print(f"  → 전년도 사업보고서 사용: {bsns_year}")
     if not fin_list:
         return {"error": "재무데이터 없음"}
 
@@ -265,7 +301,7 @@ def analyze_stock(stock_code, name, corp_code):
     print(f"  영업이익: {op_income:,}원")
 
     # 발행주식수
-    shares = get_shares_outstanding(corp_code, bsns_year)
+    shares = get_shares_outstanding(corp_code, bsns_year, reprt_code)
     print(f"  발행주식수: {shares:,}주")
 
     # 자회사
@@ -283,6 +319,7 @@ def analyze_stock(stock_code, name, corp_code):
         "stock_code":        stock_code,
         "name":              name,
         "bsns_year":         bsns_year,
+        "reprt_name":        reprt_name,
         "operating_income":  op_income,
         "shares_outstanding": shares,
         "net_debt":          net_debt_data,
