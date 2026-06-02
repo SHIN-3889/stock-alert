@@ -1,7 +1,7 @@
 {
   "006400": {
     "stock_code": "006400",
-    "name": "삼성SDI",
+    "name": "신기술투자조합15호",
     "bsns_year": "2025",
     "reprt_name": "사업보고서(연간)",
     "operating_income": 1722360788760,
@@ -21,17 +21,116 @@
     },
     "subsidiaries": [
       {
-        "name": "삼성SDI",
+        "name": "삼성E&A(구, 삼성엔지니어링)",
         "stock_code": "",
         "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "아이마켓코리아",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "Ganfeng Lithium Co., Ltd.",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "Intellectual Keystone Technology LLC",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "한국경제신문",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "로지피아",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "에코프로이엠",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "필에너지",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "이차전지성장펀드",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "DS ASIA HOLDINGS",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "Intellectual Discovery Co., Ltd.",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "호텔신라",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "iMarketAsia Co., Limited",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "Polyplus(*1)",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "신기술투자조합15호",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
         "book_value": "0"
       }
     ],
-    "updated_at": "2026-06-02 12:29:42"
+    "updated_at": "2026-06-02 12:37:46"
   },
   "000660": {
     "stock_code": "000660",
-    "name": "SK하이닉스",
+    "name": "SK China Company Limited",
     "bsns_year": "2025",
     "reprt_name": "사업보고서(연간)",
     "operating_income": 47206319000000,
@@ -51,17 +150,116 @@
     },
     "subsidiaries": [
       {
-        "name": "SK하이닉스",
+        "name": "에스케이하이이엔지㈜",
         "stock_code": "",
         "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "SK hynix Semiconductor Asia Pte.Ltd.",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "SK hynix Semiconductor HongKong Ltd.",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "SK hynix Japan Inc.",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "SK hynix Semiconductor Taiwan Inc.",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "SK hynix Semiconductor India Private Ltd.",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "SK hynix Semiconductor (China) Ltd.",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "HITECH Semiconductor (Wuxi) Co., Ltd.",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "SK hynix (Wuxi) Semiconductor Sales Ltd.",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "SK hynix memory solutions Taiwan, Inc.",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "SK APTECH Ltd.",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "에스케이하이스텍㈜",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "STRATIO,INC.",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "SK South East Asia Investment Pte. Ltd.",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "SK China Company Limited",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
         "book_value": "0"
       }
     ],
-    "updated_at": "2026-06-02 12:29:54"
+    "updated_at": "2026-06-02 12:38:03"
   },
   "012330": {
     "stock_code": "012330",
-    "name": "현대모비스",
+    "name": "Hyundai Motor (Shanghai) Co., Ltd.",
     "bsns_year": "2025",
     "reprt_name": "사업보고서(연간)",
     "operating_income": 3357456000000,
@@ -81,17 +279,116 @@
     },
     "subsidiaries": [
       {
-        "name": "현대모비스",
+        "name": "현대자동차",
         "stock_code": "",
         "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "해비치컨트리클럽",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "현대트랜시스",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "현대아이에이치엘",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "푸본현대생명보험",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "에이치그린파워",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "지아이티",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "모트라스",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "유니투스",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "에이치엠지에스 유한회사",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "모아빛",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "현대건설",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "Mobis Parts Middle East FZE",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "Mobis Parts Europe N.V.",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "Hyundai Motor (Shanghai) Co., Ltd.",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
         "book_value": "0"
       }
     ],
-    "updated_at": "2026-06-02 12:30:04"
+    "updated_at": "2026-06-02 12:38:18"
   },
   "005930": {
     "stock_code": "005930",
-    "name": "삼성전자",
+    "name": "SEHK",
     "bsns_year": "2025",
     "reprt_name": "사업보고서(연간)",
     "operating_income": 43601051000000,
@@ -111,18 +408,111 @@
     },
     "subsidiaries": [
       {
-        "name": "삼성전자",
+        "name": "삼성전기㈜",
         "stock_code": "",
         "ownership_ratio": "",
+        "shares_held": "0",
         "book_value": "0"
       },
       {
-        "name": "삼성전자",
+        "name": "스테코㈜",
         "stock_code": "",
         "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "SDMA",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "SEMA",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "SAVINA",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "SEIN",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "TSE",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "SEAU",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "SIEL",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "SRI-Bangalore",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "SJC",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "SRJ",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "세메스㈜",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "SCIC",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
+        "book_value": "0"
+      },
+      {
+        "name": "SEHK",
+        "stock_code": "",
+        "ownership_ratio": "",
+        "shares_held": "0",
         "book_value": "0"
       }
     ],
-    "updated_at": "2026-06-02 12:30:17"
+    "updated_at": "2026-06-02 12:38:38"
   }
 }
