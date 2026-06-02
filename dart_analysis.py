@@ -337,14 +337,22 @@ def analyze_stock(stock_code, name, corp_code):
         })
         print(f"    자회사: {name} ({ratio_f}%) 보유주식: {qty_i:,}주 장부가: {book_i:,}원")
 
+    # 잉여현금 계산
+    print("  [잉여현금 계산]")
+    revenue = get_revenue(fin_list)
+    total_cash = net_debt_data["total_cash"]
+    excess_cash_data = calc_excess_cash(total_cash, revenue, stock_code)
+
     return {
         "stock_code":        stock_code,
         "name":              name,
         "bsns_year":         bsns_year,
         "reprt_name":        reprt_name,
         "operating_income":  op_income,
+        "revenue":           revenue,
         "shares_outstanding": shares,
         "net_debt":          net_debt_data,
+        "excess_cash":       excess_cash_data,
         "subsidiaries":      sub_list,
         "updated_at":        datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S"),
     }
