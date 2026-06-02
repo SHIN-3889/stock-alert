@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-02 12:59';
-  const DASHBOARD_VERSION = 'v17.0';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -693,9 +693,20 @@
       var peEl = document.getElementById('pe-input-' + code);
       if (opEl && consensus.op_income) {
         if (consensus.op_income === 'NOT_FOUND') {
-          opEl.value = '';
-          opEl.placeholder = getConsensusYear() + '년 컨센서스를 아직 찾을 수 없어요. 직접 입력해주세요.';
-          opEl.style.background = '#fff8e1';
+          // DART 실적으로 대체
+          var dartFallback = (window.sotpData && window.sotpData[code]);
+          if (dartFallback && dartFallback.operating_income) {
+            var opAmt = dartFallback.operating_income;
+            var opStr = Math.round(opAmt / 100000000).toLocaleString() + '억원';
+            opEl.value = opStr;
+            opEl.style.background = '#fff8e1';
+            opEl.title = '⚠️ ' + getConsensusYear() + '년 컨센서스 미확인 - DART ' + dartFallback.bsns_year + '년 실적 사용';
+            opEl.placeholder = getConsensusYear() + '년 컨센서스 미확인';
+          } else {
+            opEl.value = '';
+            opEl.placeholder = getConsensusYear() + '년 컨센서스를 찾을 수 없어요. 직접 입력해주세요.';
+            opEl.style.background = '#fff8e1';
+          }
         } else {
           opEl.value = consensus.op_income;
           opEl.style.background = '#f0fff0';
