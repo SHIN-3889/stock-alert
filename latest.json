@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-02 18:01:19",
+  "updated_at": "2026-06-02 18:15:51",
   "portfolio": {
     "rows": [
       {
@@ -16,12 +16,12 @@
       {
         "name": "GE버노바",
         "currency": "USD",
-        "price": 958.0,
-        "day_change_pct": 0.819818776901944,
+        "price": 957.66,
+        "day_change_pct": 0.7840372128266311,
         "shares": 42,
-        "value_krw": 61060944.35888672,
-        "pl_krw": -5542606.4496740475,
-        "pl_pct": -8.321788226584518,
+        "value_krw": 61017557.069970705,
+        "pl_krw": -5562297.70473706,
+        "pl_pct": -8.354325378988445,
         "session": "pre"
       },
       {
@@ -37,12 +37,12 @@
       }
     ],
     "summary": {
-      "total_value_krw": 209769574.35888672,
-      "day_change_krw": -11535876.464973152,
-      "day_change_pct": -5.212649043224298,
-      "total_pl_krw": -1388078.44967404,
-      "total_pl_pct": -0.657365921249606,
-      "usdkrw": 1517.5699462890625
+      "total_value_krw": 209726187.0699707,
+      "day_change_krw": -11557716.303833008,
+      "day_change_pct": -5.223026224509942,
+      "total_pl_krw": -1407769.7047370672,
+      "total_pl_pct": -0.666766126227265,
+      "usdkrw": 1517.030029296875
     },
     "watchlist": [
       {
@@ -77,8 +77,8 @@
         "name": "구글",
         "market": "US",
         "currency": "USD",
-        "price": 362.43,
-        "day_change_pct": -2.0459459459459444,
+        "price": 362.31,
+        "day_change_pct": -2.078378378378378,
         "session": "pre"
       },
       {
@@ -86,8 +86,8 @@
         "name": "마이크론",
         "market": "US",
         "currency": "USD",
-        "price": 1026.57,
-        "day_change_pct": -1.297515059154968,
+        "price": 1026.5,
+        "day_change_pct": -1.3042454077389445,
         "session": "pre"
       }
     ]
