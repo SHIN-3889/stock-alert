@@ -144,6 +144,42 @@ def get_operating_income(fin_list):
     return extract_amount(fin_list, ["OperatingIncomeLoss", "영업이익"])
 
 
+def get_revenue(fin_list):
+    return extract_amount(fin_list, ["Revenue", "Revenues", "매출액", "수익(매출액)"])
+
+def calc_excess_cash(total_cash, revenue, stock_code):
+    """잉여현금 = 총현금 - 운영필요현금 (매출의 3%)"""
+    operating_cash_needed = revenue * 0.03
+    excess_cash = max(0, total_cash - operating_cash_needed)
+
+    market_cap = 0
+    try:
+        import yfinance as yf
+        ticker = f"{stock_code}.KS"
+        t = yf.Ticker(ticker)
+        price = float(t.fast_info.last_price)
+        shares = float(t.fast_info.shares)
+        market_cap = price * shares
+        print(f"  시가총액: {market_cap:,.0f}원")
+    except Exception as e:
+        print(f"  시가총액 조회 실패: {e}")
+
+    excess_cash_ratio = (excess_cash / market_cap * 100) if market_cap > 0 else 0
+
+    print(f"  매출액: {revenue:,.0f}원")
+    print(f"  운영필요현금(매출3%): {operating_cash_needed:,.0f}원")
+    print(f"  총현금: {total_cash:,.0f}원")
+    print(f"  ▶ 잉여현금: {excess_cash:,.0f}원")
+    print(f"  ▶ 시총 대비 잉여현금: {excess_cash_ratio:.1f}%")
+
+    return {
+        "excess_cash": excess_cash,
+        "operating_cash_needed": operating_cash_needed,
+        "market_cap": market_cap,
+        "excess_cash_ratio": round(excess_cash_ratio, 1),
+    }
+
+
 # ── 발행주식수 ───────────────────────────────────────────────────────
 def get_shares_outstanding(corp_code, bsns_year, reprt_code="11011"):
     """주식총수 현황에서 발행주식수 조회"""
