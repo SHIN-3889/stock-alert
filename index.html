@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-02 11:53';
-  const DASHBOARD_VERSION = 'v14.2';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -406,12 +406,18 @@
     addingStock = false;
     addingWatch = false;
 
-    Promise.all([loadSettings(), loadLatest()])
+    var sotpUrl = 'https://raw.githubusercontent.com/SHIN-3889/stock-alert/main/sotp_data.json?' + Date.now();
+    Promise.all([
+      loadSettings(),
+      loadLatest(),
+      fetch(sotpUrl).then(function(r){ return r.ok ? r.json() : {}; }).catch(function(){ return {}; })
+    ])
       .then(function(results) {
         var sr     = results[0];
         var latest = results[1];
         var sotpData = results[2] || {};
-        window.sotpData = sotpData;  // 전역으로 저장
+        window.sotpData = sotpData;
+        console.log('DART 데이터 로드됨:', Object.keys(sotpData));
         originalSettings = sr.content;
         currentSettings  = deepCopy(sr.content);
         fileSha          = sr.sha;
