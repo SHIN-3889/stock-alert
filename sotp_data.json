@@ -1,13 +1,10 @@
 {
-  "476550": {
-    "error": "corp_code 없음: 476550"
-  },
   "006400": {
     "stock_code": "006400",
     "name": "삼성SDI",
     "bsns_year": "2025",
     "operating_income": 1722360788760,
-    "shares_outstanding": 0,
+    "shares_outstanding": 77254139,
     "net_debt": {
       "net_debt": 9079915269470,
       "total_debt": 10883909507417,
@@ -26,61 +23,16 @@
         "name": "",
         "ownership_ratio": "",
         "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
       }
     ],
-    "updated_at": "2026-06-02 11:47:42"
+    "updated_at": "2026-06-02 11:54:15"
   },
   "000660": {
     "stock_code": "000660",
     "name": "SK하이닉스",
     "bsns_year": "2025",
     "operating_income": 47206319000000,
-    "shares_outstanding": 0,
+    "shares_outstanding": 701691520,
     "net_debt": {
       "net_debt": -29603485000000,
       "total_debt": 0,
@@ -99,61 +51,16 @@
         "name": "",
         "ownership_ratio": "",
         "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
       }
     ],
-    "updated_at": "2026-06-02 11:47:54"
+    "updated_at": "2026-06-02 11:54:19"
   },
   "012330": {
     "stock_code": "012330",
     "name": "현대모비스",
     "bsns_year": "2025",
     "operating_income": 3357456000000,
-    "shares_outstanding": 0,
+    "shares_outstanding": 89176783,
     "net_debt": {
       "net_debt": -2411472000000,
       "total_debt": 2510906000000,
@@ -172,61 +79,16 @@
         "name": "",
         "ownership_ratio": "",
         "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
       }
     ],
-    "updated_at": "2026-06-02 11:48:03"
+    "updated_at": "2026-06-02 11:54:23"
   },
   "005930": {
     "stock_code": "005930",
     "name": "삼성전자",
     "bsns_year": "2025",
     "operating_income": 43601051000000,
-    "shares_outstanding": 0,
+    "shares_outstanding": 5827808935,
     "net_debt": {
       "net_debt": -100582260000000,
       "total_debt": 25239139000000,
@@ -250,48 +112,8 @@
         "name": "",
         "ownership_ratio": "",
         "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
-      },
-      {
-        "name": "",
-        "ownership_ratio": "",
-        "book_value": "0"
       }
     ],
-    "updated_at": "2026-06-02 11:48:15"
+    "updated_at": "2026-06-02 11:54:28"
   }
 }
