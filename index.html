@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-02 16:42';
-  const DASHBOARD_VERSION = 'v19.1';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -822,6 +822,7 @@
         '⚠️ 반드시 (적정 주주가치 전체)를 주식수로 나눌 것. 결과가 현재가 ' + priceStr + '와 같은 자릿수인지 검증.',
         '',
         '[NTM P/E 방식]',
+        '⚠️ NTM P/E 계산 시 반드시 결과값이 현재가 ' + priceStr + '의 0.3배~5배 범위 안에 있어야 합니다. 이 범위를 벗어나면 계산 오류이므로 다시 계산하세요.',
         operatingProfit
           ? '입력된 영업이익 ' + operatingProfit + '에서 세율(약 22%)·비영업손익을 고려해 순이익과 EPS를 직접 계산하세요. P/E 배수는' + (peRatio ? ' 사용자 입력값 ' + peRatio + '배를 사용하세요.' : ' 반드시 해당 종목 산업의 글로벌 동종업계 평균 P/E를 조사해 사용하세요. 자의적 고배수 금지, 성장 프리미엄 최대 20% 이내만 가산 가능.') + ' EPS × P/E = NTM P/E 적정주가.'
           : '향후 12개월 예상 EPS(원)는 최신 애널리스트 컨센서스를 사용하세요. P/E 배수는' + (peRatio ? ' 사용자 입력값 ' + peRatio + '배를 사용하세요.' : ' 반드시 해당 종목 산업의 글로벌 동종업계 평균 P/E를 조사해 사용하세요. 자의적 고배수 금지, 성장 프리미엄 최대 20% 이내만 가산 가능.'),
@@ -900,7 +901,15 @@
         nums = nums.slice(1, nums.length - 1);
       }
       var avg = nums.reduce(function(a,b){ return a+b; }, 0) / nums.length;
-      if (isCurrency === 'USD') return '$' + avg.toLocaleString('en', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+      // 현실적 범위 검증 (이상값 필터)
+      // KRW: 최소 1원, 최대 50,000,000원 (5000만원)
+      // USD: 최소 $0.01, 최대 $100,000
+      if (isCurrency === 'USD') {
+        if (avg > 100000 || avg < 0.01) return '-';
+        return '$' + avg.toLocaleString('en', {minimumFractionDigits:2, maximumFractionDigits:2});
+      }
+      if (avg > 50000000 || avg < 1) return '-';
       return Math.round(avg).toLocaleString() + '원';
     }
 
