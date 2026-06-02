@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-02 09:54';
-  const DASHBOARD_VERSION = 'v8.0';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -645,17 +645,17 @@
     var resultDiv = document.getElementById('eval-' + code);
     if (resultDiv) {
       resultDiv.style.display = 'block';
-      resultDiv.innerHTML = '<div class="eval-loading">📡 컨센서스 5회 조회 중... (10~20초)</div>';
+      resultDiv.innerHTML = '<div class="eval-loading">📡 1단계: 컨센서스 5회 조회 중... (10~20초)</div>';
     }
 
-    // 1단계: 컨센서스 5회 조회와 AI 분석을 동시에 시작
-    var consensusPromise = fetchConsensus(code, name, market, key).catch(function(){ return null; });
+    // 1단계: 컨센서스 5회 조회 완료까지 대기
+    var consensus = null;
+    try { consensus = await fetchConsensus(code, name, market, key); } catch(e) {}
 
-    // 2단계: 백지 상태로 AI 종목 평가 5회 시작
+    // 2단계: AI 분석 5회 시작 (백지 상태)
     await evaluateStock(code, name, market, price, null, null);
 
-    // 3단계: 분석 완료 후(입력칸 생성됨) 컨센서스 결과를 입력칸에 표시
-    var consensus = await consensusPromise;
+    // 3단계: 분석 완료 후 입력칸(이제 존재)에 컨센서스 값 표시
     if (consensus) {
       var opEl = document.getElementById('op-input-' + code);
       var peEl = document.getElementById('pe-input-' + code);
@@ -833,7 +833,7 @@
     var saveChk = document.getElementById('save-eval-' + code);
     if (saveChk) { saveChk.checked = false; }
     clearEvalResult(code);
-    resultDiv.innerHTML = '<div class="eval-loading">🤖 Gemini 5회 병렬 분석 중... (30~60초 소요)</div>';
+    resultDiv.innerHTML = '<div class="eval-loading">🤖 2단계: Gemini 5회 백지 분석 중... (30~60초 소요)</div>';
     resultDiv.style.display = 'block';
 
       var promises = [];
