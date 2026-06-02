@@ -31,6 +31,10 @@ def load_kr_holdings():
         result = {}
         for code, info in {**s.get("holdings", {}), **s.get("watchlist", {})}.items():
             if info.get("market") == "KR":
+                # ETF 제외 (종목코드 6자리 숫자 중 앞 3자리가 4xx이면 ETF)
+                if code.startswith(('4', '2')):
+                    print(f"  ETF/리츠 제외: {info['name']} ({code})")
+                    continue
                 result[code] = info
         return result
     except Exception as e:
@@ -142,6 +146,33 @@ def get_operating_income(fin_list):
 
 # ── 발행주식수 ───────────────────────────────────────────────────────
 def get_shares_outstanding(corp_code, bsns_year):
+    """주식총수 현황에서 발행주식수 조회"""
+    try:
+        # 방법1: 주식총수 현황 API
+        url = f"{DART_BASE}/stockTotqySttus.json"
+        params = {
+            "crtfc_key":  DART_KEY,
+            "corp_code":  corp_code,
+            "bsns_year":  bsns_year,
+            "reprt_code": "11011",
+        }
+        res  = requests.get(url, params=params, timeout=10)
+        data = res.json()
+        if data.get("status") == "000":
+            for item in data.get("list", []):
+                se = item.get("se", "")
+                if "보통주" in se and "합계" not in se:
+                    val = item.get("distb_stock_co", "0") or "0"
+                    val = val.replace(",", "").strip()
+                    if val and val != "-":
+                        shares = int(val)
+                        if shares > 0:
+                            print(f"  발행주식수(보통주): {shares:,}주")
+                            return shares
+    except Exception as e:
+        print(f"  발행주식수 조회 실패: {e}")
+
+    # 방법2: 재무제표에서 추출
     try:
         url = f"{DART_BASE}/fnlttCmpnyIndx.json"
         params = {
@@ -154,15 +185,18 @@ def get_shares_outstanding(corp_code, bsns_year):
         data = res.json()
         if data.get("status") == "000":
             for item in data.get("list", []):
-                if "발행주식수" in item.get("idx_nm", ""):
-                    return int(item.get("idx_val", "0").replace(",", ""))
+                if "주식수" in item.get("idx_nm", ""):
+                    val = item.get("idx_val", "0").replace(",", "")
+                    if val and val.isdigit():
+                        return int(val)
     except Exception as e:
-        print(f"  발행주식수 조회 실패: {e}")
+        print(f"  발행주식수 방법2 실패: {e}")
     return 0
 
 
 # ── 자회사 정보 ──────────────────────────────────────────────────────
 def get_subsidiaries(corp_code, bsns_year):
+    """종속기업 현황 조회"""
     try:
         url = f"{DART_BASE}/hyslrSttus.json"
         params = {
@@ -173,10 +207,28 @@ def get_subsidiaries(corp_code, bsns_year):
         }
         res  = requests.get(url, params=params, timeout=10)
         data = res.json()
-        if data.get("status") == "000":
-            return data.get("list", [])
+        if data.get("status") == "000" and data.get("list"):
+            subs = [s for s in data.get("list", []) if s.get("sub_corp_nm")]
+            if subs:
+                return subs
     except Exception as e:
-        print(f"  자회사 정보 조회 실패: {e}")
+        print(f"  자회사 API 실패: {e}")
+
+    # 대안: 관계기업 현황
+    try:
+        url2 = f"{DART_BASE}/irdsSttus.json"
+        params2 = {
+            "crtfc_key":  DART_KEY,
+            "corp_code":  corp_code,
+            "bsns_year":  bsns_year,
+            "reprt_code": "11011",
+        }
+        res2  = requests.get(url2, params=params2, timeout=10)
+        data2 = res2.json()
+        if data2.get("status") == "000" and data2.get("list"):
+            return data2.get("list", [])
+    except Exception as e:
+        print(f"  관계기업 API 실패: {e}")
     return []
 
 
