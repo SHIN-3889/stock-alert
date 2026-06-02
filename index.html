@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-02 17:34';
-  const DASHBOARD_VERSION = 'v22.0';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -847,7 +847,7 @@
         '괴리율 = (2차 적정주가 - 현재가) ÷ 현재가 × 100',
         '',
         '⚠️ 출력 규칙: 아래 JSON 하나만 반환하세요. 마크다운(**, \n, ```) 절대 사용 금지. 모든 값은 한 줄 문자열.',
-        '{"breakdown":"SOTP 계산: (본업+자회사+기술-순부채)÷주식수 실제 숫자 명시(한 줄)","method1_label":"SOTP 적정주가","method1_price":"SOTP 값","method2_label":"NTM P/E 적정주가","method2_price":"NTM P/E 값","target_1":"1차적정주가(보수적)","target_2":"2차적정주가(기본)","gap_rate":"괴리율(+ 또는 -)","sell_point":"매도 지점","stop_loss":"손절 라인","summary":"핵심 투자의견 한 문단"}',
+        '{"segments":"부문1: 이름|영업이익|D&A|EBITDA|배수|부문가치 / 부문2: 이름|영업이익|D&A|EBITDA|배수|부문가치","breakdown":"(본업합계+자회사+미래기술-순부채)÷주식수 실제숫자","method1_label":"SOTP 적정주가","method1_price":"SOTP 값","method2_label":"NTM P/E 적정주가","method2_price":"NTM P/E 값","target_1":"1차적정주가(보수적)","target_2":"2차적정주가(기본)","gap_rate":"괴리율(+ 또는 -)","sell_point":"매도 지점","stop_loss":"손절 라인","summary":"핵심 투자의견 한 문단"}',
         '모든 내용은 한국어로, 가격은 원 단위 포함하여 작성하세요.'
       ];
     }
@@ -887,7 +887,7 @@
           return m ? m[1] : null;
         }
         return {
-          breakdown: extractField('breakdown'), method1_label: extractField('method1_label'),
+          segments: extractField('segments'), breakdown: extractField('breakdown'), method1_label: extractField('method1_label'),
           method1_price: extractField('method1_price'), method2_label: extractField('method2_label'),
           method2_price: extractField('method2_price'), target_1: extractField('target_1'),
           target_2: extractField('target_2'), gap_rate: extractField('gap_rate'),
@@ -977,6 +977,7 @@
         gap_rate:      avgGapRate(validResults.map(function(r){ return r.gap_rate; })),
         sell_point:    avgPriceStr(validResults.map(function(r){ return r.sell_point; }), isCur),
         stop_loss:     avgPriceStr(validResults.map(function(r){ return r.stop_loss; }), isCur),
+        segments:      validResults[0].segments || '',
         breakdown:     validResults[0].breakdown || '',
         summary:       validResults[Math.floor(validResults.length/2)].summary || '',
         // 요약용 실제 평균값 (summary 텍스트 재구성용)
@@ -989,6 +990,7 @@
       resultDiv.innerHTML =
         '<div class="eval-result">' +
         '<div class="eval-title">🤖 AI 종목 평가 — ' + name + '</div>' +
+        (parsed.segments ? '<div style="font-size:11px;color:#444;background:#f8f4ff;padding:8px;border-radius:6px;margin-bottom:6px;line-height:1.8;">🏭 부문별 본업가치<br>' + parsed.segments.split(' / ').join('<br>') + '</div>' : '') +
         (parsed.breakdown ? '<div style="font-size:11px;color:#666;background:#fff;padding:8px;border-radius:6px;margin-bottom:8px;line-height:1.5;">📐 계산 근거: ' + parsed.breakdown + '</div>' : '') +
         '<div class="eval-row"><span class="eval-label">' + (parsed.method1_label || '방법1') + '</span><span class="eval-value">' + parsed.method1_price + '</span></div>' +
         '<div class="eval-row"><span class="eval-label">' + (parsed.method2_label || '방법2') + '</span><span class="eval-value">' + parsed.method2_price + '</span></div>' +
