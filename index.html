@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-03 05:58';
-  const DASHBOARD_VERSION = 'v25.0';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -1005,7 +1005,6 @@
         '<div class="eval-row"><span class="eval-label">' + (parsed.method1_label || '방법1') + '</span><span class="eval-value">' + parsed.method1_price + '</span></div>' +
         '<div class="eval-row"><span class="eval-label">' + (parsed.method2_label || '방법2') + '</span><span class="eval-value">' + parsed.method2_price + '</span></div>' +
         (parsed.method3_label && parsed.method3_price && parsed.method3_price !== '-' ? '<div class="eval-row"><span class="eval-label">' + parsed.method3_label + '</span><span class="eval-value">' + parsed.method3_price + '</span></div>' : '') +
-        (parsed.method4_label && parsed.method4_price && parsed.method4_price !== '-' ? '<div class="eval-row" style="background:#f0f7ff;"><span class="eval-label">' + parsed.method4_label + '</span><span class="eval-value">' + parsed.method4_price + '</span></div>' : '') +
         (parsed.method4_label && parsed.method4_price && parsed.method4_price !== '-' ? '<div class="eval-row" style="background:#f0f7ff;"><span class="eval-label">' + parsed.method4_label + '</span><span class="eval-value">' + parsed.method4_price + '</span></div>' : '') +
         '<div class="eval-row"><span class="eval-label">1차 적정주가 (보수적)</span><span class="eval-value" style="color:#0066cc;">' + parsed.target_1 + '</span></div>' +
         '<div class="eval-row"><span class="eval-label">2차 적정주가 (기본)</span><span class="eval-value" style="color:#1967d2;">' + parsed.target_2 + '</span></div>' +
