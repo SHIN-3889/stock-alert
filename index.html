@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-04 08:27';
-  const DASHBOARD_VERSION = 'v37.0';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -785,7 +785,7 @@
         '계산한 적정주가가 현재가 ' + priceStr + '와 지나치게 동떨어지면(예: 1/10 수준) 자릿수나 EPS 단위를 잘못 본 것이니 다시 점검하세요. 적정주가는 보통 현재가와 같은 자릿수입니다.',
         '',
         '⚠️ 출력 규칙: 아래 JSON 하나만 반환하세요. 마크다운(**, \n, ```) 절대 사용 금지. 모든 값은 한 줄 문자열.',
-        '{"breakdown":"실제 수치로 계산식 명시(예: Forward EPS $35 × 적정P/E 32배 = $1,120)","method1_label":"적정가 (EPS×적정P/E)","method1_price":"적정가 값($)","method2_label":"낙관가 (EPS×Peak P/E)","method2_price":"낙관가 값($)","method3_label":"애널리스트 목표주가 (전문가 컨센서스)","method3_price":"최신 월가 목표주가 평균($, 미래기술 기대 반영)","target_1":"가장 낮은값","target_2":"가장 높은값","gap_rate":"현재가 대비 애널리스트 목표주가 괴리율(+ 또는 -)","sell_point":"차트 기술적 분석 매도 지점","stop_loss":"보수적 바닥선(DCF 하단)","summary":"핵심 투자의견: 적정가/낙관가/전문가목표 사이 현재가 위치 해석"}',
+        '{"breakdown":"실제 수치로 계산식 명시(예: Forward EPS $35 × 적정P/E 32배 = $1,120)","method1_label":"적정가 (EPS×적정P/E)","method1_price":"적정가 값($)","method2_label":"낙관가 (EPS×Peak P/E)","method2_price":"낙관가 값($)","method3_label":"애널리스트 목표주가 (전문가 컨센서스)","method3_price":"최신 월가 목표주가 평균($, 미래기술 기대 반영)","target_detail":"이 목표주가의 출처 기관들과 대략적 시점(예: 2025년 하반기 Morgan Stanley/Goldman 등 평균). 학습 데이터 기준이라 최신이 아닐 수 있다는 점 명시","target_1":"가장 낮은값","target_2":"가장 높은값","gap_rate":"현재가 대비 애널리스트 목표주가 괴리율(+ 또는 -)","sell_point":"차트 기술적 분석 매도 지점","stop_loss":"보수적 바닥선(DCF 하단)","summary":"핵심 투자의견: 적정가/낙관가/전문가목표 사이 현재가 위치 해석"}',
         '모든 내용은 한국어로, 가격은 $ 단위 포함하여 작성하세요.'
       ];
     } else {
@@ -875,7 +875,7 @@
         '괴리율 = (2차 적정주가 - 현재가) ÷ 현재가 × 100',
         '',
         '⚠️ 출력 규칙: 아래 JSON 하나만 반환하세요. 마크다운(**, \n, ```) 절대 사용 금지. 모든 값은 한 줄 문자열.',
-        '{"segments":"부문1: 이름|현재EBITDA|정상화EBITDA|배수|보수적가치|정상화가치 / 부문2: 동일형식","breakdown":"SOTP보수적=(본업A+자회사+미래기술-순부채)÷주식수=P원, SOTP정상화=(본업B+자회사+미래기술-순부채)÷주식수=Q원","method1_label":"SOTP 적정주가 (보수적 바닥)","method1_price":"SOTP보수적 값","method2_label":"SOTP 적정주가 (정상화/포워드)","method2_price":"SOTP정상화 값","method3_label":"NTM P/E 적정주가 (시장기대)","method3_price":"NTM PE 값","method4_label":"애널리스트 목표주가 (전문가 컨센서스)","method4_price":"최신 증권사 목표주가 평균값(전고체 등 장기 성장기대 반영된 값)","target_1":"3가지 중 가장 낮은값(보수적)","target_2":"3가지 중 가장 높은값(낙관적)","gap_rate":"현재가 대비 정상화SOTP 괴리율(+ 또는 -)","sell_point":"매도 지점","stop_loss":"손절 라인","summary":"핵심 투자의견: 보수적바닥/정상화/시장기대 3개 값 사이에서 현재가 위치 해석 포함"}',
+        '{"segments":"부문1: 이름|현재EBITDA|정상화EBITDA|배수|보수적가치|정상화가치 / 부문2: 동일형식","breakdown":"SOTP보수적=(본업A+자회사+미래기술-순부채)÷주식수=P원, SOTP정상화=(본업B+자회사+미래기술-순부채)÷주식수=Q원","method1_label":"SOTP 적정주가 (보수적 바닥)","method1_price":"SOTP보수적 값","method2_label":"SOTP 적정주가 (정상화/포워드)","method2_price":"SOTP정상화 값","method3_label":"NTM P/E 적정주가 (시장기대)","method3_price":"NTM PE 값","method4_label":"애널리스트 목표주가 (전문가 컨센서스)","method4_price":"최신 증권사 목표주가 평균값(전고체 등 장기 성장기대 반영된 값)","target_detail":"이 목표주가의 출처 증권사들과 대략적 시점(예: 2025년 하반기 삼성증권/미래에셋 등 평균). 학습 데이터 기준이라 최신이 아닐 수 있다는 점 명시","target_1":"3가지 중 가장 낮은값(보수적)","target_2":"3가지 중 가장 높은값(낙관적)","gap_rate":"현재가 대비 정상화SOTP 괴리율(+ 또는 -)","sell_point":"매도 지점","stop_loss":"손절 라인","summary":"핵심 투자의견: 보수적바닥/정상화/시장기대 3개 값 사이에서 현재가 위치 해석 포함"}',
         '모든 내용은 한국어로, 가격은 원 단위 포함하여 작성하세요.'
       ];
     }
@@ -925,6 +925,7 @@
           method3_price: extractField('method3_price'),
           method4_label: extractField('method4_label'),
           method4_price: extractField('method4_price'),
+          target_detail: extractField('target_detail'),
           target_1:      extractField('target_1'),
           target_2:      extractField('target_2'),
           gap_rate:      extractField('gap_rate'),
@@ -1015,6 +1016,7 @@
         method2_price: avgPriceStr(validResults.map(function(r){ return r.method2_price; }), isCur),
         method3_price: avgPriceStr(validResults.map(function(r){ return r.method3_price; }), isCur),
         method4_price: avgPriceStr(validResults.map(function(r){ return r.method4_price; }), isCur),
+        target_detail: validResults[0].target_detail || '',
         target_1:      avgPriceStr(validResults.map(function(r){ return r.target_1; }), isCur),
         target_2:      avgPriceStr(validResults.map(function(r){ return r.target_2; }), isCur),
         gap_rate:      avgGapRate(validResults.map(function(r){ return r.gap_rate; })),
@@ -1083,8 +1085,8 @@
     }; return '<div style="font-size:11px;color:#666;background:#fff;padding:8px;border-radius:6px;margin-bottom:8px;line-height:1.5;">📐 계산 근거: ' + fmtBd(parsed.breakdown) + '</div>'; })() : '') +
         '<div class="eval-row"><span class="eval-label">' + (parsed.method1_label || '방법1') + '</span><span class="eval-value">' + parsed.method1_price + '</span></div>' +
         '<div class="eval-row"><span class="eval-label">' + (parsed.method2_label || '방법2') + '</span><span class="eval-value">' + parsed.method2_price + '</span></div>' +
-        (parsed.method3_label && parsed.method3_price && parsed.method3_price !== '-' ? '<div class="eval-row"><span class="eval-label">' + parsed.method3_label + '</span><span class="eval-value">' + parsed.method3_price + '</span></div>' : '') +
-        (parsed.method4_label && parsed.method4_price && parsed.method4_price !== '-' ? '<div class="eval-row" style="background:#f0f7ff;"><span class="eval-label">' + parsed.method4_label + '</span><span class="eval-value">' + parsed.method4_price + '</span></div>' : '') +
+        (parsed.method3_label && parsed.method3_price && parsed.method3_price !== '-' ? '<div class="eval-row"><span class="eval-label">' + parsed.method3_label + '</span><span class="eval-value">' + parsed.method3_price + '</span></div>' + (market === 'US' && parsed.target_detail ? '<div style="font-size:10px;color:#888;padding:2px 4px 6px;line-height:1.4;">ℹ️ ' + parsed.target_detail + '</div>' : '') : '') +
+        (parsed.method4_label && parsed.method4_price && parsed.method4_price !== '-' ? '<div class="eval-row" style="background:#f0f7ff;"><span class="eval-label">' + parsed.method4_label + '</span><span class="eval-value">' + parsed.method4_price + '</span></div>' + (parsed.target_detail ? '<div style="font-size:10px;color:#888;padding:2px 4px 6px;line-height:1.4;">ℹ️ ' + parsed.target_detail + '</div>' : '') : '') +
         '<div class="eval-row"><span class="eval-label">1차 적정주가 (보수적)</span><span class="eval-value" style="color:#0066cc;">' + parsed.target_1 + '</span></div>' +
         '<div class="eval-row"><span class="eval-label">2차 적정주가 (기본)</span><span class="eval-value" style="color:#1967d2;">' + parsed.target_2 + '</span></div>' +
         '<div class="eval-row"><span class="eval-label">현재가 대비 괴리율</span><span class="eval-value" style="color:' + gapColor + ';">' + parsed.gap_rate + '</span></div>' +
