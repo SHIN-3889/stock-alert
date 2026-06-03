@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-03 19:45:52",
+  "updated_at": "2026-06-03 20:01:11",
   "portfolio": {
     "rows": [
       {
@@ -11,17 +11,17 @@
         "value_krw": 3626630.0,
         "pl_krw": 27162.0,
         "pl_pct": 0.7546115148127445,
-        "session": "nxt"
+        "session": "market_closed"
       },
       {
         "name": "GE버노바",
         "currency": "USD",
-        "price": 964.0,
-        "day_change_pct": -0.4703293172491696,
+        "price": 969.67,
+        "day_change_pct": 0.11507860056327143,
         "shares": 42,
-        "value_krw": 61907773.1015625,
-        "pl_krw": -5199180.471847855,
-        "pl_pct": -7.747603184162291,
+        "value_krw": 62251943.28558105,
+        "pl_krw": -4833505.454031885,
+        "pl_pct": -7.204998319073291,
         "session": "pre"
       },
       {
@@ -33,16 +33,16 @@
         "value_krw": 145082000.0,
         "pl_krw": 4127366.0,
         "pl_pct": 2.928152046423674,
-        "session": "nxt"
+        "session": "market_closed"
       }
     ],
     "summary": {
-      "total_value_krw": 210616403.1015625,
-      "day_change_krw": -12324941.337745696,
-      "day_change_pct": -5.528333638043948,
-      "total_pl_krw": -1044652.471847862,
-      "total_pl_pct": -0.49354968443193153,
-      "usdkrw": 1529.0400390625
+      "total_value_krw": 210960573.28558105,
+      "day_change_krw": -11960838.680854201,
+      "day_change_pct": -5.3654956584677995,
+      "total_pl_krw": -678977.4540318847,
+      "total_pl_pct": -0.32081784886571263,
+      "usdkrw": 1528.550048828125
     },
     "watchlist": [
       {
@@ -52,7 +52,7 @@
         "currency": "KRW",
         "price": 2360000.0,
         "day_change_pct": -0.12695725772323319,
-        "session": "nxt"
+        "session": "market_closed"
       },
       {
         "code": "012330",
@@ -61,7 +61,7 @@
         "currency": "KRW",
         "price": 759000.0,
         "day_change_pct": -0.2628120893561104,
-        "session": "nxt"
+        "session": "market_closed"
       },
       {
         "code": "005930",
@@ -70,15 +70,15 @@
         "currency": "KRW",
         "price": 360500.0,
         "day_change_pct": 3.29512893982808,
-        "session": "nxt"
+        "session": "market_closed"
       },
       {
         "code": "GOOG",
         "name": "구글",
         "market": "US",
         "currency": "USD",
-        "price": 357.05,
-        "day_change_pct": -0.4100189668637651,
+        "price": 357.0,
+        "day_change_pct": -0.42396519022648166,
         "session": "pre"
       },
       {
@@ -86,8 +86,8 @@
         "name": "마이크론",
         "market": "US",
         "currency": "USD",
-        "price": 1084.02,
-        "day_change_pct": 2.5854074003974574,
+        "price": 1083.29,
+        "day_change_pct": 2.516324406170144,
         "session": "pre"
       }
     ]
