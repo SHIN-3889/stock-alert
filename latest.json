@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-03 12:19:40",
+  "updated_at": "2026-06-03 12:31:00",
   "portfolio": {
     "rows": [
       {
@@ -19,8 +19,8 @@
         "price": 969.6699829101562,
         "day_change_pct": 2.0479665453064286,
         "shares": 42,
-        "value_krw": 61833683.94256756,
-        "pl_krw": -4801031.19539021,
+        "value_krw": 61829612.322929844,
+        "pl_krw": -4800715.057459392,
         "pl_pct": -7.204999954528731,
         "session": "market_closed"
       },
@@ -37,38 +37,58 @@
       }
     ],
     "summary": {
-      "total_value_krw": 210542313.94256756,
-      "day_change_krw": -10791475.456236154,
-      "day_change_pct": -4.875656575323823,
-      "total_pl_krw": -646503.1953901947,
-      "total_pl_pct": -0.3061256766109308,
-      "usdkrw": 1518.280029296875
+      "total_value_krw": 210538242.32292986,
+      "day_change_krw": -10791557.168210268,
+      "day_change_pct": -4.875781387332913,
+      "total_pl_krw": -646187.0574593842,
+      "total_pl_pct": -0.30598233939655667,
+      "usdkrw": 1518.1800537109375
     },
     "watchlist": [
       {
         "code": "000660",
         "name": "SK하이닉스",
-        "error": "000660.KS 시세 조회 실패"
+        "market": "KR",
+        "currency": "KRW",
+        "price": 2360000.0,
+        "day_change_pct": -0.12695725772323319,
+        "session": "open"
       },
       {
         "code": "012330",
         "name": "현대모비스",
-        "error": "argument of type 'NoneType' is not iterable"
+        "market": "KR",
+        "currency": "KRW",
+        "price": 759000.0,
+        "day_change_pct": -0.2628120893561104,
+        "session": "open"
       },
       {
         "code": "005930",
         "name": "삼성전자",
-        "error": "005930.KS 시세 조회 실패"
+        "market": "KR",
+        "currency": "KRW",
+        "price": 360500.0,
+        "day_change_pct": 3.29512893982808,
+        "session": "open"
       },
       {
         "code": "GOOG",
         "name": "구글",
-        "error": "GOOG 시세 조회 실패"
+        "market": "US",
+        "currency": "USD",
+        "price": 358.3900146484375,
+        "day_change_pct": -3.1378338788006754,
+        "session": "market_closed"
       },
       {
         "code": "MU",
         "name": "마이크론",
-        "error": "MU 시세 조회 실패"
+        "market": "US",
+        "currency": "USD",
+        "price": 1064.0999755859375,
+        "day_change_pct": 2.310910912869623,
+        "session": "market_closed"
       }
     ]
   },
