@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-03 15:15:44",
+  "updated_at": "2026-06-03 15:31:02",
   "portfolio": {
     "rows": [
       {
@@ -11,7 +11,7 @@
         "value_krw": 3626630.0,
         "pl_krw": 27162.0,
         "pl_pct": 0.7546115148127445,
-        "session": "open"
+        "session": "nxt"
       },
       {
         "name": "GE버노바",
@@ -19,8 +19,8 @@
         "price": 969.6699829101562,
         "day_change_pct": 2.0479665453064286,
         "shares": 42,
-        "value_krw": 62049529.49789183,
-        "pl_krw": -4817790.365771525,
+        "value_krw": 61993327.226824254,
+        "pl_krw": -4813426.581512809,
         "pl_pct": -7.204999954528731,
         "session": "market_closed"
       },
@@ -33,16 +33,16 @@
         "value_krw": 145082000.0,
         "pl_krw": 4127366.0,
         "pl_pct": 2.928152046423674,
-        "session": "open"
+        "session": "nxt"
       }
     ],
     "summary": {
-      "total_value_krw": 210758159.49789184,
-      "day_change_krw": -10787143.723902583,
-      "day_change_pct": -4.869046451011109,
-      "total_pl_krw": -663262.3657715023,
-      "total_pl_pct": -0.31371578145908596,
-      "usdkrw": 1523.5799560546875
+      "total_value_krw": 210701957.22682425,
+      "day_change_krw": -10788271.628502905,
+      "day_change_pct": -4.870766391933968,
+      "total_pl_krw": -658898.5815128088,
+      "total_pl_pct": -0.3117410643484056,
+      "usdkrw": 1522.199951171875
     },
     "watchlist": [
       {
@@ -52,7 +52,7 @@
         "currency": "KRW",
         "price": 2360000.0,
         "day_change_pct": -0.12695725772323319,
-        "session": "open"
+        "session": "nxt"
       },
       {
         "code": "012330",
@@ -61,7 +61,7 @@
         "currency": "KRW",
         "price": 759000.0,
         "day_change_pct": -0.2628120893561104,
-        "session": "open"
+        "session": "nxt"
       },
       {
         "code": "005930",
@@ -70,7 +70,7 @@
         "currency": "KRW",
         "price": 360500.0,
         "day_change_pct": 3.29512893982808,
-        "session": "open"
+        "session": "nxt"
       },
       {
         "code": "GOOG",
