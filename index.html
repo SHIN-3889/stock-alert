@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-03 14:57';
-  const DASHBOARD_VERSION = 'v35.0';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -608,6 +608,7 @@
         body: JSON.stringify({ contents:[{parts:[{text:prompt}]}], generationConfig:{temperature:0.3, maxOutputTokens:2048} }) }
     );
     var data = await res.json();
+    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) return null;
     var raw = data.candidates[0].content.parts[0].text;
     var s = raw.indexOf('{'), e = raw.lastIndexOf('}');
     if (s === -1 || e === -1) return null;
@@ -620,7 +621,18 @@
     for (var i = 0; i < 5; i++) promises.push(fetchConsensusOnce(code, name, market, key));
     var results = await Promise.allSettled(promises);
     var valid = results.filter(function(r){ return r.status==='fulfilled' && r.value; }).map(function(r){ return r.value; });
-    if (valid.length === 0) return null;
+    if (valid.length === 0) {
+      // 유효한 응답 없으면 DART 데이터로 대체
+      var dart = window.sotpData && window.sotpData[code];
+      if (dart && dart.operating_income) {
+        return {
+          op_income: 'NOT_FOUND',
+          pe_avg: '',
+          source: 'DART 대체'
+        };
+      }
+      return null;
+    }
 
     // 영업이익: 숫자 추출 후 극단값 제거 평균, 원래 표현은 중간값 사용
     var opNums = valid.map(function(v){ return parseFloat(String(v.op_income||'').replace(/[^0-9.]/g,'')); }).filter(function(n){ return !isNaN(n) && n>0; });
@@ -691,11 +703,9 @@
 
     // 3단계: 분석 완료 후 입력칸에 컨센서스 값 표시 (DOM 렌더링 대기)
     await new Promise(function(resolve){ setTimeout(resolve, 100); });
-    console.log('컨센서스 결과:', JSON.stringify(consensus));
     if (consensus) {
       var opEl = document.getElementById('op-input-' + code);
       var peEl = document.getElementById('pe-input-' + code);
-      console.log('입력칸 존재:', opEl ? 'op있음' : 'op없음', peEl ? 'pe있음' : 'pe없음');
       if (opEl && consensus.op_income) {
         if (consensus.op_income === 'NOT_FOUND') {
           // DART 실적으로 대체
