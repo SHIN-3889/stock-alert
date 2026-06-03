@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-03 13:02';
-  const DASHBOARD_VERSION = 'v33.0';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -689,7 +689,8 @@
     // 2단계: AI 분석 5회 시작 (백지 상태)
     await evaluateStock(code, name, market, price, null, null);
 
-    // 3단계: 분석 완료 후 입력칸(이제 존재)에 컨센서스 값 표시
+    // 3단계: 분석 완료 후 입력칸에 컨센서스 값 표시 (DOM 렌더링 대기)
+    await new Promise(function(resolve){ setTimeout(resolve, 100); });
     if (consensus) {
       var opEl = document.getElementById('op-input-' + code);
       var peEl = document.getElementById('pe-input-' + code);
