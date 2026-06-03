@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-03 09:37';
-  const DASHBOARD_VERSION = 'v27.0';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -874,38 +874,43 @@
       );
       var data = await res.json();
       if (!res.ok) throw new Error(data.error ? data.error.message : 'API 오류');
+      if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) return null;
       var rawText = data.candidates[0].content.parts[0].text.trim();
-      var text = rawText
-        .replace(/```json/g, '').replace(/```/g, '')
-        .replace(/[*]{2}/g, '')
-        .replace(/[\r\n]+/g, ' ')
-        .trim();
-      var jsonStart = text.indexOf('{');
-      var jsonEnd   = text.lastIndexOf('}');
-      if (jsonStart === -1 || jsonEnd === -1) {
-        console.log('DEBUG: JSON 없음, raw 앞부분:', rawText.slice(0, 100));
-        return null;
-      }
-      text = text.slice(jsonStart, jsonEnd + 1);
+
+      // { } 사이 JSON만 직접 추출 (특수문자/마크다운 무관)
+      var s = rawText.indexOf('{');
+      var e = rawText.lastIndexOf('}');
+      if (s === -1 || e === -1) return null;
+      var jsonStr = rawText.slice(s, e + 1);
+
       try {
-        var parsed = JSON.parse(text);
-        if (!parsed.method1_price) console.log('DEBUG: method1_price 없음, 키:', Object.keys(parsed));
-        return parsed;
-      } catch(e) {
-        console.log('DEBUG: 파싱실패:', e.message, '텍스트 앞부분:', text.slice(0,100));
+        return JSON.parse(jsonStr);
+      } catch(err) {
+        // extractField로 폴백
         function extractField(k) {
           var rx = new RegExp('"' + k + '"\s*:\s*"([^"]*)"');
-          var m = text.match(rx);
-          return m ? m[1] : null;
+          var m2 = jsonStr.match(rx);
+          return m2 ? m2[1] : null;
         }
-        return {
-          segments: extractField('segments'), breakdown: extractField('breakdown'), method1_label: extractField('method1_label'),
-          method1_price: extractField('method1_price'), method2_label: extractField('method2_label'), method3_label: extractField('method3_label'), method3_price: extractField('method3_price'), method4_label: extractField('method4_label'), method4_price: extractField('method4_price'), method4_label: extractField('method4_label'), method4_price: extractField('method4_price'),
-          method2_price: extractField('method2_price'), target_1: extractField('target_1'),
-          target_2: extractField('target_2'), gap_rate: extractField('gap_rate'),
-          sell_point: extractField('sell_point'), stop_loss: extractField('stop_loss'),
-          summary: extractField('summary'),
+        var r = {
+          segments:      extractField('segments'),
+          breakdown:     extractField('breakdown'),
+          method1_label: extractField('method1_label'),
+          method1_price: extractField('method1_price'),
+          method2_label: extractField('method2_label'),
+          method2_price: extractField('method2_price'),
+          method3_label: extractField('method3_label'),
+          method3_price: extractField('method3_price'),
+          method4_label: extractField('method4_label'),
+          method4_price: extractField('method4_price'),
+          target_1:      extractField('target_1'),
+          target_2:      extractField('target_2'),
+          gap_rate:      extractField('gap_rate'),
+          sell_point:    extractField('sell_point'),
+          stop_loss:     extractField('stop_loss'),
+          summary:       extractField('summary'),
         };
+        return r.method1_price ? r : null;
       }
     }
 
