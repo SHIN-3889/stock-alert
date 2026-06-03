@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-03 14:11';
-  const DASHBOARD_VERSION = 'v34.0';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -691,9 +691,11 @@
 
     // 3단계: 분석 완료 후 입력칸에 컨센서스 값 표시 (DOM 렌더링 대기)
     await new Promise(function(resolve){ setTimeout(resolve, 100); });
+    console.log('컨센서스 결과:', JSON.stringify(consensus));
     if (consensus) {
       var opEl = document.getElementById('op-input-' + code);
       var peEl = document.getElementById('pe-input-' + code);
+      console.log('입력칸 존재:', opEl ? 'op있음' : 'op없음', peEl ? 'pe있음' : 'pe없음');
       if (opEl && consensus.op_income) {
         if (consensus.op_income === 'NOT_FOUND') {
           // DART 실적으로 대체
@@ -1013,40 +1015,50 @@
         '<div class="eval-result">' +
         '<div class="eval-title">🤖 AI 종목 평가 — ' + name + '</div>' +
         (parsed.segments ? (function(){ var fmtSeg = function(s){
-      // 콤마 포함 숫자+원 패턴 먼저 처리
-      s = s.replace(/[\d,]+원/g, function(m){
-        var v = parseInt(m.replace(/,/g,'').replace('원',''));
+      // 큰 숫자(콤마 유무, 원 유무 무관) 모두 변환
+      function conv(v){
         if(v>=1000000000000){var jo=Math.floor(v/1000000000000);var eok=Math.floor((v%1000000000000)/100000000);return jo+'조'+(eok>0?eok+'억':'');}
         if(v>=100000000){return Math.floor(v/100000000)+'억';}
         if(v>=10000){return Math.floor(v/10000)+'만';}
-        return m;
+        return null;
+      }
+      // 1) 콤마 포함 숫자 (예: 38,945,213,175,000) - 원 유무 무관
+      s = s.replace(/[\d,]{6,}원?/g, function(m){
+        var hasWon = m.indexOf('원') !== -1;
+        var v = parseInt(m.replace(/[,원]/g,''));
+        if(isNaN(v)) return m;
+        var c = conv(v);
+        return c !== null ? c : m;
       });
-      // 남은 순수 숫자 처리
-      s = s.replace(/\b\d{5,}\b/g, function(n){
+      // 2) 콤마 없는 순수 큰 숫자 (예: 38945213175000)
+      s = s.replace(/\d{5,}/g, function(n){
         var v=parseInt(n);
-        if(v>=1000000000000){var jo=Math.floor(v/1000000000000);var eok=Math.floor((v%1000000000000)/100000000);return jo+'조'+(eok>0?eok+'억':'');}
-        if(v>=100000000){return Math.floor(v/100000000)+'억';}
-        if(v>=10000){return Math.floor(v/10000)+'만';}
-        return n;
+        var c = conv(v);
+        return c !== null ? c : n;
       });
       return s;
     }; return '<div style="font-size:11px;color:#444;background:#f8f4ff;padding:8px;border-radius:6px;margin-bottom:6px;line-height:1.8;">🏭 부문별 본업가치<br>' + parsed.segments.split(' / ').map(fmtSeg).join('<br>') + '</div>'; })() : '') +
         (parsed.breakdown ? (function(){ var fmtBd = function(s){
-      // 콤마 포함 숫자+원 패턴 먼저 처리
-      s = s.replace(/[\d,]+원/g, function(m){
-        var v = parseInt(m.replace(/,/g,'').replace('원',''));
+      // 큰 숫자(콤마 유무, 원 유무 무관) 모두 변환
+      function conv(v){
         if(v>=1000000000000){var jo=Math.floor(v/1000000000000);var eok=Math.floor((v%1000000000000)/100000000);return jo+'조'+(eok>0?eok+'억':'');}
         if(v>=100000000){return Math.floor(v/100000000)+'억';}
         if(v>=10000){return Math.floor(v/10000)+'만';}
-        return m;
+        return null;
+      }
+      // 1) 콤마 포함 숫자 (예: 38,945,213,175,000) - 원 유무 무관
+      s = s.replace(/[\d,]{6,}원?/g, function(m){
+        var hasWon = m.indexOf('원') !== -1;
+        var v = parseInt(m.replace(/[,원]/g,''));
+        if(isNaN(v)) return m;
+        var c = conv(v);
+        return c !== null ? c : m;
       });
-      // 남은 순수 숫자 처리
-      s = s.replace(/\b\d{5,}\b/g, function(n){
+      // 2) 콤마 없는 순수 큰 숫자 (예: 38945213175000)
+      s = s.replace(/\d{5,}/g, function(n){
         var v=parseInt(n);
-        if(v>=1000000000000){var jo=Math.floor(v/1000000000000);var eok=Math.floor((v%1000000000000)/100000000);return jo+'조'+(eok>0?eok+'억':'');}
-        if(v>=100000000){return Math.floor(v/100000000)+'억';}
-        if(v>=10000){return Math.floor(v/10000)+'만';}
-        return n;
+        var c = conv(v);
+        return c !== null ? c : n;
       });
       return s;
     }; return '<div style="font-size:11px;color:#666;background:#fff;padding:8px;border-radius:6px;margin-bottom:8px;line-height:1.5;">📐 계산 근거: ' + fmtBd(parsed.breakdown) + '</div>'; })() : '') +
