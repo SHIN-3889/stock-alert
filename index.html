@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-03 09:41';
-  const DASHBOARD_VERSION = 'v28.0';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -824,7 +824,7 @@
         '  (6) 각 부문에 순수 경쟁사(pure-play peer) EV/EBITDA 배수 적용. ⚠️ 자의적 고배수 금지. (2차전지 셀 6~9배, 양극재 8~12배, 반도체 5~8배, 자동차부품 4~6배, 화학 5~7배).',
         '  (7) ▶ 시나리오A (보수적 바닥) = 부문별 [현재 EBITDA × 배수] 합산.',
         '  (8) ▶ 시나리오B (정상화/포워드) = 부문별 [정상화 또는 1~2년 후 포워드 EBITDA × 배수] 합산.',
-        '  ⚠️ segments에 각 부문의 현재EBITDA와 정상화EBITDA를 모두 명시하세요.',
+        '  ⚠️ segments는 반드시 각 부문을 한 줄씩 / 로 구분하여 작성하세요. 각 부문은 이름|현재EBITDA|정상화EBITDA|배수|보수적가치|정상화가치 형식으로 간결하게 작성하세요.',
         '',
         '【2단계: 자회사 가치】',
         '위 DART 자회사 보유현황을 사용하세요. 상장 자회사는 보유주식수×현재주가×(1-지주할인 0.4), 비상장은 장부가액×(1-할인 0.3)으로 계산.',
@@ -868,7 +868,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0.3, maxOutputTokens: 8192 }
+            generationConfig: { temperature: 0.3, maxOutputTokens: 16000 }
           })
         }
       );
