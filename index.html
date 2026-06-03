@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-03 09:15';
-  const DASHBOARD_VERSION = 'v26.0';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -882,11 +882,17 @@
         .trim();
       var jsonStart = text.indexOf('{');
       var jsonEnd   = text.lastIndexOf('}');
-      if (jsonStart === -1 || jsonEnd === -1) return null;
+      if (jsonStart === -1 || jsonEnd === -1) {
+        console.log('DEBUG: JSON 없음, raw 앞부분:', rawText.slice(0, 100));
+        return null;
+      }
       text = text.slice(jsonStart, jsonEnd + 1);
       try {
-        return JSON.parse(text);
+        var parsed = JSON.parse(text);
+        if (!parsed.method1_price) console.log('DEBUG: method1_price 없음, 키:', Object.keys(parsed));
+        return parsed;
       } catch(e) {
+        console.log('DEBUG: 파싱실패:', e.message, '텍스트 앞부분:', text.slice(0,100));
         function extractField(k) {
           var rx = new RegExp('"' + k + '"\s*:\s*"([^"]*)"');
           var m = text.match(rx);
