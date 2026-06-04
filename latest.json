@@ -1,16 +1,16 @@
 {
-  "updated_at": "2026-06-04 12:45:49",
+  "updated_at": "2026-06-04 13:01:12",
   "portfolio": {
     "rows": [
       {
         "name": "TIGER 미국30년국채커버드콜액티브(H)",
         "currency": "KRW",
-        "price": 7190.0,
-        "day_change_pct": 0.0,
+        "price": 7195.0,
+        "day_change_pct": 0.06954102920723226,
         "shares": 503,
-        "value_krw": 3616570.0,
-        "pl_krw": 17102.0,
-        "pl_pct": 0.47512576858580213,
+        "value_krw": 3619085.0,
+        "pl_krw": 19617.0,
+        "pl_pct": 0.5449972051425377,
         "session": "open"
       },
       {
@@ -19,30 +19,30 @@
         "price": 959.3599853515625,
         "day_change_pct": -0.9493948047202528,
         "shares": 42,
-        "value_krw": 61626309.475592315,
-        "pl_krw": -5498634.439594746,
+        "value_krw": 61636786.08011985,
+        "pl_krw": -5499569.219219804,
         "pl_pct": -8.191641018787763,
         "session": "market_closed"
       },
       {
         "name": "삼성SDI",
         "currency": "KRW",
-        "price": 606000.0,
-        "day_change_pct": 0.6644518272425249,
+        "price": 605000.0,
+        "day_change_pct": 0.4983388704318937,
         "shares": 241,
-        "value_krw": 146046000.0,
-        "pl_krw": 5091366.0,
-        "pl_pct": 3.612060033443101,
+        "value_krw": 145805000.0,
+        "pl_krw": 4850366.0,
+        "pl_pct": 3.441083036688244,
         "session": "open"
       }
     ],
     "summary": {
-      "total_value_krw": 211288879.47559232,
-      "day_change_krw": 373315.0876275897,
-      "day_change_pct": 0.17699741065145017,
-      "total_pl_krw": -390166.43959474564,
-      "total_pl_pct": -0.18431982150518228,
-      "usdkrw": 1529.449951171875
+      "total_value_krw": 211060871.08011985,
+      "day_change_krw": 134729.66992807388,
+      "day_change_pct": 0.06387528308597024,
+      "total_pl_krw": -629586.2192198038,
+      "total_pl_pct": -0.2974088805191351,
+      "usdkrw": 1529.7099609375
     },
     "watchlist": [
       {
@@ -50,8 +50,8 @@
         "name": "SK하이닉스",
         "market": "KR",
         "currency": "KRW",
-        "price": 2307000.0,
-        "day_change_pct": -1.4944491887275833,
+        "price": 2306000.0,
+        "day_change_pct": -1.5371477369769428,
         "session": "open"
       },
       {
@@ -59,8 +59,8 @@
         "name": "현대모비스",
         "market": "KR",
         "currency": "KRW",
-        "price": 747000.0,
-        "day_change_pct": -1.1904761904761905,
+        "price": 746000.0,
+        "day_change_pct": -1.3227513227513228,
         "session": "open"
       },
       {
@@ -68,8 +68,8 @@
         "name": "삼성전자",
         "market": "KR",
         "currency": "KRW",
-        "price": 357500.0,
-        "day_change_pct": -1.1065006915629323,
+        "price": 358000.0,
+        "day_change_pct": -0.9681881051175657,
         "session": "open"
       },
       {
