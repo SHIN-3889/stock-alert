@@ -1,17 +1,17 @@
 {
-  "updated_at": "2026-06-04 15:15:46",
+  "updated_at": "2026-06-04 15:31:02",
   "portfolio": {
     "rows": [
       {
         "name": "TIGER 미국30년국채커버드콜액티브(H)",
         "currency": "KRW",
-        "price": 7190.0,
-        "day_change_pct": 0.0,
+        "price": 7192.0,
+        "day_change_pct": -0.24965325936199723,
         "shares": 503,
-        "value_krw": 3616570.0,
-        "pl_krw": 17102.0,
-        "pl_pct": 0.47512576858580213,
-        "session": "open"
+        "value_krw": 3617576.0,
+        "pl_krw": 18108.0,
+        "pl_pct": 0.5030743432084964,
+        "session": "nxt"
       },
       {
         "name": "GE버노바",
@@ -19,8 +19,8 @@
         "price": 959.3599853515625,
         "day_change_pct": -0.9493948047202528,
         "shares": 42,
-        "value_krw": 61627519.44963634,
-        "pl_krw": -5498742.400058478,
+        "value_krw": 61639609.35288924,
+        "pl_krw": -5499821.126968518,
         "pl_pct": -8.191641018787763,
         "session": "market_closed"
       },
@@ -33,16 +33,16 @@
         "value_krw": 145323000.0,
         "pl_krw": 4368366.0,
         "pl_pct": 3.0991290431785306,
-        "session": "open"
+        "session": "nxt"
       }
     ],
     "summary": {
-      "total_value_krw": 210567089.44963634,
-      "day_change_krw": -349696.5099095404,
-      "day_change_pct": -0.16579833052102957,
-      "total_pl_krw": -1113274.4000584781,
-      "total_pl_pct": -0.5259223764604669,
-      "usdkrw": 1529.47998046875
+      "total_value_krw": 210580185.35288924,
+      "day_change_krw": -358866.3909918964,
+      "day_change_pct": -0.1701280004935389,
+      "total_pl_krw": -1113347.126968503,
+      "total_pl_pct": -0.5259240156873645,
+      "usdkrw": 1529.780029296875
     },
     "watchlist": [
       {
@@ -50,18 +50,18 @@
         "name": "SK하이닉스",
         "market": "KR",
         "currency": "KRW",
-        "price": 2286000.0,
-        "day_change_pct": -2.391118701964133,
-        "session": "open"
+        "price": 2290000.0,
+        "day_change_pct": -2.9661016949152543,
+        "session": "nxt"
       },
       {
         "code": "012330",
         "name": "현대모비스",
         "market": "KR",
         "currency": "KRW",
-        "price": 753000.0,
-        "day_change_pct": -0.3968253968253968,
-        "session": "open"
+        "price": 751000.0,
+        "day_change_pct": -1.0540184453227932,
+        "session": "nxt"
       },
       {
         "code": "005930",
@@ -69,8 +69,8 @@
         "market": "KR",
         "currency": "KRW",
         "price": 354000.0,
-        "day_change_pct": -2.0746887966804977,
-        "session": "open"
+        "day_change_pct": -1.8030513176144243,
+        "session": "nxt"
       },
       {
         "code": "GOOG",
