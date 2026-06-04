@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-04 08:45:44",
+  "updated_at": "2026-06-04 09:01:13",
   "portfolio": {
     "rows": [
       {
@@ -11,18 +11,18 @@
         "value_krw": 3626630.0,
         "pl_krw": 27162.0,
         "pl_pct": 0.7546115148127445,
-        "session": "market_closed"
+        "session": "open"
       },
       {
         "name": "GE버노바",
         "currency": "USD",
-        "price": 950.06,
-        "day_change_pct": -1.909586173387709,
+        "price": 959.3599853515625,
+        "day_change_pct": -0.9493948047202528,
         "shares": 42,
-        "value_krw": 61137843.0936,
-        "pl_krw": -6106917.997908004,
-        "pl_pct": -9.081626432723269,
-        "session": "after"
+        "value_krw": 61615434.464977115,
+        "pl_krw": -5497664.112012118,
+        "pl_pct": -8.191641018787763,
+        "session": "market_closed"
       },
       {
         "name": "삼성SDI",
@@ -33,16 +33,16 @@
         "value_krw": 145082000.0,
         "pl_krw": 4127366.0,
         "pl_pct": 2.928152046423674,
-        "session": "market_closed"
+        "session": "open"
       }
     ],
     "summary": {
-      "total_value_krw": 209846473.0936,
-      "day_change_krw": -13222602.842823982,
-      "day_change_pct": -5.92758220175373,
-      "total_pl_krw": -1952389.9979079962,
-      "total_pl_pct": -0.9218132568844165,
-      "usdkrw": 1532.18
+      "total_value_krw": 210324064.46497712,
+      "day_change_krw": -12622975.675971657,
+      "day_change_pct": -5.661871836464534,
+      "total_pl_krw": -1343136.112012118,
+      "total_pl_pct": -0.6345508932658569,
+      "usdkrw": 1529.1800537109375
     },
     "watchlist": [
       {
@@ -52,7 +52,7 @@
         "currency": "KRW",
         "price": 2360000.0,
         "day_change_pct": -0.12695725772323319,
-        "session": "market_closed"
+        "session": "open"
       },
       {
         "code": "012330",
@@ -61,7 +61,7 @@
         "currency": "KRW",
         "price": 759000.0,
         "day_change_pct": -0.2628120893561104,
-        "session": "market_closed"
+        "session": "open"
       },
       {
         "code": "005930",
@@ -70,25 +70,25 @@
         "currency": "KRW",
         "price": 360500.0,
         "day_change_pct": 3.29512893982808,
-        "session": "market_closed"
+        "session": "open"
       },
       {
         "code": "GOOG",
         "name": "구글",
         "market": "US",
         "currency": "USD",
-        "price": 354.54,
-        "day_change_pct": -1.1101193796719742,
-        "session": "after"
+        "price": 355.67999267578125,
+        "day_change_pct": -0.7921475299059276,
+        "session": "market_closed"
       },
       {
         "code": "MU",
         "name": "마이크론",
         "market": "US",
         "currency": "USD",
-        "price": 1052.75,
-        "day_change_pct": -0.37380524273682647,
-        "session": "after"
+        "price": 1079.5699462890625,
+        "day_change_pct": 2.1642799554331837,
+        "session": "market_closed"
       }
     ]
   },
