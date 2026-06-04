@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-04 10:31:02",
+  "updated_at": "2026-06-04 10:45:42",
   "portfolio": {
     "rows": [
       {
@@ -27,21 +27,21 @@
       {
         "name": "삼성SDI",
         "currency": "KRW",
-        "price": 598000.0,
-        "day_change_pct": -0.6644518272425249,
+        "price": 591000.0,
+        "day_change_pct": -1.8272425249169437,
         "shares": 241,
-        "value_krw": 144118000.0,
-        "pl_krw": 3163366.0,
-        "pl_pct": 2.2442440594042474,
+        "value_krw": 142431000.0,
+        "pl_krw": 1476366.0,
+        "pl_pct": 1.0474050821202516,
         "session": "open"
       }
     ],
     "summary": {
-      "total_value_krw": 209364604.44963634,
-      "day_change_krw": -1552181.5099095404,
-      "day_change_pct": -0.7359212794979964,
-      "total_pl_krw": -2315759.400058478,
-      "total_pl_pct": -1.0939887658653118,
+      "total_value_krw": 207677604.44963634,
+      "day_change_krw": -3239181.5099095404,
+      "day_change_pct": -1.5357627868133832,
+      "total_pl_krw": -4002759.400058478,
+      "total_pl_pct": -1.8909450679613657,
       "usdkrw": 1529.47998046875
     },
     "watchlist": [
@@ -50,8 +50,8 @@
         "name": "SK하이닉스",
         "market": "KR",
         "currency": "KRW",
-        "price": 2295000.0,
-        "day_change_pct": -2.0068317677198975,
+        "price": 2290000.0,
+        "day_change_pct": -2.220324508966695,
         "session": "open"
       },
       {
@@ -59,8 +59,8 @@
         "name": "현대모비스",
         "market": "KR",
         "currency": "KRW",
-        "price": 736000.0,
-        "day_change_pct": -2.6455026455026456,
+        "price": 729000.0,
+        "day_change_pct": -3.571428571428571,
         "session": "open"
       },
       {
@@ -68,8 +68,8 @@
         "name": "삼성전자",
         "market": "KR",
         "currency": "KRW",
-        "price": 359750.0,
-        "day_change_pct": -0.48409405255878285,
+        "price": 357500.0,
+        "day_change_pct": -1.1065006915629323,
         "session": "open"
       },
       {
