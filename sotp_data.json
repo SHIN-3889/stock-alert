@@ -23,8 +23,8 @@
     "excess_cash": {
       "excess_cash": 1405992317562.03,
       "operating_cash_needed": 398001920384.97,
-      "market_cap": 47373568270000.0,
-      "excess_cash_ratio": 3.0
+      "market_cap": 47767036445000.0,
+      "excess_cash_ratio": 2.9
     },
     "subsidiaries": [
       {
@@ -168,7 +168,7 @@
         "investment_purpose": "경영참여"
       }
     ],
-    "updated_at": "2026-06-04 01:00:27"
+    "updated_at": "2026-06-04 19:50:09"
   },
   "000660": {
     "stock_code": "000660",
@@ -194,7 +194,7 @@
     "excess_cash": {
       "excess_cash": 26689084750000.0,
       "operating_cash_needed": 2914400250000.0,
-      "market_cap": 1675257542760000.0,
+      "market_cap": 1631246539518000.0,
       "excess_cash_ratio": 1.6
     },
     "subsidiaries": [
@@ -339,7 +339,7 @@
         "investment_purpose": "일반투자"
       }
     ],
-    "updated_at": "2026-06-04 01:00:43"
+    "updated_at": "2026-06-04 19:50:16"
   },
   "012330": {
     "stock_code": "012330",
@@ -365,7 +365,7 @@
     "excess_cash": {
       "excess_cash": 3088834190000.0,
       "operating_cash_needed": 1833543810000.0,
-      "market_cap": 67688062497000.0,
+      "market_cap": 66707076084000.0,
       "excess_cash_ratio": 4.6
     },
     "subsidiaries": [
@@ -503,7 +503,7 @@
         "investment_purpose": "경영참여"
       }
     ],
-    "updated_at": "2026-06-04 01:00:58"
+    "updated_at": "2026-06-04 19:50:23"
   },
   "005930": {
     "stock_code": "005930",
@@ -529,8 +529,8 @@
     "excess_cash": {
       "excess_cash": 115813220860000.0,
       "operating_cash_needed": 10008178140000.0,
-      "market_cap": 2367245999713000.0,
-      "excess_cash_ratio": 4.9
+      "market_cap": 2308146931759000.0,
+      "excess_cash_ratio": 5.0
     },
     "subsidiaries": [
       {
@@ -674,6 +674,6 @@
         "investment_purpose": "경영참여"
       }
     ],
-    "updated_at": "2026-06-04 01:01:19"
+    "updated_at": "2026-06-04 19:50:30"
   }
 }
