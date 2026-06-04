@@ -1,16 +1,16 @@
 {
-  "updated_at": "2026-06-04 15:31:02",
+  "updated_at": "2026-06-04 15:45:51",
   "portfolio": {
     "rows": [
       {
         "name": "TIGER 미국30년국채커버드콜액티브(H)",
         "currency": "KRW",
-        "price": 7192.0,
-        "day_change_pct": -0.24965325936199723,
+        "price": 7190.0,
+        "day_change_pct": -0.27739251040221913,
         "shares": 503,
-        "value_krw": 3617576.0,
-        "pl_krw": 18108.0,
-        "pl_pct": 0.5030743432084964,
+        "value_krw": 3616570.0,
+        "pl_krw": 17102.0,
+        "pl_pct": 0.47512576858580213,
         "session": "nxt"
       },
       {
@@ -19,8 +19,8 @@
         "price": 959.3599853515625,
         "day_change_pct": -0.9493948047202528,
         "shares": 42,
-        "value_krw": 61639609.35288924,
-        "pl_krw": -5499821.126968518,
+        "value_krw": 61650892.606779456,
+        "pl_krw": -5500827.880236074,
         "pl_pct": -8.191641018787763,
         "session": "market_closed"
       },
@@ -37,12 +37,12 @@
       }
     ],
     "summary": {
-      "total_value_krw": 210580185.35288924,
-      "day_change_krw": -358866.3909918964,
-      "day_change_pct": -0.1701280004935389,
-      "total_pl_krw": -1113347.126968503,
-      "total_pl_pct": -0.5259240156873645,
-      "usdkrw": 1529.780029296875
+      "total_value_krw": 210590462.60677946,
+      "day_change_krw": -359980.5403828323,
+      "day_change_pct": -0.17064697045064006,
+      "total_pl_krw": -1115359.8802360892,
+      "total_pl_pct": -0.5268442157770589,
+      "usdkrw": 1530.06005859375
     },
     "watchlist": [
       {
@@ -50,8 +50,8 @@
         "name": "SK하이닉스",
         "market": "KR",
         "currency": "KRW",
-        "price": 2290000.0,
-        "day_change_pct": -2.9661016949152543,
+        "price": 2284000.0,
+        "day_change_pct": -3.2203389830508473,
         "session": "nxt"
       },
       {
@@ -68,8 +68,8 @@
         "name": "삼성전자",
         "market": "KR",
         "currency": "KRW",
-        "price": 354000.0,
-        "day_change_pct": -1.8030513176144243,
+        "price": 353000.0,
+        "day_change_pct": -2.0804438280166435,
         "session": "nxt"
       },
       {
