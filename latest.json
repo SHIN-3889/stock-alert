@@ -1,16 +1,16 @@
 {
-  "updated_at": "2026-06-05 13:15:47",
+  "updated_at": "2026-06-05 13:30:58",
   "portfolio": {
     "rows": [
       {
         "name": "TIGER 미국30년국채커버드콜액티브(H)",
         "currency": "KRW",
-        "price": 7200.0,
-        "day_change_pct": 0.20876826722338201,
+        "price": 7205.0,
+        "day_change_pct": 0.2783576896311761,
         "shares": 503,
-        "value_krw": 3621600.0,
-        "pl_krw": 22132.0,
-        "pl_pct": 0.6148686416992734,
+        "value_krw": 3624115.0,
+        "pl_krw": 24647.0,
+        "pl_pct": 0.6847400782560089,
         "session": "open"
       },
       {
@@ -19,19 +19,19 @@
         "price": 963.33,
         "day_change_pct": 1.3999557908697693,
         "shares": 42,
-        "value_krw": 62514528.69821045,
-        "pl_krw": -5297268.036358088,
+        "value_krw": 62453028.92077881,
+        "pl_krw": -5292056.754884541,
         "pl_pct": -7.811720513899435,
         "session": "market_closed"
       }
     ],
     "summary": {
-      "total_value_krw": 66136128.69821045,
-      "day_change_krw": 870637.8463623002,
-      "day_change_pct": 1.3339941751738869,
-      "total_pl_krw": -5275136.036358088,
-      "total_pl_pct": -7.386980269801212,
-      "usdkrw": 1545.0999755859375
+      "total_value_krw": 66077143.92077881,
+      "day_change_krw": 872303.7634521499,
+      "day_change_pct": 1.3377898961909112,
+      "total_pl_krw": -5267409.754884541,
+      "total_pl_pct": -7.383057967999217,
+      "usdkrw": 1543.5799560546875
     },
     "watchlist": [
       {
@@ -39,8 +39,8 @@
         "name": "SK하이닉스",
         "market": "KR",
         "currency": "KRW",
-        "price": 2113000.0,
-        "day_change_pct": -7.80977312390925,
+        "price": 2110000.0,
+        "day_change_pct": -7.940663176265271,
         "session": "open"
       },
       {
@@ -57,8 +57,8 @@
         "name": "삼성전자",
         "market": "KR",
         "currency": "KRW",
-        "price": 332750.0,
-        "day_change_pct": -6.39943741209564,
+        "price": 333250.0,
+        "day_change_pct": -6.258790436005627,
         "session": "open"
       },
       {
