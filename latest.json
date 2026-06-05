@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-05 16:01:09",
+  "updated_at": "2026-06-05 16:15:54",
   "portfolio": {
     "rows": [
       {
@@ -19,19 +19,19 @@
         "price": 963.33,
         "day_change_pct": 1.3999557908697693,
         "shares": 42,
-        "value_krw": 62295239.41793701,
-        "pl_krw": -5278686.210352227,
+        "value_krw": 62339744.27614746,
+        "pl_krw": -5282457.4003103,
         "pl_pct": -7.811720513899435,
         "session": "market_closed"
       }
     ],
     "summary": {
-      "total_value_krw": 65921869.41793701,
-      "day_change_krw": 872640.2780029252,
-      "day_change_pct": 1.3415074852396773,
-      "total_pl_krw": -5251524.210352227,
-      "total_pl_pct": -7.378493482801848,
-      "usdkrw": 1539.6800537109375
+      "total_value_krw": 65966374.27614746,
+      "day_change_krw": 873254.7243652344,
+      "day_change_pct": 1.3415468952452825,
+      "total_pl_krw": -5255295.4003103,
+      "total_pl_pct": -7.37878713625192,
+      "usdkrw": 1540.780029296875
     },
     "watchlist": [
       {
