@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-05 15:15:47",
+  "updated_at": "2026-06-05 15:30:56",
   "portfolio": {
     "rows": [
       {
@@ -11,7 +11,7 @@
         "value_krw": 3621600.0,
         "pl_krw": 22132.0,
         "pl_pct": 0.6148686416992734,
-        "session": "open"
+        "session": "nxt"
       },
       {
         "name": "GE버노바",
@@ -19,19 +19,19 @@
         "price": 963.33,
         "day_change_pct": 1.3999557908697693,
         "shares": 42,
-        "value_krw": 62428753.99256836,
-        "pl_krw": -5289999.780226469,
+        "value_krw": 62303329.41435791,
+        "pl_krw": -5279371.729068391,
         "pl_pct": -7.811720513899435,
         "session": "market_closed"
       }
     ],
     "summary": {
-      "total_value_krw": 66050353.99256836,
-      "day_change_krw": 869453.6170898378,
-      "day_change_pct": 1.3339085715006966,
-      "total_pl_krw": -5267867.780226469,
-      "total_pl_pct": -7.386426146474616,
-      "usdkrw": 1542.97998046875
+      "total_value_krw": 65924929.41435791,
+      "day_change_krw": 867721.9707275331,
+      "day_change_pct": 1.333782996264298,
+      "total_pl_krw": -5257239.729068391,
+      "total_pl_pct": -7.385613268507566,
+      "usdkrw": 1539.8800048828125
     },
     "watchlist": [
       {
@@ -39,27 +39,27 @@
         "name": "SK하이닉스",
         "market": "KR",
         "currency": "KRW",
-        "price": 2100000.0,
-        "day_change_pct": -8.37696335078534,
-        "session": "open"
+        "price": 2096000.0,
+        "day_change_pct": -8.790252393385552,
+        "session": "nxt"
       },
       {
         "code": "012330",
         "name": "현대모비스",
         "market": "KR",
         "currency": "KRW",
-        "price": 700000.0,
-        "day_change_pct": -7.4074074074074066,
-        "session": "open"
+        "price": 703000.0,
+        "day_change_pct": -6.016042780748663,
+        "session": "nxt"
       },
       {
         "code": "005930",
         "name": "삼성전자",
         "market": "KR",
         "currency": "KRW",
-        "price": 332500.0,
-        "day_change_pct": -6.469760900140647,
-        "session": "open"
+        "price": 333000.0,
+        "day_change_pct": -5.263157894736842,
+        "session": "nxt"
       },
       {
         "code": "GOOG",
