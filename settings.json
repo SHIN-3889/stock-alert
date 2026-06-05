@@ -19,14 +19,6 @@
       "avg_price": 1044.9593,
       "kr_query": "GE버노바",
       "en_query": "GE Vernova"
-    },
-    "006400": {
-      "name": "삼성SDI",
-      "market": "KR",
-      "shares": 241,
-      "avg_price": 584874,
-      "kr_query": "삼성SDI",
-      "en_query": "Samsung SDI"
     }
   },
   "watchlist": {
