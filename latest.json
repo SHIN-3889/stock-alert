@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-05 21:31:06",
+  "updated_at": "2026-06-05 21:45:49",
   "portfolio": {
     "rows": [
       {
@@ -16,24 +16,33 @@
       {
         "name": "GE버노바",
         "currency": "USD",
-        "price": 955.22,
-        "day_change_pct": -0.6014568158168545,
+        "price": 954.71,
+        "day_change_pct": -0.6545265348595175,
         "shares": 42,
-        "value_krw": 61999471.30709472,
-        "pl_krw": -5824615.434631571,
-        "pl_pct": -8.587827296240146,
+        "value_krw": 61978400.57129151,
+        "pl_krw": -5858854.800597727,
+        "pl_pct": -8.636633024846034,
         "session": "pre"
       }
     ],
     "summary": {
-      "total_value_krw": 65626101.30709472,
-      "day_change_krw": -362581.44998535514,
-      "day_change_pct": -0.5494600510819455,
-      "total_pl_krw": -5797453.434631571,
-      "total_pl_pct": -8.117004895087707,
-      "usdkrw": 1545.3800048828125
+      "total_value_krw": 65605030.57129151,
+      "day_change_krw": -395762.7565893531,
+      "day_change_pct": -0.5996333326226402,
+      "total_pl_krw": -5831692.800597727,
+      "total_pl_pct": -8.163438250434275,
+      "usdkrw": 1545.6800537109375
     },
     "watchlist": [
+      {
+        "code": "267260",
+        "name": "HD현대일렉트릭",
+        "market": "KR",
+        "currency": "KRW",
+        "price": 956000.0,
+        "day_change_pct": -4.3043043043043046,
+        "session": "market_closed"
+      },
       {
         "code": "000660",
         "name": "SK하이닉스",
@@ -66,8 +75,8 @@
         "name": "구글",
         "market": "US",
         "currency": "USD",
-        "price": 365.35,
-        "day_change_pct": -0.6147819700225758,
+        "price": 366.0,
+        "day_change_pct": -0.4379641467859997,
         "session": "pre"
       },
       {
@@ -75,8 +84,8 @@
         "name": "마이크론",
         "market": "US",
         "currency": "USD",
-        "price": 945.3838,
-        "day_change_pct": -2.712268713853506,
+        "price": 956.42,
+        "day_change_pct": -1.5765533990573664,
         "session": "pre"
       }
     ]
