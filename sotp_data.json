@@ -1,175 +1,4 @@
 {
-  "006400": {
-    "stock_code": "006400",
-    "name": "피엠그로우",
-    "bsns_year": "2025",
-    "reprt_name": "사업보고서(연간)",
-    "operating_income": 1722360788760,
-    "revenue": 13266730679499,
-    "shares_outstanding": 77254139,
-    "net_debt": {
-      "net_debt": 9079915269470,
-      "total_debt": 10883909507417,
-      "total_cash": 1803994237947,
-      "detail": {
-        "short_borrowings": 5390568184387,
-        "current_ltd": 0,
-        "long_borrowings": 5493341323030,
-        "bonds": 0,
-        "cash": 1803994237947,
-        "short_financial": 0
-      }
-    },
-    "excess_cash": {
-      "excess_cash": 1405992317562.03,
-      "operating_cash_needed": 398001920384.97,
-      "market_cap": 47767036445000.0,
-      "excess_cash_ratio": 2.9
-    },
-    "subsidiaries": [
-      {
-        "name": "삼성E&A(구, 삼성엔지니어링)",
-        "ownership_ratio": 11.7,
-        "shares_held": 22918000,
-        "book_value": 551188000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "아이마켓코리아",
-        "ownership_ratio": 1.5,
-        "shares_held": 511000,
-        "book_value": 4027000000,
-        "investment_purpose": "일반투자"
-      },
-      {
-        "name": "Ganfeng Lithium Co., Ltd.",
-        "ownership_ratio": 0.8,
-        "shares_held": 16622000,
-        "book_value": 159240000000,
-        "investment_purpose": "일반투자"
-      },
-      {
-        "name": "Intellectual Keystone Technology LLC",
-        "ownership_ratio": 41.0,
-        "shares_held": 10250000,
-        "book_value": 8835000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "한국경제신문",
-        "ownership_ratio": 8.7,
-        "shares_held": 1631000,
-        "book_value": 24883000000,
-        "investment_purpose": "일반투자"
-      },
-      {
-        "name": "로지피아",
-        "ownership_ratio": 19.0,
-        "shares_held": 11000,
-        "book_value": 57000000,
-        "investment_purpose": "일반투자"
-      },
-      {
-        "name": "에코프로이엠",
-        "ownership_ratio": 40.0,
-        "shares_held": 12800000,
-        "book_value": 128000000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "필에너지",
-        "ownership_ratio": 14.0,
-        "shares_held": 3000000,
-        "book_value": 5000000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "이차전지성장펀드",
-        "ownership_ratio": 33.3,
-        "shares_held": 0,
-        "book_value": 4450000000,
-        "investment_purpose": "일반투자"
-      },
-      {
-        "name": "DS ASIA HOLDINGS",
-        "ownership_ratio": 0.5,
-        "shares_held": 898000,
-        "book_value": 0,
-        "investment_purpose": "일반투자"
-      },
-      {
-        "name": "Intellectual Discovery Co., Ltd.",
-        "ownership_ratio": 0.2,
-        "shares_held": 7000,
-        "book_value": 250000000,
-        "investment_purpose": "일반투자"
-      },
-      {
-        "name": "호텔신라",
-        "ownership_ratio": 0.1,
-        "shares_held": 29000,
-        "book_value": 1307000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "iMarketAsia Co., Limited",
-        "ownership_ratio": 8.7,
-        "shares_held": 348000,
-        "book_value": 6007000000,
-        "investment_purpose": "일반투자"
-      },
-      {
-        "name": "Polyplus(*1)",
-        "ownership_ratio": 8.3,
-        "shares_held": 226000,
-        "book_value": 345000000,
-        "investment_purpose": "일반투자"
-      },
-      {
-        "name": "신기술투자조합15호",
-        "ownership_ratio": 99.0,
-        "shares_held": 0,
-        "book_value": 9669000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "신기술투자조합24호",
-        "ownership_ratio": 99.0,
-        "shares_held": 0,
-        "book_value": 0,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "신기술투자조합49호",
-        "ownership_ratio": 99.0,
-        "shares_held": 0,
-        "book_value": 33908000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "신기술투자조합76호",
-        "ownership_ratio": 6.7,
-        "shares_held": 0,
-        "book_value": 100000000,
-        "investment_purpose": "일반투자"
-      },
-      {
-        "name": "성일하이텍",
-        "ownership_ratio": 8.6,
-        "shares_held": 1048000,
-        "book_value": 42877000000,
-        "investment_purpose": "일반투자"
-      },
-      {
-        "name": "피엠그로우",
-        "ownership_ratio": 4.9,
-        "shares_held": 516000,
-        "book_value": 1440000000,
-        "investment_purpose": "경영참여"
-      }
-    ],
-    "updated_at": "2026-06-04 19:50:09"
-  },
   "000660": {
     "stock_code": "000660",
     "name": "GigaIO Networks, Inc.",
@@ -194,8 +23,8 @@
     "excess_cash": {
       "excess_cash": 26689084750000.0,
       "operating_cash_needed": 2914400250000.0,
-      "market_cap": 1631246539518000.0,
-      "excess_cash_ratio": 1.6
+      "market_cap": 1469399624370000.0,
+      "excess_cash_ratio": 1.8
     },
     "subsidiaries": [
       {
@@ -339,7 +168,7 @@
         "investment_purpose": "일반투자"
       }
     ],
-    "updated_at": "2026-06-04 19:50:16"
+    "updated_at": "2026-06-05 20:03:45"
   },
   "012330": {
     "stock_code": "012330",
@@ -365,8 +194,8 @@
     "excess_cash": {
       "excess_cash": 3088834190000.0,
       "operating_cash_needed": 1833543810000.0,
-      "market_cap": 66707076084000.0,
-      "excess_cash_ratio": 4.6
+      "market_cap": 62158866351000.0,
+      "excess_cash_ratio": 5.0
     },
     "subsidiaries": [
       {
@@ -503,7 +332,7 @@
         "investment_purpose": "경영참여"
       }
     ],
-    "updated_at": "2026-06-04 19:50:23"
+    "updated_at": "2026-06-05 20:03:59"
   },
   "005930": {
     "stock_code": "005930",
@@ -529,8 +358,8 @@
     "excess_cash": {
       "excess_cash": 115813220860000.0,
       "operating_cash_needed": 10008178140000.0,
-      "market_cap": 2308146931759000.0,
-      "excess_cash_ratio": 5.0
+      "market_cap": 2160399261874000.0,
+      "excess_cash_ratio": 5.4
     },
     "subsidiaries": [
       {
@@ -674,6 +503,6 @@
         "investment_purpose": "경영참여"
       }
     ],
-    "updated_at": "2026-06-04 19:50:30"
+    "updated_at": "2026-06-05 20:04:17"
   }
 }
