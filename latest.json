@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-06 12:45:46",
+  "updated_at": "2026-06-06 13:01:09",
   "portfolio": {
     "rows": [
       {
@@ -22,7 +22,7 @@
         "value_krw": 61124639.42150715,
         "pl_krw": -7290181.997308791,
         "pl_pct": -10.655851825849819,
-        "session": "market_closed"
+        "session": "closed"
       }
     ],
     "summary": {
@@ -77,7 +77,7 @@
         "currency": "USD",
         "price": 365.760009765625,
         "day_change_pct": -0.5032480711555762,
-        "session": "market_closed"
+        "session": "closed"
       },
       {
         "code": "MU",
@@ -86,7 +86,7 @@
         "currency": "USD",
         "price": 864.010009765625,
         "day_change_pct": -11.086297799244141,
-        "session": "market_closed"
+        "session": "closed"
       }
     ]
   },
