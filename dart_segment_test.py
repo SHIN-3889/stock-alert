@@ -92,12 +92,13 @@ def extract_segment_section(doc_text):
         if pos == -1:
             continue
         # 앵커부터 다음 2500자를 가져와서 표 내용 확인
-        chunk = doc_text[pos:pos+2500]
+        chunk = doc_text[pos:pos+5000]
         # TABLE 태그 안의 내용을 텍스트로 정리
         clean = re.sub(r'<[^>]+>', ' | ', chunk)
         clean = re.sub(r'\s*\|\s*(\|\s*)+', ' | ', clean)  # 연속 구분자 정리
         clean = re.sub(r'\s+', ' ', clean).strip()
-        found.append(f"=== [{anchor}] ===\n{clean[:2000]}")
+        found.append(f"=== [{anchor}] ===\n{clean[:4000]}")
+        break  # 첫 번째 표만
     return found
 
 
