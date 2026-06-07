@@ -339,15 +339,15 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-07 20:23';
-  const DASHBOARD_VERSION = 'v40.1';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
   const FILE_PATH     = 'settings.json';
   const BRANCH        = 'main';
   const GEMINI_KEY_K  = 'gemini_api_key';
-  const GEMINI_MODEL  = 'gemini-2.5-flash';
+  const GEMINI_MODEL  = 'gemini-2.5-flash-lite';
 
   // ── 상태 ───────────────────────────────────────────────────────────
   let originalSettings = null;
@@ -626,9 +626,9 @@
       try { return await fetchConsensusOnce(code, name, market, key); } catch(e) { return null; }
     }
     var promises = [];
-    for (var i = 0; i < 5; i++) {
+    for (var i = 0; i < 2; i++) {
       promises.push(consWithRetry());
-      await new Promise(function(res){ setTimeout(res, 150); });
+      await new Promise(function(res){ setTimeout(res, 500); });
     }
     var results = await Promise.allSettled(promises);
     var valid = results.filter(function(r){ return r.status==='fulfilled' && r.value; }).map(function(r){ return r.value; });
@@ -1030,9 +1030,9 @@
 
       // 5회 호출을 150ms 간격으로 시작 (속도 제한 회피)
       var promises = [];
-      for (var i = 0; i < 5; i++) {
+      for (var i = 0; i < 3; i++) {
         promises.push(callWithRetry(prompt, key));
-        await new Promise(function(res){ setTimeout(res, 150); });
+        await new Promise(function(res){ setTimeout(res, 500); });
       }
       var results = await Promise.allSettled(promises);
       var validResults = results
