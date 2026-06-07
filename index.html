@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-07 20:43';
-  const DASHBOARD_VERSION = 'v41.0';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -902,7 +902,7 @@
         '괴리율 = (2차 적정주가 - 현재가) ÷ 현재가 × 100',
         '',
         '⚠️ 출력 규칙: 아래 JSON 하나만 반환하세요. 마크다운(**, \n, ```) 절대 사용 금지. 모든 값은 한 줄 문자열.',
-        '{"segments":"부문1: 이름|현재EBITDA|정상화EBITDA|배수|보수적가치|정상화가치 / 부문2: 동일형식","breakdown":"SOTP보수적=(본업A+자회사+미래기술-순부채)÷주식수=P원, SOTP정상화=(본업B+자회사+미래기술-순부채)÷주식수=Q원","method1_label":"SOTP 적정주가 (보수적 바닥)","method1_price":"SOTP보수적 값","method2_label":"SOTP 적정주가 (정상화/포워드)","method2_price":"SOTP정상화 값","method3_label":"NTM P/E 적정주가 (시장기대)","method3_price":"NTM PE 값","method4_label":"애널리스트 목표주가 (전문가 컨센서스)","method4_price":"최신 증권사 목표주가 평균값(전고체 등 장기 성장기대 반영된 값)","target_detail":"이 목표주가의 출처 증권사들과 대략적 시점(예: 2025년 하반기 삼성증권/미래에셋 등 평균). 학습 데이터 기준이라 최신이 아닐 수 있다는 점 명시","target_1":"3가지 중 가장 낮은값(보수적)","target_2":"3가지 중 가장 높은값(낙관적)","gap_rate":"현재가 대비 정상화SOTP 괴리율(+ 또는 -)","sell_point":"매도 지점","stop_loss":"손절 라인","summary":"핵심 투자의견: 보수적바닥/정상화/시장기대 3개 값 사이에서 현재가 위치 해석 포함"}',
+        '{"segments":"부문1: 이름|현재EBITDA|정상화EBITDA|배수|보수적가치|정상화가치 / 부문2: 동일형식. ⚠️금액은 조/억 단위 한글 없이 순수 숫자(원)로만","breakdown":"SOTP보수적=(본업A+자회사+미래기술-순부채)÷주식수=P원, SOTP정상화=(본업B+자회사+미래기술-순부채)÷주식수=Q원. ⚠️모든 금액은 조/억/만 같은 한글 단위 없이 콤마 없는 순수 숫자(원)로만 쓸 것. 예: 10000000000000원","method1_label":"SOTP 적정주가 (보수적 바닥)","method1_price":"SOTP보수적 값","method2_label":"SOTP 적정주가 (정상화/포워드)","method2_price":"SOTP정상화 값","method3_label":"NTM P/E 적정주가 (시장기대)","method3_price":"NTM PE 값","method4_label":"애널리스트 목표주가 (전문가 컨센서스)","method4_price":"최신 증권사 목표주가 평균값(전고체 등 장기 성장기대 반영된 값)","target_detail":"이 목표주가의 출처 증권사들과 대략적 시점(예: 2025년 하반기 삼성증권/미래에셋 등 평균). 학습 데이터 기준이라 최신이 아닐 수 있다는 점 명시","target_1":"3가지 중 가장 낮은값(보수적)","target_2":"3가지 중 가장 높은값(낙관적)","gap_rate":"현재가 대비 정상화SOTP 괴리율(+ 또는 -)","sell_point":"매도 지점","stop_loss":"손절 라인","summary":"핵심 투자의견: 보수적바닥/정상화/시장기대 3개 값 사이에서 현재가 위치 해석 포함"}',
         '모든 내용은 한국어로, 가격은 원 단위 포함하여 작성하세요.'
       ];
     }
@@ -1077,48 +1077,56 @@
         (parsed.segments ? (function(){ var fmtSeg = function(s){
       // 큰 숫자(콤마 유무, 원 유무 무관) 모두 변환
       function conv(v){
+        // 1조 이상만 '조', 1000억 이상만 '억'으로 축약. 그 미만은 변환 안 함(주식수/적정주가 보호)
         if(v>=1000000000000){var jo=Math.floor(v/1000000000000);var eok=Math.floor((v%1000000000000)/100000000);return jo+'조'+(eok>0?eok+'억':'');}
-        if(v>=100000000){return Math.floor(v/100000000)+'억';}
-        if(v>=10000){return Math.floor(v/10000)+'만';}
+        if(v>=100000000000){return Math.floor(v/100000000)+'억';}
         return null;
       }
-      // 1) 콤마 포함 숫자 (예: 38,945,213,175,000) - 원 유무 무관
-      s = s.replace(/[\d,]{6,}원?/g, function(m){
-        var hasWon = m.indexOf('원') !== -1;
-        var v = parseInt(m.replace(/[,원]/g,''));
+      // 콤마 포함 숫자 + 원 (예: 38,945,213,175,000원)
+      s = s.replace(/[\d,]{6,}\s*원/g, function(m){
+        var v = parseInt(m.replace(/[,원\s]/g,''));
         if(isNaN(v)) return m;
-        var c = conv(v);
-        return c !== null ? c : m;
+        var c = conv(v); return c !== null ? c+'원' : m;
       });
-      // 2) 콤마 없는 순수 큰 숫자 (예: 38945213175000)
-      s = s.replace(/\d{5,}/g, function(n){
+      // 콤마 포함 숫자(원 없음) - 단 뒤에 조/억/만 한글단위가 오면 스킵
+      s = s.replace(/[\d,]{6,}(?![\d,]*\s*[조억만])/g, function(m){
+        if(m.indexOf(',') === -1) return m; // 콤마 없으면 다음 단계로
+        var v = parseInt(m.replace(/,/g,''));
+        if(isNaN(v)) return m;
+        var c = conv(v); return c !== null ? c : m;
+      });
+      // 콤마 없는 순수 큰 숫자 - 뒤에 조/억/만 한글이 오면 스킵
+      s = s.replace(/\d{5,}(?![\d]*\s*[조억만])/g, function(n){
         var v=parseInt(n);
-        var c = conv(v);
-        return c !== null ? c : n;
+        var c = conv(v); return c !== null ? c : n;
       });
       return s;
     }; return '<div style="font-size:11px;color:#444;background:#f8f4ff;padding:8px;border-radius:6px;margin-bottom:6px;line-height:1.8;">🏭 부문별 본업가치<br>' + parsed.segments.split(' / ').map(fmtSeg).join('<br>') + '</div>'; })() : '') +
         (parsed.breakdown ? (function(){ var fmtBd = function(s){
       // 큰 숫자(콤마 유무, 원 유무 무관) 모두 변환
       function conv(v){
+        // 1조 이상만 '조', 1000억 이상만 '억'으로 축약. 그 미만은 변환 안 함(주식수/적정주가 보호)
         if(v>=1000000000000){var jo=Math.floor(v/1000000000000);var eok=Math.floor((v%1000000000000)/100000000);return jo+'조'+(eok>0?eok+'억':'');}
-        if(v>=100000000){return Math.floor(v/100000000)+'억';}
-        if(v>=10000){return Math.floor(v/10000)+'만';}
+        if(v>=100000000000){return Math.floor(v/100000000)+'억';}
         return null;
       }
-      // 1) 콤마 포함 숫자 (예: 38,945,213,175,000) - 원 유무 무관
-      s = s.replace(/[\d,]{6,}원?/g, function(m){
-        var hasWon = m.indexOf('원') !== -1;
-        var v = parseInt(m.replace(/[,원]/g,''));
+      // 콤마 포함 숫자 + 원 (예: 38,945,213,175,000원)
+      s = s.replace(/[\d,]{6,}\s*원/g, function(m){
+        var v = parseInt(m.replace(/[,원\s]/g,''));
         if(isNaN(v)) return m;
-        var c = conv(v);
-        return c !== null ? c : m;
+        var c = conv(v); return c !== null ? c+'원' : m;
       });
-      // 2) 콤마 없는 순수 큰 숫자 (예: 38945213175000)
-      s = s.replace(/\d{5,}/g, function(n){
+      // 콤마 포함 숫자(원 없음) - 단 뒤에 조/억/만 한글단위가 오면 스킵
+      s = s.replace(/[\d,]{6,}(?![\d,]*\s*[조억만])/g, function(m){
+        if(m.indexOf(',') === -1) return m; // 콤마 없으면 다음 단계로
+        var v = parseInt(m.replace(/,/g,''));
+        if(isNaN(v)) return m;
+        var c = conv(v); return c !== null ? c : m;
+      });
+      // 콤마 없는 순수 큰 숫자 - 뒤에 조/억/만 한글이 오면 스킵
+      s = s.replace(/\d{5,}(?![\d]*\s*[조억만])/g, function(n){
         var v=parseInt(n);
-        var c = conv(v);
-        return c !== null ? c : n;
+        var c = conv(v); return c !== null ? c : n;
       });
       return s;
     }; return '<div style="font-size:11px;color:#666;background:#fff;padding:8px;border-radius:6px;margin-bottom:8px;line-height:1.5;">📐 계산 근거: ' + fmtBd(parsed.breakdown) + '</div>'; })() : '') +
