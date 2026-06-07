@@ -41,6 +41,9 @@ def _save_last_mail(portfolio: dict):
     for row in portfolio["rows"]:
         if "error" not in row:
             snapshot["prices"][row["name"]] = row["price"]
+    for w in portfolio.get("watchlist", []):
+        if "error" not in w:
+            snapshot["prices"][w["name"]] = w["price"]
     try:
         with open(LAST_MAIL_PATH, 'w', encoding='utf-8') as f:
             json.dump(snapshot, f, ensure_ascii=False, indent=2, default=str)
@@ -109,6 +112,30 @@ def build_report(portfolio: dict, news: dict) -> str:
             f"  ▶ 평가손익 {_mark(row['pl_krw'])} {_won(row['pl_krw'])} "
             f"({row['pl_pct']:+.2f}%)"
         )
+
+    # ── 관심 종목 시세 (있을 때만) ────────────────────────────
+    watchlist = portfolio.get("watchlist", [])
+    if watchlist:
+        lines.append("")
+        lines.append("[ 관심 종목 시세 ]")
+        for w in watchlist:
+            if "error" in w:
+                lines.append(f"· {w['name']}: 조회 실패")
+                continue
+            unit = "$" if w["currency"] == "USD" else "원"
+            price = (f"{w['price']:,.2f}{unit}" if w["currency"] == "USD"
+                     else f"{w['price']:,.0f}{unit}")
+            # 직전 메일 대비 변동
+            last_p = last_prices.get(w["name"])
+            if last_p:
+                p_diff_pct = (w["price"] - last_p) / last_p * 100 if last_p else 0
+                change_str = f" / 직전比 {_mark(p_diff_pct)} {p_diff_pct:+.2f}%"
+            else:
+                change_str = ""
+            lines.append(
+                f"\n· {w['name']}\n"
+                f"  현재가 {price} (일간 {w['day_change_pct']:+.2f}%{change_str})"
+            )
 
     # ── 뉴스 (있을 때만) ──────────────────────────────────────
     if news:
