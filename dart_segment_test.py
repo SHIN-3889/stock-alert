@@ -83,26 +83,21 @@ def download_document(rcept_no):
 
 
 def extract_segment_section(doc_text):
-    """문서에서 '부문' 관련 섹션 찾아서 일부 출력"""
-    # 부문 정보가 나오는 키워드 주변 텍스트 추출
-    keywords = ["부문별", "영업부문", "사업부문", "부문 정보", "세그먼트"]
+    """'연결기준 사업부문별 재무정보' 표 전체를 추출"""
     found = []
-    for kw in keywords:
-        idx = 0
-        while True:
-            pos = doc_text.find(kw, idx)
-            if pos == -1:
-                break
-            snippet = doc_text[pos:pos+500]
-            # HTML 태그 제거
-            clean = re.sub(r'<[^>]+>', ' ', snippet)
-            clean = re.sub(r'\s+', ' ', clean).strip()
-            found.append(f"[{kw}] {clean[:300]}")
-            idx = pos + 1
-            if len(found) >= 10:
-                break
-        if len(found) >= 10:
-            break
+    # 핵심 표: 부문별 재무정보 (영업이익, 매출 등이 있는 표)
+    anchors = ["연결기준 사업부문별 재무정보", "부문별 주요 재무정보", "사업부문별 재무정보"]
+    for anchor in anchors:
+        pos = doc_text.find(anchor)
+        if pos == -1:
+            continue
+        # 앵커부터 다음 2500자를 가져와서 표 내용 확인
+        chunk = doc_text[pos:pos+2500]
+        # TABLE 태그 안의 내용을 텍스트로 정리
+        clean = re.sub(r'<[^>]+>', ' | ', chunk)
+        clean = re.sub(r'\s*\|\s*(\|\s*)+', ' | ', clean)  # 연속 구분자 정리
+        clean = re.sub(r'\s+', ' ', clean).strip()
+        found.append(f"=== [{anchor}] ===\n{clean[:2000]}")
     return found
 
 
