@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-08 06:01:07",
+  "updated_at": "2026-06-08 06:15:52",
   "portfolio": {
     "rows": [
       {
@@ -19,19 +19,19 @@
         "price": 933.6099853515625,
         "day_change_pct": -2.850157611700052,
         "shares": 42,
-        "value_krw": 60114155.2241098,
-        "pl_krw": -7169664.088750973,
+        "value_krw": 61147385.22415808,
+        "pl_krw": -7292894.831978574,
         "pl_pct": -10.655851825849819,
         "session": "closed"
       }
     ],
     "summary": {
-      "total_value_krw": 63740785.2241098,
-      "day_change_krw": -1751038.948009342,
-      "day_change_pct": -2.6736756383627895,
-      "total_pl_krw": -7142502.088750973,
-      "total_pl_pct": -10.0764261358616,
-      "usdkrw": 1533.0699462890625
+      "total_value_krw": 64774015.22415808,
+      "day_change_krw": -1781351.5895626247,
+      "day_change_pct": -2.676495788158425,
+      "total_pl_krw": -7265732.831978574,
+      "total_pl_pct": -10.085727710092469,
+      "usdkrw": 1559.4200439453125
     },
     "watchlist": [
       {
@@ -87,6 +87,11 @@
         "price": 864.010009765625,
         "day_change_pct": -11.086297799244141,
         "session": "closed"
+      },
+      {
+        "code": "AVDA.O",
+        "name": "엔비디아",
+        "error": "AVDA.O 시세 조회 실패"
       }
     ]
   },
