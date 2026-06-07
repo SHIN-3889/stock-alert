@@ -72,7 +72,7 @@ def get_financial_data(corp_code, bsns_year, fs_div="CFS", reprt_code="11011"):
             "crtfc_key": DART_KEY,
             "corp_code":  corp_code,
             "bsns_year":  bsns_year,
-            "reprt_code": "11011",
+            "reprt_code": reprt_code,
             "fs_div":     fs_div,
         }
         res  = requests.get(url, params=params, timeout=20)
@@ -230,6 +230,89 @@ def get_shares_outstanding(corp_code, bsns_year, reprt_code="11011"):
     return 0
 
 
+
+# ── 사업부문별 재무정보 (공시 원문에서 추출) ──────────────────────────
+def find_business_report(corp_code, bsns_year):
+    """사업보고서 등 정기공시 접수번호 찾기"""
+    try:
+        url = f"{DART_BASE}/list.json"
+        params = {
+            "crtfc_key": DART_KEY,
+            "corp_code": corp_code,
+            "bgn_de":    f"{bsns_year}0101",
+            "end_de":    f"{int(bsns_year)+1}0630",
+            "pblntf_ty": "A",
+            "page_count": 100,
+        }
+        res = requests.get(url, params=params, timeout=15)
+        data = res.json()
+        if data.get("status") != "000":
+            return None
+        reports = data.get("list", [])
+        # 분기/반기/사업 순으로 가장 최신 보고서 우선
+        for keyword in ["분기보고서", "반기보고서", "사업보고서"]:
+            for r in reports:
+                if keyword in r.get("report_nm", ""):
+                    print(f"  공시원문 기준: {r['report_nm']} ({r['rcept_dt']})")
+                    return r["rcept_no"]
+    except Exception as e:
+        print(f"  사업보고서 검색 실패: {e}")
+    return None
+
+
+def download_document(rcept_no):
+    """공시 원문 ZIP → 본문 XML 텍스트"""
+    try:
+        url = f"{DART_BASE}/document.xml"
+        res = requests.get(url, params={"crtfc_key": DART_KEY, "rcept_no": rcept_no}, timeout=60)
+        z = zipfile.ZipFile(io.BytesIO(res.content))
+        names = z.namelist()
+        biggest = max(names, key=lambda n: z.getinfo(n).file_size)
+        raw = z.read(biggest)
+        for enc in ["utf-8", "euc-kr", "cp949"]:
+            try:
+                return raw.decode(enc)
+            except:
+                continue
+        return raw.decode("utf-8", errors="ignore")
+    except Exception as e:
+        print(f"  공시원문 다운로드 실패: {e}")
+    return None
+
+
+def extract_segment_table(doc_text):
+    """'연결기준 사업부문별 재무정보' 표를 텍스트로 추출 (Gemini가 읽을 형태)"""
+    anchors = ["연결기준 사업부문별 재무정보", "부문별 주요 재무정보", "사업부문별 재무정보"]
+    for anchor in anchors:
+        pos = doc_text.find(anchor)
+        if pos == -1:
+            continue
+        chunk = doc_text[pos:pos+5000]
+        # HTML 태그를 구분자로 변환
+        clean = re.sub(r'<[^>]+>', ' | ', chunk)
+        clean = re.sub(r'\s*\|\s*(\|\s*)+', ' | ', clean)
+        clean = re.sub(r'\s+', ' ', clean).strip()
+        return clean[:3000]
+    return None
+
+
+def get_segment_info(corp_code, bsns_year):
+    """부문별 재무정보 표 텍스트 반환 (없으면 None)"""
+    rcept_no = find_business_report(corp_code, bsns_year)
+    if not rcept_no:
+        print("  사업보고서 접수번호 못 찾음")
+        return None
+    doc = download_document(rcept_no)
+    if not doc:
+        return None
+    table = extract_segment_table(doc)
+    if table:
+        print(f"  부문별 재무정보 표 추출 성공 ({len(table)}자)")
+    else:
+        print("  부문별 재무정보 표 못 찾음")
+    return table
+
+
 # ── 자회사 정보 ──────────────────────────────────────────────────────
 def get_subsidiaries(corp_code, bsns_year, reprt_code="11011"):
     """특수관계인 출자현황으로 자회사 정보 조회"""
@@ -379,6 +462,10 @@ def analyze_stock(stock_code, name, corp_code):
     total_cash = net_debt_data["total_cash"]
     excess_cash_data = calc_excess_cash(total_cash, revenue, stock_code)
 
+    # 부문별 재무정보 (공시 원문에서 추출)
+    print("  [부문별 재무정보 추출]")
+    segment_info = get_segment_info(corp_code, bsns_year)
+
     return {
         "stock_code":        stock_code,
         "name":              name,
@@ -390,6 +477,7 @@ def analyze_stock(stock_code, name, corp_code):
         "net_debt":          net_debt_data,
         "excess_cash":       excess_cash_data,
         "subsidiaries":      sub_list,
+        "segment_info":      segment_info,
         "updated_at":        datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S"),
     }
 
