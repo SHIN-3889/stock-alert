@@ -45,6 +45,10 @@
     "MU": {
       "name": "마이크론",
       "market": "US"
+    },
+    "AVDA.O": {
+      "name": "엔비디아",
+      "market": "US"
     }
   }
 }
