@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-07 23:45:44",
+  "updated_at": "2026-06-08 00:01:06",
   "portfolio": {
     "rows": [
       {
@@ -11,7 +11,7 @@
         "value_krw": 3626630.0,
         "pl_krw": 27162.0,
         "pl_pct": 0.7546115148127445,
-        "session": "closed"
+        "session": "market_closed"
       },
       {
         "name": "GE버노바",
@@ -41,7 +41,7 @@
         "currency": "KRW",
         "price": 956000.0,
         "day_change_pct": -4.3043043043043046,
-        "session": "closed"
+        "session": "market_closed"
       },
       {
         "code": "000660",
@@ -50,7 +50,7 @@
         "currency": "KRW",
         "price": 2070000.0,
         "day_change_pct": -9.921671018276761,
-        "session": "closed"
+        "session": "market_closed"
       },
       {
         "code": "012330",
@@ -59,7 +59,7 @@
         "currency": "KRW",
         "price": 697000.0,
         "day_change_pct": -6.8181818181818175,
-        "session": "closed"
+        "session": "market_closed"
       },
       {
         "code": "005930",
@@ -68,7 +68,7 @@
         "currency": "KRW",
         "price": 329000.0,
         "day_change_pct": -6.401137980085349,
-        "session": "closed"
+        "session": "market_closed"
       },
       {
         "code": "GOOG",
