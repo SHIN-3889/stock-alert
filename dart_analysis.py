@@ -249,8 +249,8 @@ def find_business_report(corp_code, bsns_year):
         if data.get("status") != "000":
             return None
         reports = data.get("list", [])
-        # 분기/반기/사업 순으로 가장 최신 보고서 우선
-        for keyword in ["분기보고서", "반기보고서", "사업보고서"]:
+        # 부문 정보는 연간 사업보고서에만 상세히 나오므로 사업보고서 우선
+        for keyword in ["사업보고서", "반기보고서", "분기보고서"]:
             for r in reports:
                 if keyword in r.get("report_nm", ""):
                     print(f"  공시원문 기준: {r['report_nm']} ({r['rcept_dt']})")
@@ -281,18 +281,39 @@ def download_document(rcept_no):
 
 
 def extract_segment_table(doc_text):
-    """'연결기준 사업부문별 재무정보' 표를 텍스트로 추출 (Gemini가 읽을 형태)"""
-    anchors = ["연결기준 사업부문별 재무정보", "부문별 주요 재무정보", "사업부문별 재무정보"]
+    """사업부문별 재무정보 표를 텍스트로 추출. 단일부문이면 그 사실을 반환."""
+    # 단일 사업부문(SK하이닉스 등) 체크 먼저
+    single_markers = ["지배적 단일 사업부문", "단일 사업부문으로", "부문별 기재를 생략", "단일 영업부문"]
+    for marker in single_markers:
+        if marker in doc_text:
+            return "SINGLE_SEGMENT: 이 회사는 지배적 단일 사업부문(예: 반도체)으로, 부문 분할이 불필요합니다. 전사 영업이익을 그대로 사용하세요."
+
+    # 부문별 재무정보 표 추출 (영업이익이 포함된 표 우선)
+    anchors = [
+        "연결기준 사업부문별 재무정보", "부문별 주요 재무정보",
+        "사업부문별 재무정보", "사업부문별 요약 재무",
+        "부문별 재무정보", "영업부문별 정보",
+    ]
     for anchor in anchors:
         pos = doc_text.find(anchor)
         if pos == -1:
             continue
         chunk = doc_text[pos:pos+5000]
-        # HTML 태그를 구분자로 변환
         clean = re.sub(r'<[^>]+>', ' | ', chunk)
         clean = re.sub(r'\s*\|\s*(\|\s*)+', ' | ', clean)
         clean = re.sub(r'\s+', ' ', clean).strip()
-        return clean[:3000]
+        # 영업이익/영업손익 단어가 있는 표만 유효 (매출 비중만 있는 표 제외)
+        if "영업" in clean and ("이익" in clean or "손익" in clean or "손실" in clean):
+            return clean[:3000]
+    # 영업이익 표는 없지만 매출 비중표라도 있으면 반환
+    for anchor in anchors:
+        pos = doc_text.find(anchor)
+        if pos != -1:
+            chunk = doc_text[pos:pos+3000]
+            clean = re.sub(r'<[^>]+>', ' | ', chunk)
+            clean = re.sub(r'\s*\|\s*(\|\s*)+', ' | ', clean)
+            clean = re.sub(r'\s+', ' ', clean).strip()
+            return clean[:2500]
     return None
 
 
@@ -411,20 +432,28 @@ def analyze_stock(stock_code, name, corp_code):
 
     print(f"  재무항목 수: {len(fin_list)}개")
 
-    # 순부채
+    # 연간 사업보고서 연도 결정 (발행주식수/자회사/부문정보용)
+    # 분기 데이터를 쓰는 경우, 직전 완료된 연간 사업보고서를 따로 조회
+    now = datetime.now(KST)
+    annual_year = str(now.year - 1) if now.month >= 4 else str(now.year - 2)
+    print(f"  연간 사업보고서 기준연도: {annual_year}")
+
+    # 순부채 (최신 분기 기준)
     print("  [순부채 계산]")
     net_debt_data = calc_net_debt(fin_list)
 
-    # 영업이익
+    # 영업이익 (최신 분기 기준)
     op_income = get_operating_income(fin_list)
     print(f"  영업이익: {op_income:,}원")
 
-    # 발행주식수
-    shares = get_shares_outstanding(corp_code, bsns_year, reprt_code)
+    # 발행주식수 (연간 사업보고서 기준 - 분기엔 없을 수 있음)
+    shares = get_shares_outstanding(corp_code, annual_year, "11011")
+    if not shares:
+        shares = get_shares_outstanding(corp_code, bsns_year, reprt_code)
     print(f"  발행주식수: {shares:,}주")
 
-    # 자회사
-    subs = get_subsidiaries(corp_code, bsns_year, reprt_code)
+    # 자회사 (연간 사업보고서 기준)
+    subs = get_subsidiaries(corp_code, annual_year, "11011")
     sub_list = []
     for sub in subs[:20]:
         name  = sub.get("inv_prm", "").strip()
@@ -464,7 +493,7 @@ def analyze_stock(stock_code, name, corp_code):
 
     # 부문별 재무정보 (공시 원문에서 추출)
     print("  [부문별 재무정보 추출]")
-    segment_info = get_segment_info(corp_code, bsns_year)
+    segment_info = get_segment_info(corp_code, annual_year)
 
     return {
         "stock_code":        stock_code,
