@@ -24,4 +24,4 @@ jobs:
       - name: 부문정보 추출 테스트
         env:
           DART_API_KEY: ${{ secrets.DART_API_KEY }}
-        run: python dart_segment_test.py
+        run: python dart_q1_test.py
