@@ -1,12 +1,12 @@
 {
   "000660": {
     "stock_code": "000660",
-    "name": "합계",
+    "name": "GigaIO Networks, Inc.",
     "bsns_year": "2026",
     "reprt_name": "1분기보고서",
     "operating_income": 37610283000000,
     "revenue": 52576287000000,
-    "shares_outstanding": 708297021,
+    "shares_outstanding": 701691520,
     "net_debt": {
       "net_debt": -39386979000000,
       "total_debt": 0,
@@ -28,113 +28,153 @@
     },
     "subsidiaries": [
       {
-        "name": "-",
-        "ownership_ratio": 0.0,
-        "shares_held": 0,
-        "book_value": 0,
-        "investment_purpose": "-"
+        "name": "에스케이하이이엔지㈜",
+        "ownership_ratio": 100.0,
+        "shares_held": 500689,
+        "book_value": 7521000000,
+        "investment_purpose": "경영참여"
       },
       {
-        "name": "합계",
-        "ownership_ratio": 0.0,
+        "name": "SK hynix Semiconductor Asia Pte.Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 196303500,
+        "book_value": 52380000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SK hynix Semiconductor HongKong Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 170693661,
+        "book_value": 32623000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SK hynix Japan Inc.",
+        "ownership_ratio": 100.0,
+        "shares_held": 20000,
+        "book_value": 42905000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SK hynix Semiconductor Taiwan Inc.",
+        "ownership_ratio": 100.0,
+        "shares_held": 35725000,
+        "book_value": 37562000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SK hynix Semiconductor India Private Ltd.",
+        "ownership_ratio": 1.0,
+        "shares_held": 270,
+        "book_value": 5000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SK hynix Semiconductor (China) Ltd.",
+        "ownership_ratio": 100.0,
         "shares_held": 0,
-        "book_value": 0,
-        "investment_purpose": "-"
+        "book_value": 5679587000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "HITECH Semiconductor (Wuxi) Co., Ltd.",
+        "ownership_ratio": 45.0,
+        "shares_held": 0,
+        "book_value": 92608000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SK hynix (Wuxi) Semiconductor Sales Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 237000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SK hynix memory solutions Taiwan, Inc.",
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 7819000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SK APTECH Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 407000000,
+        "book_value": 440770000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "에스케이하이스텍㈜",
+        "ownership_ratio": 100.0,
+        "shares_held": 277203,
+        "book_value": 6760000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "STRATIO,INC.",
+        "ownership_ratio": 9.3,
+        "shares_held": 1136013,
+        "book_value": 394000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SK South East Asia Investment Pte. Ltd.",
+        "ownership_ratio": 20.0,
+        "shares_held": 0,
+        "book_value": 345800000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SK China Company Limited",
+        "ownership_ratio": 11.9,
+        "shares_held": 4754868,
+        "book_value": 257169000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SK hynix Ventures Hong Kong Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 9800001,
+        "book_value": 10941000000,
+        "investment_purpose": "일반투자"
+      },
+      {
+        "name": "MEMS Drive, Inc.",
+        "ownership_ratio": 2.4,
+        "shares_held": 305826,
+        "book_value": 1251000000,
+        "investment_purpose": "일반투자"
+      },
+      {
+        "name": "FemtoMetrix, Inc.",
+        "ownership_ratio": 10.0,
+        "shares_held": 31645570,
+        "book_value": 6820000000,
+        "investment_purpose": "일반투자"
+      },
+      {
+        "name": "ProMOS Technologies Inc.",
+        "ownership_ratio": 13.3,
+        "shares_held": 6000932,
+        "book_value": 1983000000,
+        "investment_purpose": "일반투자"
+      },
+      {
+        "name": "GigaIO Networks, Inc.",
+        "ownership_ratio": 7.5,
+        "shares_held": 1334152,
+        "book_value": 3242000000,
+        "investment_purpose": "일반투자"
       }
     ],
-    "segment_info": null,
-    "updated_at": "2026-06-08 06:29:46"
+    "segment_info": "SINGLE_SEGMENT: 이 회사는 지배적 단일 사업부문(예: 반도체)으로, 부문 분할이 불필요합니다. 전사 영업이익을 그대로 사용하세요.",
+    "updated_at": "2026-06-08 06:50:13"
   },
   "012330": {
-    "stock_code": "012330",
-    "name": "합계",
-    "bsns_year": "2026",
-    "reprt_name": "1분기보고서",
-    "operating_income": 802648000000,
-    "revenue": 15560513000000,
-    "shares_outstanding": 0,
-    "net_debt": {
-      "net_debt": 254591000000,
-      "total_debt": 5897656000000,
-      "total_cash": 5643065000000,
-      "detail": {
-        "short_borrowings": 963443000000,
-        "current_ltd": 963443000000,
-        "long_borrowings": 1985385000000,
-        "bonds": 1985385000000,
-        "cash": 5643065000000,
-        "short_financial": 0
-      }
-    },
-    "excess_cash": {
-      "excess_cash": 5176249610000.0,
-      "operating_cash_needed": 466815390000.0,
-      "market_cap": 62158866351000.0,
-      "excess_cash_ratio": 8.3
-    },
-    "subsidiaries": [
-      {
-        "name": "-",
-        "ownership_ratio": 0.0,
-        "shares_held": 0,
-        "book_value": 0,
-        "investment_purpose": "-"
-      },
-      {
-        "name": "합계",
-        "ownership_ratio": 0.0,
-        "shares_held": 0,
-        "book_value": 0,
-        "investment_purpose": "-"
-      }
-    ],
-    "segment_info": null,
-    "updated_at": "2026-06-08 06:30:17"
+    "error": "name 're' is not defined"
   },
   "005930": {
-    "stock_code": "005930",
-    "name": "합계",
-    "bsns_year": "2026",
-    "reprt_name": "1분기보고서",
-    "operating_income": 57232797000000,
-    "revenue": 133873444000000,
-    "shares_outstanding": 0,
-    "net_debt": {
-      "net_debt": -119216042000000,
-      "total_debt": 28138794000000,
-      "total_cash": 147354836000000,
-      "detail": {
-        "short_borrowings": 19546315000000,
-        "current_ltd": 1191168000000,
-        "long_borrowings": 7393796000000,
-        "bonds": 7515000000,
-        "cash": 73306751000000,
-        "short_financial": 74048085000000
-      }
-    },
-    "excess_cash": {
-      "excess_cash": 143338632680000.0,
-      "operating_cash_needed": 4016203320000.0,
-      "market_cap": 2160399261874000.0,
-      "excess_cash_ratio": 6.6
-    },
-    "subsidiaries": [
-      {
-        "name": "-",
-        "ownership_ratio": 0.0,
-        "shares_held": 0,
-        "book_value": 0,
-        "investment_purpose": "-"
-      },
-      {
-        "name": "합계",
-        "ownership_ratio": 0.0,
-        "shares_held": 0,
-        "book_value": 0,
-        "investment_purpose": "-"
-      }
-    ],
-    "segment_info": null,
-    "updated_at": "2026-06-08 06:30:53"
+    "error": "name 're' is not defined"
   }
 }
