@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-08 06:54';
-  const DASHBOARD_VERSION = 'v43.9';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -890,7 +890,10 @@
         '  ▶ SOTP-보수적 = (시나리오A 본업 + 자회사 + 미래기술 - 순부채) ÷ 발행주식수',
         '  ▶ SOTP-정상화 = (시나리오B 본업 + 자회사 + 미래기술 - 순부채) ÷ 발행주식수',
         '  ▶ NTM P/E = 아래 NTM 방식 결과',
-        '  ⚠️ 반드시 (주주가치 전체)를 발행주식수로 나누세요. 세 값 모두 현재가 ' + priceStr + '와 같은 자릿수인지 검증.',
+        '  ⚠️⚠️ 자릿수 계산 주의(매우 중요): 주주가치는 보통 수십조원(예: 175조원=175,000,000,000,000원), 발행주식수는 수천만~수억주(예: 89,176,783주)입니다.',
+        '    예시 계산: 주주가치 175조원(175000000000000) ÷ 발행주식수 89,176,783주 = 약 1,962,000원 (백만원대 아님, 백만원 미만의 정상 주가).',
+        '    ⚠️ 계산 결과 적정주가(method1~3 price)는 반드시 현재가 ' + priceStr + '와 동일한 자릿수(보통 수만~수십만원)여야 합니다.',
+        '    만약 적정주가가 1조원, 1억원처럼 비현실적으로 크게 나오면 자릿수를 틀린 것이니 다시 계산하세요. method1_price/method2_price/method3_price/method4_price는 반드시 현재가와 같은 자릿수의 원 단위 숫자로 출력하세요.',
         '',
         '[NTM P/E 방식]',
         '⚠️ NTM P/E 계산 시 반드시 결과값이 현재가 ' + priceStr + '의 0.3배~5배 범위 안에 있어야 합니다. 이 범위를 벗어나면 계산 오류이므로 다시 계산하세요.',
