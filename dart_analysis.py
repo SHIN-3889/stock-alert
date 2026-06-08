@@ -290,28 +290,36 @@ def extract_segment_table(doc_text):
         if marker in doc_text:
             return "SINGLE_SEGMENT: 이 회사는 지배적 단일 사업부문(예: 반도체)으로, 부문 분할이 불필요합니다. 전사 영업이익을 그대로 사용하세요."
 
-    # 부문별 재무정보 표 추출 (영업이익이 포함된 표 우선)
+    # 부문별 재무정보 표 추출 (영업이익+영업손익 단어가 있는 진짜 표 우선)
     anchors = [
         "연결기준 사업부문별 재무정보", "부문별 주요 재무정보",
-        "사업부문별 재무정보", "사업부문별 요약 재무",
-        "부문별 재무정보", "영업부문별 정보",
+        "사업부문별 재무정보", "부문별 재무정보",
+        "사업부문별 요약 재무", "영업부문별 정보",
     ]
+    # 각 앵커의 "모든" 출현 위치를 확인 (첫 출현은 회사소개 문단일 수 있음)
+    candidates = []
     for anchor in anchors:
-        pos = doc_text.find(anchor)
-        if pos == -1:
-            continue
-        chunk = doc_text[pos:pos+5000]
-        clean = re.sub(r'<[^>]+>', ' | ', chunk)
-        clean = re.sub(r'\s*\|\s*(\|\s*)+', ' | ', clean)
-        clean = re.sub(r'\s+', ' ', clean).strip()
-        # 영업이익/영업손익이 있고, 부문이 2개 이상 구분되는 표만 유효
-        has_profit = "영업" in clean and ("이익" in clean or "손익" in clean or "손실" in clean)
-        # 부문 구분 확인: 표에 숫자가 충분히 많아야 함 (단일부문이면 데이터 빈약)
-        digit_groups = re.findall(r'[\d,]{4,}', clean)
-        if has_profit and len(digit_groups) >= 6:
-            return clean[:3000]
-    # 영업이익이 명확한 부문 표를 못 찾으면 → 전사 계산 (단일부문 취급)
-    # (매출 비중만 있는 부실한 표는 오히려 혼란을 주므로 사용 안 함)
+        start = 0
+        while True:
+            pos = doc_text.find(anchor, start)
+            if pos == -1:
+                break
+            chunk = doc_text[pos:pos+5000]
+            clean = re.sub(r'<[^>]+>', ' | ', chunk)
+            clean = re.sub(r'\s*\|\s*(\|\s*)+', ' | ', clean)
+            clean = re.sub(r'\s+', ' ', clean).strip()
+            has_profit = ("영업이익" in clean) or ("영업손익" in clean) or ("영업손실" in clean)
+            digit_groups = re.findall(r'[\d,]{4,}', clean)
+            # 영업이익 단어 + 숫자 8개 이상 = 진짜 재무 표
+            if has_profit and len(digit_groups) >= 8:
+                # 숫자가 많을수록 좋은 표 (점수: 숫자 개수)
+                candidates.append((len(digit_groups), clean[:3000]))
+            start = pos + 1
+    if candidates:
+        # 숫자가 가장 많은 표 선택 (가장 상세한 재무 표)
+        candidates.sort(key=lambda x: x[0], reverse=True)
+        return candidates[0][1]
+    # 영업이익이 명확한 부문 표를 못 찾으면 → 전사 계산
     return "SINGLE_SEGMENT: 부문별 영업이익 데이터가 명확하지 않습니다. 사업부문을 나누지 말고 전사(회사 전체) 영업이익으로 EBITDA를 계산하세요."
 
 
