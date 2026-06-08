@@ -169,7 +169,172 @@
       }
     ],
     "segment_info": "사업부문별 요약 재무 현황 | 2025년(제57기) 매출은 DX 부문이 187조 9,673억원(56.3%), DS 부문이 130조 1,282억원(39%)이며, SDC가 29조 8,417억원(8.9%), Harman은 15조 7,833억원(4.7%)입니다.2025년(제57기) 영업이익은 DX 부문이 12조 8,527억원, DS 부문이 24조 8,581억원, SDC가 4조 1,163억원, 그리고 Harman은 1조 5,311억원입니다. | (단위 : 억원, %) | 부문 | 구 분 | 제57기 | 제56기 | 제55기 | 금액 | 비중 | 금액 | 비중 | 금액 | 비중 | DX 부문 | 매출액 | 1,879,673 | 56.3% | 1,748,877 | 58.1% | 1,699,923 | 65.7% | 영업이익 | 128,527 | 29.5% | 124,399 | 38.0% | 143,847 | 219.0% | 총자산 | 2,810,397 | 36.0% | 2,596,713 | 36.2% | 2,342,534 | 37.2% | DS 부문 | 매출액 | 1,301,282 | 39.0% | 1,110,660 | 36.9% | 665,945 | 25.7% | 영업이익 | 248,581 | 57.0% | 150,945 | 46.1% | △148,795 | △226.6% | 총자산 | <TD ALIGN=\"RIGHT\" VALIGN=\"MIDDLE\" WIDTH=\"90\" HEIGHT=\"23",
-    "updated_at": "2026-06-08 16:29:43"
+    "updated_at": "2026-06-08 23:00:51"
+  },
+  "012330": {
+    "stock_code": "012330",
+    "name": "Hyundai Motor Group (China) Ltd.",
+    "bsns_year": "2026",
+    "reprt_name": "1분기보고서",
+    "operating_income": 802648000000,
+    "revenue": 15560513000000,
+    "shares_outstanding": 89176783,
+    "net_debt": {
+      "net_debt": 254591000000,
+      "total_debt": 5897656000000,
+      "total_cash": 5643065000000,
+      "detail": {
+        "short_borrowings": 963443000000,
+        "current_ltd": 963443000000,
+        "long_borrowings": 1985385000000,
+        "bonds": 1985385000000,
+        "cash": 5643065000000,
+        "short_financial": 0
+      }
+    },
+    "excess_cash": {
+      "excess_cash": 5176249610000.0,
+      "operating_cash_needed": 466815390000.0,
+      "market_cap": 54578516796000.0,
+      "excess_cash_ratio": 9.5
+    },
+    "subsidiaries": [
+      {
+        "name": "현대자동차",
+        "ownership_ratio": 22.0,
+        "shares_held": 45782000,
+        "book_value": 3880191000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "현대트랜시스",
+        "ownership_ratio": 16.0,
+        "shares_held": 12893000,
+        "book_value": 285678000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "현대아이에이치엘",
+        "ownership_ratio": 99.0,
+        "shares_held": 19080000,
+        "book_value": 0,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "푸본현대생명보험",
+        "ownership_ratio": 5.0,
+        "shares_held": 23051000,
+        "book_value": 23097000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "에이치그린파워",
+        "ownership_ratio": 100.0,
+        "shares_held": 29933000,
+        "book_value": 169746000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "지아이티",
+        "ownership_ratio": 46.0,
+        "shares_held": 4231000,
+        "book_value": 48450000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "모트라스",
+        "ownership_ratio": 100.0,
+        "shares_held": 36232000,
+        "book_value": 167302000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "유니투스",
+        "ownership_ratio": 100.0,
+        "shares_held": 59839000,
+        "book_value": 277902000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "에이치엠지에스 유한회사",
+        "ownership_ratio": 20.0,
+        "shares_held": 1836000,
+        "book_value": 18363000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "모아빛",
+        "ownership_ratio": 100.0,
+        "shares_held": 160000,
+        "book_value": 800000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "현대건설",
+        "ownership_ratio": 9.0,
+        "shares_held": 9720000,
+        "book_value": 1167118000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "Mobis Parts Middle East FZE",
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 0,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "Mobis Parts Europe N.V.",
+        "ownership_ratio": 100.0,
+        "shares_held": 3000,
+        "book_value": 59107000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "Hyundai Motor (Shanghai) Co., Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 18228000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "Shanghai Hyundai Mobis Automotive Parts Co., Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 116069000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "Jiangsu Mobis Automotive Parts Co., Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 85000000,
+        "book_value": 96915000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "Beijing Hyundai Mobis Automotive Parts Co., Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 223061000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "Beijing Hyundai Mobis Parts Co., Ltd.",
+        "ownership_ratio": 50.0,
+        "shares_held": 0,
+        "book_value": 20983000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "Hyundai Motor Group (China) Ltd.",
+        "ownership_ratio": 0.0,
+        "shares_held": 0,
+        "book_value": 0,
+        "investment_purpose": "경영참여"
+      }
+    ],
+    "segment_info": "사업부문별 요약 재무현황 | (1) 제 49기 (2025년) | (단위:백만원) | 구 분 | 모듈 및 부품제조사업부문 | A/S용 부품사업부문 | 공통부문 | 연결조정 | 합 계 | 총부문수익 | 58,702,105 | 17,842,842 | - | (15,426,820) | 61,118,127 | 연결조정 | (10,901,986) | (4,524,834) | - | 15,426,820 | - | 외부고객으로부터의 수익 | 47,800,119 | 13,318,008 | - | - | 61,118,127 | 영업이익 | 76,027 | 3,503,512 | - | (222,083) | 3,357,456 | 부문자산 : | 재고자산 | 4,595,047 | 3,854,921 | - | (1,588,134) | 6,861,834 | 유형자산 | 7,004,400 | 1,268,448 | 4,050,600 | 23,144 | 12,346,592 | 무형자산 | 875,967 | 90,478 | 277,559 | 21,624 | 1,265,628 | (2) 제 48기 (2024년) | (단위 : 백만원) | <TB",
+    "updated_at": "2026-06-08 23:01:54"
   },
   "267260": {
     "stock_code": "267260",
@@ -320,7 +485,7 @@
       }
     ],
     "segment_info": "SINGLE_SEGMENT: 이 회사는 지배적 단일 사업부문(예: 반도체)으로, 부문 분할이 불필요합니다. 전사 영업이익을 그대로 사용하세요.",
-    "updated_at": "2026-06-08 16:30:35"
+    "updated_at": "2026-06-08 23:02:46"
   },
   "000660": {
     "stock_code": "000660",
@@ -492,171 +657,6 @@
       }
     ],
     "segment_info": "SINGLE_SEGMENT: 이 회사는 지배적 단일 사업부문(예: 반도체)으로, 부문 분할이 불필요합니다. 전사 영업이익을 그대로 사용하세요.",
-    "updated_at": "2026-06-08 16:31:36"
-  },
-  "012330": {
-    "stock_code": "012330",
-    "name": "Hyundai Motor Group (China) Ltd.",
-    "bsns_year": "2026",
-    "reprt_name": "1분기보고서",
-    "operating_income": 802648000000,
-    "revenue": 15560513000000,
-    "shares_outstanding": 89176783,
-    "net_debt": {
-      "net_debt": 254591000000,
-      "total_debt": 5897656000000,
-      "total_cash": 5643065000000,
-      "detail": {
-        "short_borrowings": 963443000000,
-        "current_ltd": 963443000000,
-        "long_borrowings": 1985385000000,
-        "bonds": 1985385000000,
-        "cash": 5643065000000,
-        "short_financial": 0
-      }
-    },
-    "excess_cash": {
-      "excess_cash": 5176249610000.0,
-      "operating_cash_needed": 466815390000.0,
-      "market_cap": 54578516796000.0,
-      "excess_cash_ratio": 9.5
-    },
-    "subsidiaries": [
-      {
-        "name": "현대자동차",
-        "ownership_ratio": 22.0,
-        "shares_held": 45782000,
-        "book_value": 3880191000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "현대트랜시스",
-        "ownership_ratio": 16.0,
-        "shares_held": 12893000,
-        "book_value": 285678000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "현대아이에이치엘",
-        "ownership_ratio": 99.0,
-        "shares_held": 19080000,
-        "book_value": 0,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "푸본현대생명보험",
-        "ownership_ratio": 5.0,
-        "shares_held": 23051000,
-        "book_value": 23097000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "에이치그린파워",
-        "ownership_ratio": 100.0,
-        "shares_held": 29933000,
-        "book_value": 169746000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "지아이티",
-        "ownership_ratio": 46.0,
-        "shares_held": 4231000,
-        "book_value": 48450000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "모트라스",
-        "ownership_ratio": 100.0,
-        "shares_held": 36232000,
-        "book_value": 167302000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "유니투스",
-        "ownership_ratio": 100.0,
-        "shares_held": 59839000,
-        "book_value": 277902000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "에이치엠지에스 유한회사",
-        "ownership_ratio": 20.0,
-        "shares_held": 1836000,
-        "book_value": 18363000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "모아빛",
-        "ownership_ratio": 100.0,
-        "shares_held": 160000,
-        "book_value": 800000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "현대건설",
-        "ownership_ratio": 9.0,
-        "shares_held": 9720000,
-        "book_value": 1167118000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "Mobis Parts Middle East FZE",
-        "ownership_ratio": 100.0,
-        "shares_held": 0,
-        "book_value": 0,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "Mobis Parts Europe N.V.",
-        "ownership_ratio": 100.0,
-        "shares_held": 3000,
-        "book_value": 59107000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "Hyundai Motor (Shanghai) Co., Ltd.",
-        "ownership_ratio": 100.0,
-        "shares_held": 0,
-        "book_value": 18228000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "Shanghai Hyundai Mobis Automotive Parts Co., Ltd.",
-        "ownership_ratio": 100.0,
-        "shares_held": 0,
-        "book_value": 116069000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "Jiangsu Mobis Automotive Parts Co., Ltd.",
-        "ownership_ratio": 100.0,
-        "shares_held": 85000000,
-        "book_value": 96915000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "Beijing Hyundai Mobis Automotive Parts Co., Ltd.",
-        "ownership_ratio": 100.0,
-        "shares_held": 0,
-        "book_value": 223061000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "Beijing Hyundai Mobis Parts Co., Ltd.",
-        "ownership_ratio": 50.0,
-        "shares_held": 0,
-        "book_value": 20983000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "Hyundai Motor Group (China) Ltd.",
-        "ownership_ratio": 0.0,
-        "shares_held": 0,
-        "book_value": 0,
-        "investment_purpose": "경영참여"
-      }
-    ],
-    "segment_info": "사업부문별 요약 재무현황 | (1) 제 49기 (2025년) | (단위:백만원) | 구 분 | 모듈 및 부품제조사업부문 | A/S용 부품사업부문 | 공통부문 | 연결조정 | 합 계 | 총부문수익 | 58,702,105 | 17,842,842 | - | (15,426,820) | 61,118,127 | 연결조정 | (10,901,986) | (4,524,834) | - | 15,426,820 | - | 외부고객으로부터의 수익 | 47,800,119 | 13,318,008 | - | - | 61,118,127 | 영업이익 | 76,027 | 3,503,512 | - | (222,083) | 3,357,456 | 부문자산 : | 재고자산 | 4,595,047 | 3,854,921 | - | (1,588,134) | 6,861,834 | 유형자산 | 7,004,400 | 1,268,448 | 4,050,600 | 23,144 | 12,346,592 | 무형자산 | 875,967 | 90,478 | 277,559 | 21,624 | 1,265,628 | (2) 제 48기 (2024년) | (단위 : 백만원) | <TB",
-    "updated_at": "2026-06-08 16:32:42"
+    "updated_at": "2026-06-08 23:03:45"
   }
 }
