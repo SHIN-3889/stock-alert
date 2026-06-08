@@ -9,6 +9,7 @@ DART API를 이용한 종목별 재무 분석
 
 import os
 import io
+import re
 import json
 import time
 import zipfile
@@ -31,9 +32,10 @@ def load_kr_holdings():
         result = {}
         for code, info in {**s.get("holdings", {}), **s.get("watchlist", {})}.items():
             if info.get("market") == "KR":
-                # ETF 제외 (종목코드 6자리 숫자 중 앞 3자리가 4xx이면 ETF)
-                if code.startswith(('4', '2')):
-                    print(f"  ETF/리츠 제외: {info['name']} ({code})")
+                # ETF 제외 (ETF는 보통 4로 시작. 2로 시작하는 일반주식 많으므로 4만 제외)
+                # 정확한 판별은 DART corp_code 존재 여부로 하므로 여기선 명백한 ETF만 거름
+                if code.startswith('4'):
+                    print(f"  ETF 제외: {info['name']} ({code})")
                     continue
                 result[code] = info
         return result
