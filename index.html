@@ -243,6 +243,13 @@
       font-size: 13px; font-weight: 500; cursor: pointer;
     }
     .eval-btn:active { background: #1967d2; color: white; }
+    .move-btn {
+      width: 100%; margin-top: 8px; padding: 9px;
+      background: #f0fff4; color: #2e7d32;
+      border: 1px solid #2e7d32; border-radius: 8px;
+      font-size: 13px; font-weight: 500; cursor: pointer;
+    }
+    .move-btn:active { background: #2e7d32; color: white; }
     .eval-result {
       margin-top: 12px; padding: 14px;
       background: #f8f9ff; border-radius: 10px;
@@ -339,8 +346,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-09 06:53';
-  const DASHBOARD_VERSION = 'v58.0';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -1377,6 +1384,38 @@
     markChanged();
   }
 
+  // 관심 종목 → 보유 종목 이동
+  function moveToHoldings(code) {
+    var w = currentSettings.watchlist && currentSettings.watchlist[code];
+    if (!w) return;
+    var unit = w.market === 'US' ? '$' : '원';
+    var sharesStr = prompt(w.name + ' - 보유 수량을 입력하세요', '');
+    if (sharesStr === null) return;
+    var shares = Number(String(sharesStr).replace(/,/g,''));
+    if (!Number.isFinite(shares) || shares <= 0) { alert('올바른 수량이 아니에요'); return; }
+    var avgStr = prompt(w.name + ' - 평균 단가를 입력하세요 (' + unit + ')', '');
+    if (avgStr === null) return;
+    var avg = Number(String(avgStr).replace(/,/g,''));
+    if (!Number.isFinite(avg) || avg <= 0) { alert('올바른 단가가 아니에요'); return; }
+
+    if (!currentSettings.holdings) currentSettings.holdings = {};
+    if (currentSettings.holdings[code]) { alert('이미 보유 종목에 있어요'); return; }
+
+    // 기존 관심종목의 검색어 정보가 있으면 가져오고, 없으면 종목명으로
+    currentSettings.holdings[code] = {
+      name: w.name,
+      market: w.market,
+      shares: shares,
+      avg_price: avg,
+      kr_query: w.kr_query || w.name,
+      en_query: w.en_query || null
+    };
+    delete currentSettings.watchlist[code];
+    renderContent(currentSettings, currentLatest);
+    markChanged();
+    alert('✓ ' + w.name + '이(가) 보유 종목으로 이동됐어요! 저장 버튼을 눌러 반영하세요.');
+  }
+
   function startAddWatch()  { addingWatch = true;  renderContent(currentSettings, currentLatest); }
   function cancelAddWatch() { addingWatch = false; renderContent(currentSettings, currentLatest); }
 
@@ -1719,6 +1758,7 @@
       var watchPrice = (row && !row.error) ? row.price : 0;
       var savedEvalW = loadEvalResult(code);
       html += '<button class="eval-btn" data-code="' + code + '" data-name="' + w.name + '" data-market="' + w.market + '" data-price="' + watchPrice + '" onclick="onEvalClick(this)">🤖 AI 종목 평가</button>';
+      html += '<button class="move-btn" onclick="moveToHoldings(' + "'" + code + "'" + ')">📥 보유 종목으로 이동</button>';
       if (savedEvalW) {
         html += '<div id="eval-' + code + '" class="eval-result" style="display:block;">' + savedEvalW + '</div>';
       } else {
