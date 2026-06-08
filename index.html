@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-08 17:06';
-  const DASHBOARD_VERSION = 'v57.0';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -1095,37 +1095,58 @@
           // 순부채 (원 단위, DART)
           var netDebt = (dartCode.net_debt && dartCode.net_debt.net_debt) || 0;
 
-          // 각 회차의 segments_calc를 파싱해서 본업가치(보수/정상) 산출
+          // DART 전사 영업이익(연환산, 억원) - 단위 보정 기준점
+          var opWonRef = dartCode.operating_income || 0;
+          var rnRef = dartCode.reprt_name || '';
+          var multRef = rnRef.indexOf('1분기') !== -1 ? 4 : rnRef.indexOf('반기') !== -1 ? 2 : rnRef.indexOf('3분기') !== -1 ? (4/3) : 1;
+          var dartOpEok = Math.abs(opWonRef / 100000000 * multRef);  // 전사 연환산 영업이익(억원, 절대값)
+
+          // 각 회차의 segments_calc를 파싱 (단위 자동 보정 포함)
           function bizValuesFromResult(r) {
             var sc = r.segments_calc;
             if (!sc) return null;
             var parts = String(sc).split('/');
-            var consTotal = 0, normTotal = 0, valid = false;
+            // 1차 파싱: 부문 현재영업이익 절대값 합 구하기
+            var segData = [];
             parts.forEach(function(p){
               var f = p.split(';');
               if (f.length < 6) return;
-              var opCur = parseFloat(String(f[1]).replace(/[^0-9.\-]/g,''));   // 현재영업이익 억원
-              var opNorm = parseFloat(String(f[2]).replace(/[^0-9.\-]/g,''));  // 정상화영업이익 억원
-              var da = parseFloat(String(f[3]).replace(/[^0-9.]/g,''));         // DA비율 %
-              var consM = parseFloat(String(f[4]).replace(/[^0-9.]/g,''));      // 보수배수
-              var normM = parseFloat(String(f[5]).replace(/[^0-9.]/g,''));      // 정상배수
+              var opCur = parseFloat(String(f[1]).replace(/[^0-9.\-]/g,''));
+              var opNorm = parseFloat(String(f[2]).replace(/[^0-9.\-]/g,''));
+              var da = parseFloat(String(f[3]).replace(/[^0-9.]/g,''));
+              var consM = parseFloat(String(f[4]).replace(/[^0-9.]/g,''));
+              var normM = parseFloat(String(f[5]).replace(/[^0-9.]/g,''));
               if (isNaN(opCur)) return;
               if (isNaN(opNorm)) opNorm = opCur;
               if (isNaN(da)) da = 25;
               if (isNaN(consM)) consM = 6;
               if (isNaN(normM)) normM = consM;
-              // 보수(시나리오A): 현재 영업이익 기준 EBITDA. 정상(시나리오B): 정상화 영업이익 기준.
-              var ebitdaCur = opCur * (1 + da/100);    // 억원
-              var ebitdaNorm = opNorm * (1 + da/100);
-              // 적자 부문(EBITDA 음수)은 EV/EBITDA 무의미 → 0으로 바닥 처리
-              var consV = ebitdaCur > 0 ? ebitdaCur * consM : 0;
-              var normV = ebitdaNorm > 0 ? ebitdaNorm * normM : 0;
-              consTotal += consV;          // 억원
-              normTotal += normV;
-              valid = true;
+              segData.push({opCur:opCur, opNorm:opNorm, da:da, consM:consM, normM:normM});
             });
-            if (!valid) return null;
-            return { cons: consTotal, norm: normTotal };  // 억원 단위
+            if (segData.length === 0) return null;
+
+            // ── 단위 자동 보정 (B방식) ──
+            // 부문 현재영업이익 절대값 합 vs DART 전사 영업이익 비교
+            var sumAbs = 0;
+            segData.forEach(function(s){ sumAbs += Math.abs(s.opCur); });
+            var corr = 1;  // 보정계수
+            if (dartOpEok > 0 && sumAbs > 0) {
+              var ratio = sumAbs / dartOpEok;
+              // 비율이 50배 이상이면 ÷100 (백만원을 억원으로 착각), 0.02배 이하면 ×100
+              if (ratio >= 50) corr = 0.01;
+              else if (ratio <= 0.02) corr = 100;
+            }
+
+            var consTotal = 0, normTotal = 0;
+            segData.forEach(function(s){
+              var opCur = s.opCur * corr;
+              var opNorm = s.opNorm * corr;
+              var ebitdaCur = opCur * (1 + s.da/100);
+              var ebitdaNorm = opNorm * (1 + s.da/100);
+              consTotal += ebitdaCur > 0 ? ebitdaCur * s.consM : 0;
+              normTotal += ebitdaNorm > 0 ? ebitdaNorm * s.normM : 0;
+            });
+            return { cons: consTotal, norm: normTotal, corr: corr };  // 억원
           }
 
           // 회차별 본업가치 → 중앙값
@@ -1173,12 +1194,21 @@
           var firstSc = validResults.find ? validResults.find(function(r){return r.segments_calc;}) : null;
           if (!firstSc) { for (var fi=0; fi<validResults.length; fi++){ if(validResults[fi].segments_calc){ firstSc=validResults[fi]; break; } } }
           if (firstSc && firstSc.segments_calc) {
-            var segLines = String(firstSc.segments_calc).split('/').map(function(p){
+            // 표시용에도 같은 단위 보정 적용
+            var dispParts = String(firstSc.segments_calc).split('/');
+            var dispSumAbs = 0;
+            dispParts.forEach(function(p){ var f=p.split(';'); if(f.length>=6){ var v=parseFloat(String(f[1]).replace(/[^0-9.\-]/g,'')); if(!isNaN(v)) dispSumAbs+=Math.abs(v); } });
+            var dispCorr = 1;
+            if (dartOpEok > 0 && dispSumAbs > 0) {
+              var dr = dispSumAbs / dartOpEok;
+              if (dr >= 50) dispCorr = 0.01; else if (dr <= 0.02) dispCorr = 100;
+            }
+            var segLines = dispParts.map(function(p){
               var f = p.split(';');
               if (f.length < 6) return '';
               var nm = f[0].trim();
-              var opCur = parseFloat(String(f[1]).replace(/[^0-9.\-]/g,''))||0;
-              var opNorm = parseFloat(String(f[2]).replace(/[^0-9.\-]/g,''))||opCur;
+              var opCur = (parseFloat(String(f[1]).replace(/[^0-9.\-]/g,''))||0) * dispCorr;
+              var opNorm = (parseFloat(String(f[2]).replace(/[^0-9.\-]/g,''))||opCur) * dispCorr;
               var da = parseFloat(String(f[3]).replace(/[^0-9.]/g,''))||25;
               var cm = parseFloat(String(f[4]).replace(/[^0-9.]/g,''))||6;
               var nm2 = parseFloat(String(f[5]).replace(/[^0-9.]/g,''))||cm;
