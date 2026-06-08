@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-08 11:48';
-  const DASHBOARD_VERSION = 'v46.0';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -1089,36 +1089,42 @@
       if (market !== 'US') {
         var dartShares = (window.sotpData && window.sotpData[code] && window.sotpData[code].shares_outstanding) || 0;
         if (dartShares > 0) {
-          // 억원 단위 총액들의 중앙값 추출
-          function medianEok(key) {
-            var nums = validResults.map(function(r){
-              var v = parseFloat(String(r[key]||'').replace(/[^0-9.]/g,''));
-              return isNaN(v) ? null : v;
-            }).filter(function(v){ return v !== null && v > 0; });
-            if (nums.length === 0) return null;
-            nums.sort(function(a,b){ return a-b; });
-            return nums[Math.floor(nums.length/2)];  // 중앙값
+          // 총액 → 적정주가 환산. Gemini가 억원/원 단위를 섞어 주는 문제 보정.
+          // 각 회차의 총액을 적정주가(원)로 환산하되, 단위 자동판별 + 정상범위 필터
+          function pricesFromTotals(key) {
+            var out = [];
+            validResults.forEach(function(r){
+              var raw = parseFloat(String(r[key]||'').replace(/[^0-9.]/g,''));
+              if (isNaN(raw) || raw <= 0) return;
+              // 억원 단위로 가정하고 환산
+              var p1 = raw * 100000000 / dartShares;
+              // 원 단위로 잘못 준 경우 가정하고 환산
+              var p2 = raw / dartShares;
+              // 둘 중 현실적 주가범위(1천원~1천만원)에 드는 것 채택
+              if (p1 >= 1000 && p1 <= 10000000) out.push(Math.round(p1));
+              else if (p2 >= 1000 && p2 <= 10000000) out.push(Math.round(p2));
+            });
+            if (out.length === 0) return null;
+            out.sort(function(a,b){ return a-b; });
+            return out[Math.floor(out.length/2)];  // 중앙값
           }
-          var consEok = medianEok('sotp_cons_total_eok');
-          var normEok = medianEok('sotp_norm_total_eok');
-          // 적정주가 = 총액(억원) × 100,000,000 ÷ 발행주식수 = 원
-          // 코드가 계산하면 자릿수 오류 없음. 값 없으면 '-'로 막아 Gemini 엉터리값 차단
-          if (consEok) {
-            var consPrice = Math.round(consEok * 100000000 / dartShares);
+          var consPrice = pricesFromTotals('sotp_cons_total_eok');
+          var normPrice = pricesFromTotals('sotp_norm_total_eok');
+          if (consPrice) {
             parsed.method1_price = consPrice.toLocaleString() + '원';
           } else {
             parsed.method1_price = '-';
           }
-          if (normEok) {
-            var normPrice = Math.round(normEok * 100000000 / dartShares);
+          if (normPrice) {
             parsed.method2_price = normPrice.toLocaleString() + '원';
           } else {
             parsed.method2_price = '-';
           }
+          var consEok = consPrice, normEok = normPrice;  // 아래 target 계산 호환용
           // target_1(최저), target_2(최고) 재계산
           var prices = [];
-          if (consEok) prices.push(Math.round(consEok * 100000000 / dartShares));
-          if (normEok) prices.push(Math.round(normEok * 100000000 / dartShares));
+          if (consPrice) prices.push(consPrice);
+          if (normPrice) prices.push(normPrice);
           var m3 = parseFloat(String(parsed.method3_price||'').replace(/[^0-9.]/g,''));
           if (!isNaN(m3) && m3 > 0) prices.push(m3);
           var m4 = parseFloat(String(parsed.method4_price||'').replace(/[^0-9.]/g,''));
