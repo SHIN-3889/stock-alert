@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-08 16:45:50",
+  "updated_at": "2026-06-08 17:01:12",
   "portfolio": {
     "rows": [
       {
@@ -16,13 +16,13 @@
       {
         "name": "GE버노바",
         "currency": "USD",
-        "price": 933.6099853515625,
-        "day_change_pct": -2.850157611700052,
+        "price": 934.78,
+        "day_change_pct": 1.162287346868102,
         "shares": 42,
-        "value_krw": 60112197.51508534,
-        "pl_krw": -7169430.597719833,
-        "pl_pct": -10.655851825849819,
-        "session": "market_closed"
+        "value_krw": 60113327.650502935,
+        "pl_krw": -7085350.950173363,
+        "pl_pct": -10.543884340758536,
+        "session": "pre"
       },
       {
         "name": "삼성전자",
@@ -37,12 +37,12 @@
       }
     ],
     "summary": {
-      "total_value_krw": 92369632.51508534,
-      "day_change_krw": -5045751.513234973,
-      "day_change_pct": -5.179624926354638,
-      "total_pl_krw": -8581463.597719833,
-      "total_pl_pct": -8.500614582857724,
-      "usdkrw": 1533.02001953125
+      "total_value_krw": 92370762.65050294,
+      "day_change_krw": -2591532.8773974627,
+      "day_change_pct": -2.7290124601464143,
+      "total_pl_krw": -8497383.950173363,
+      "total_pl_pct": -8.424249117824466,
+      "usdkrw": 1531.1300048828125
     },
     "watchlist": [
       {
@@ -86,18 +86,18 @@
         "name": "구글",
         "market": "US",
         "currency": "USD",
-        "price": 365.760009765625,
-        "day_change_pct": -0.5032480711555762,
-        "session": "market_closed"
+        "price": 363.11,
+        "day_change_pct": 0.4148115372915572,
+        "session": "pre"
       },
       {
         "code": "MU",
         "name": "마이크론",
         "market": "US",
         "currency": "USD",
-        "price": 864.010009765625,
-        "day_change_pct": -11.086297799244141,
-        "session": "market_closed"
+        "price": 888.0,
+        "day_change_pct": 3.593093793747078,
+        "session": "pre"
       },
       {
         "code": "AVDA.O",
