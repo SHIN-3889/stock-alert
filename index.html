@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-08 12:54';
-  const DASHBOARD_VERSION = 'v52.0';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -847,7 +847,14 @@
             dartStr = ' [DART 실제 재무데이터 - 반드시 이 수치를 사용하세요] ' +
               '순부채: ' + (nd.net_debt || 0).toLocaleString() + '원 ' +
               '(총차입금 ' + (nd.total_debt || 0).toLocaleString() + '원 - 현금성자산 ' + (nd.total_cash || 0).toLocaleString() + '원), ' +
-              '영업이익: ' + (dartInfo.operating_income || 0).toLocaleString() + '원, ' +
+              '영업이익: ' + (dartInfo.operating_income || 0).toLocaleString() + '원' +
+              (function(){
+                var rn = dartInfo.reprt_name || '';
+                if (rn.indexOf('1분기') !== -1) return '(⚠️ 이것은 1분기 영업이익입니다. SOTP 계산 시 반드시 ×4 하여 연간 영업이익으로 환산해서 사용하세요)';
+                if (rn.indexOf('반기') !== -1) return '(⚠️ 이것은 반기(상반기) 영업이익입니다. SOTP 계산 시 반드시 ×2 하여 연간으로 환산하세요)';
+                if (rn.indexOf('3분기') !== -1) return '(⚠️ 이것은 3분기 누적 영업이익입니다. SOTP 계산 시 ×4/3 하여 연간으로 환산하세요)';
+                return '(연간 영업이익)';
+              })() + ', ' +
               '발행주식수: ' + (dartInfo.shares_outstanding || 0).toLocaleString() + '주.' +
               subStr + excessStr;
             // DART 실제 부문별 재무정보 주입
@@ -1094,21 +1101,31 @@
         if (dartShares > 0) {
           // 총액 → 적정주가 환산. Gemini가 억원/원 단위를 섞어 주는 문제 보정.
           // 각 회차의 총액을 적정주가(원)로 환산하되, 단위 자동판별 + 정상범위 필터
+          // NTM P/E를 기준점으로 사용 (Gemini가 직접 계산한 정상 자릿수 값)
+          var ntmRef = parseFloat(String(parsed.method3_price||'').replace(/[^0-9.]/g,''));
+          if (isNaN(ntmRef) || ntmRef <= 0) {
+            // NTM 없으면 현재가를 기준점으로
+            ntmRef = currentPrice > 0 ? currentPrice : 100000;
+          }
           function pricesFromTotals(key) {
             var out = [];
             validResults.forEach(function(r){
               var raw = parseFloat(String(r[key]||'').replace(/[^0-9.]/g,''));
               if (isNaN(raw) || raw <= 0) return;
-              // 조원 단위로 가정: 조원 × 1조 ÷ 발행주식수
-              var p1 = raw * 1000000000000 / dartShares;
-              // 억원으로 잘못 준 경우 대비
-              var p2 = raw * 100000000 / dartShares;
-              // 원으로 잘못 준 경우 대비
-              var p3 = raw / dartShares;
-              // 현실적 주가범위(1천원~1천만원)에 드는 것 채택
-              if (p1 >= 1000 && p1 <= 10000000) out.push(Math.round(p1));
-              else if (p2 >= 1000 && p2 <= 10000000) out.push(Math.round(p2));
-              else if (p3 >= 1000 && p3 <= 10000000) out.push(Math.round(p3));
+              // 조원/억원/원 세 가지 해석 후보
+              var cands = [
+                raw * 1000000000000 / dartShares,  // 조원
+                raw * 100000000 / dartShares,      // 억원
+                raw / dartShares                    // 원
+              ];
+              // 현실범위(1천~1천만원)면서 기준점(NTM/현재가)과 비율이 가장 가까운 것 선택
+              var best = null, bestRatio = Infinity;
+              cands.forEach(function(p){
+                if (p < 1000 || p > 10000000) return;
+                var ratio = p > ntmRef ? p / ntmRef : ntmRef / p;
+                if (ratio < bestRatio) { bestRatio = ratio; best = p; }
+              });
+              if (best !== null) out.push(Math.round(best));
             });
             if (out.length === 0) return null;
             out.sort(function(a,b){ return a-b; });
