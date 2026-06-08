@@ -47,24 +47,12 @@
       "name": "SK하이닉스",
       "market": "KR"
     },
-    "012330": {
-      "name": "현대모비스",
-      "market": "KR"
-    },
-    "005930": {
-      "name": "삼성전자",
-      "market": "KR"
-    },
     "GOOG": {
       "name": "구글",
       "market": "US"
     },
     "MU": {
       "name": "마이크론",
-      "market": "US"
-    },
-    "NVDA": {
-      "name": "엔비디아",
       "market": "US"
     }
   }
