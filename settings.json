@@ -54,6 +54,10 @@
     "MU": {
       "name": "마이크론",
       "market": "US"
+    },
+    "006400": {
+      "name": "삼성SDI",
+      "market": "KR"
     }
   }
 }
