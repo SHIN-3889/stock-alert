@@ -1,553 +1,662 @@
-# -*- coding: utf-8 -*-
-"""
-DART API를 이용한 종목별 재무 분석
-- corp_code: 전체 기업목록 ZIP 다운로드 후 종목코드로 매핑
-- 순부채: 총차입금 - 현금성자산 (DART 정의)
-- 영업이익, 발행주식수, 자회사 정보
-결과를 sotp_data.json에 저장
-"""
-
-import os
-import io
-import re
-import json
-import time
-import zipfile
-import requests
-import xml.etree.ElementTree as ET
-from datetime import datetime, timezone, timedelta
-
-DART_KEY   = os.environ.get("DART_API_KEY", "")
-DART_BASE  = "https://opendart.fss.or.kr/api"
-KST        = timezone(timedelta(hours=9))
-OUTPUT     = os.path.join(os.path.dirname(__file__), "sotp_data.json")
-SETTINGS   = os.path.join(os.path.dirname(__file__), "settings.json")
-
-
-# ── 설정에서 한국 종목 가져오기 ─────────────────────────────────────
-def load_kr_holdings():
-    try:
-        with open(SETTINGS, "r", encoding="utf-8") as f:
-            s = json.load(f)
-        result = {}
-        for code, info in {**s.get("holdings", {}), **s.get("watchlist", {})}.items():
-            if info.get("market") == "KR":
-                # ETF 제외 (종목코드 6자리 숫자 중 앞 3자리가 4xx이면 ETF)
-                if code.startswith(('4', '2')):
-                    print(f"  ETF/리츠 제외: {info['name']} ({code})")
-                    continue
-                result[code] = info
-        return result
-    except Exception as e:
-        print(f"설정 로드 실패: {e}")
-        return {}
-
-
-# ── DART 전체 기업목록 다운로드 → stock_code → corp_code 매핑 ───────
-def build_corp_map():
-    print("DART 기업목록 다운로드 중...")
-    try:
-        url = f"{DART_BASE}/corpCode.xml"
-        res = requests.get(url, params={"crtfc_key": DART_KEY}, timeout=30)
-        z = zipfile.ZipFile(io.BytesIO(res.content))
-        xml_data = z.read("CORPCODE.xml")
-        root = ET.fromstring(xml_data)
-        corp_map = {}
-        for item in root.findall("list"):
-            stock_code = item.findtext("stock_code", "").strip()
-            corp_code  = item.findtext("corp_code", "").strip()
-            if stock_code:
-                corp_map[stock_code] = corp_code
-        print(f"  기업 수: {len(corp_map):,}개")
-        return corp_map
-    except Exception as e:
-        print(f"기업목록 다운로드 실패: {e}")
-        return {}
-
-
-# ── 재무제표 조회 ────────────────────────────────────────────────────
-def get_financial_data(corp_code, bsns_year, fs_div="CFS", reprt_code="11011"):
-    try:
-        url = f"{DART_BASE}/fnlttSinglAcntAll.json"
-        params = {
-            "crtfc_key": DART_KEY,
-            "corp_code":  corp_code,
-            "bsns_year":  bsns_year,
-            "reprt_code": reprt_code,
-            "fs_div":     fs_div,
-        }
-        res  = requests.get(url, params=params, timeout=20)
-        data = res.json()
-        if data.get("status") == "000":
-            return data.get("list", [])
-        print(f"  재무데이터 status: {data.get('status')} / {data.get('message')}")
-    except Exception as e:
-        print(f"  재무데이터 조회 실패: {e}")
-    return []
-
-
-# ── 계정과목 금액 추출 ───────────────────────────────────────────────
-def extract_amount(fin_list, keywords):
-    for item in fin_list:
-        acct_id = item.get("account_id", "") or ""
-        acct_nm = item.get("account_nm", "") or ""
-        for kw in keywords:
-            if kw in acct_id or kw in acct_nm:
-                raw = (item.get("thstrm_amount") or "0").replace(",", "").replace(" ", "")
-                try:
-                    val = int(raw.lstrip("-"))
-                    return val
-                except:
-                    pass
-    return 0
-
-
-# ── 순부채 계산 ──────────────────────────────────────────────────────
-def calc_net_debt(fin_list):
-    short_borrow = extract_amount(fin_list, ["ShortTermBorrowings",  "단기차입금"])
-    current_ltd  = extract_amount(fin_list, ["CurrentPortionOfLongTermBorrowings", "유동성장기부채", "유동성장기차입금"])
-    long_borrow  = extract_amount(fin_list, ["LongTermBorrowings",   "장기차입금"])
-    bonds        = extract_amount(fin_list, ["BondsIssued",          "사채"])
-    cash         = extract_amount(fin_list, ["CashAndCashEquivalents","현금및현금성자산"])
-    short_fin    = extract_amount(fin_list, ["ShortTermFinancialInstruments", "단기금융상품"])
-
-    total_debt = short_borrow + current_ltd + long_borrow + bonds
-    total_cash = cash + short_fin
-    net_debt   = total_debt - total_cash
-
-    print(f"    단기차입금:      {short_borrow:>20,}원")
-    print(f"    유동성장기부채:  {current_ltd:>20,}원")
-    print(f"    장기차입금:      {long_borrow:>20,}원")
-    print(f"    사채:            {bonds:>20,}원")
-    print(f"    총차입금:        {total_debt:>20,}원")
-    print(f"    현금및현금성자산:{cash:>20,}원")
-    print(f"    단기금융상품:    {short_fin:>20,}원")
-    print(f"    총현금성자산:    {total_cash:>20,}원")
-    print(f"    ▶ 순부채:        {net_debt:>20,}원")
-
-    return {
-        "net_debt":    net_debt,
-        "total_debt":  total_debt,
-        "total_cash":  total_cash,
-        "detail": {
-            "short_borrowings":  short_borrow,
-            "current_ltd":       current_ltd,
-            "long_borrowings":   long_borrow,
-            "bonds":             bonds,
-            "cash":              cash,
-            "short_financial":   short_fin,
-        }
-    }
-
-
-# ── 영업이익 ─────────────────────────────────────────────────────────
-def get_operating_income(fin_list):
-    return extract_amount(fin_list, ["OperatingIncomeLoss", "영업이익"])
-
-
-def get_revenue(fin_list):
-    return extract_amount(fin_list, ["Revenue", "Revenues", "매출액", "수익(매출액)"])
-
-def calc_excess_cash(total_cash, revenue, stock_code):
-    """잉여현금 = 총현금 - 운영필요현금 (매출의 3%)"""
-    operating_cash_needed = revenue * 0.03
-    excess_cash = max(0, total_cash - operating_cash_needed)
-
-    market_cap = 0
-    try:
-        import yfinance as yf
-        ticker = f"{stock_code}.KS"
-        t = yf.Ticker(ticker)
-        price = float(t.fast_info.last_price)
-        shares = float(t.fast_info.shares)
-        market_cap = price * shares
-        print(f"  시가총액: {market_cap:,.0f}원")
-    except Exception as e:
-        print(f"  시가총액 조회 실패: {e}")
-
-    excess_cash_ratio = (excess_cash / market_cap * 100) if market_cap > 0 else 0
-
-    print(f"  매출액: {revenue:,.0f}원")
-    print(f"  운영필요현금(매출3%): {operating_cash_needed:,.0f}원")
-    print(f"  총현금: {total_cash:,.0f}원")
-    print(f"  ▶ 잉여현금: {excess_cash:,.0f}원")
-    print(f"  ▶ 시총 대비 잉여현금: {excess_cash_ratio:.1f}%")
-
-    return {
-        "excess_cash": excess_cash,
-        "operating_cash_needed": operating_cash_needed,
-        "market_cap": market_cap,
-        "excess_cash_ratio": round(excess_cash_ratio, 1),
-    }
-
-
-# ── 발행주식수 ───────────────────────────────────────────────────────
-def get_shares_outstanding(corp_code, bsns_year, reprt_code="11011"):
-    """주식총수 현황에서 발행주식수 조회"""
-    try:
-        # 방법1: 주식총수 현황 API
-        url = f"{DART_BASE}/stockTotqySttus.json"
-        params = {
-            "crtfc_key":  DART_KEY,
-            "corp_code":  corp_code,
-            "bsns_year":  bsns_year,
-            "reprt_code": reprt_code,
-        }
-        res  = requests.get(url, params=params, timeout=10)
-        data = res.json()
-        if data.get("status") == "000":
-            for item in data.get("list", []):
-                se = item.get("se", "")
-                if "보통주" in se and "합계" not in se:
-                    val = item.get("distb_stock_co", "0") or "0"
-                    val = val.replace(",", "").strip()
-                    if val and val != "-":
-                        shares = int(val)
-                        if shares > 0:
-                            print(f"  발행주식수(보통주): {shares:,}주")
-                            return shares
-    except Exception as e:
-        print(f"  발행주식수 조회 실패: {e}")
-
-    # 방법2: 재무제표에서 추출
-    try:
-        url = f"{DART_BASE}/fnlttCmpnyIndx.json"
-        params = {
-            "crtfc_key":  DART_KEY,
-            "corp_code":  corp_code,
-            "bsns_year":  bsns_year,
-            "reprt_code": "11011",
-        }
-        res  = requests.get(url, params=params, timeout=10)
-        data = res.json()
-        if data.get("status") == "000":
-            for item in data.get("list", []):
-                if "주식수" in item.get("idx_nm", ""):
-                    val = item.get("idx_val", "0").replace(",", "")
-                    if val and val.isdigit():
-                        return int(val)
-    except Exception as e:
-        print(f"  발행주식수 방법2 실패: {e}")
-    return 0
-
-
-
-# ── 사업부문별 재무정보 (공시 원문에서 추출) ──────────────────────────
-def find_business_report(corp_code, bsns_year):
-    """사업보고서 등 정기공시 접수번호 찾기"""
-    try:
-        url = f"{DART_BASE}/list.json"
-        params = {
-            "crtfc_key": DART_KEY,
-            "corp_code": corp_code,
-            "bgn_de":    f"{bsns_year}0101",
-            "end_de":    f"{int(bsns_year)+1}0630",
-            "pblntf_ty": "A",
-            "page_count": 100,
-        }
-        res = requests.get(url, params=params, timeout=15)
-        data = res.json()
-        if data.get("status") != "000":
-            return None
-        reports = data.get("list", [])
-        # 부문 정보는 연간 사업보고서에만 상세히 나오므로 사업보고서 우선
-        for keyword in ["사업보고서", "반기보고서", "분기보고서"]:
-            for r in reports:
-                if keyword in r.get("report_nm", ""):
-                    print(f"  공시원문 기준: {r['report_nm']} ({r['rcept_dt']})")
-                    return r["rcept_no"]
-    except Exception as e:
-        print(f"  사업보고서 검색 실패: {e}")
-    return None
-
-
-def download_document(rcept_no):
-    """공시 원문 ZIP → 본문 XML 텍스트"""
-    try:
-        url = f"{DART_BASE}/document.xml"
-        res = requests.get(url, params={"crtfc_key": DART_KEY, "rcept_no": rcept_no}, timeout=60)
-        z = zipfile.ZipFile(io.BytesIO(res.content))
-        names = z.namelist()
-        biggest = max(names, key=lambda n: z.getinfo(n).file_size)
-        raw = z.read(biggest)
-        for enc in ["utf-8", "euc-kr", "cp949"]:
-            try:
-                return raw.decode(enc)
-            except:
-                continue
-        return raw.decode("utf-8", errors="ignore")
-    except Exception as e:
-        print(f"  공시원문 다운로드 실패: {e}")
-    return None
-
-
-def extract_segment_table(doc_text):
-    """사업부문별 재무정보 표를 텍스트로 추출. 단일부문이면 그 사실을 반환."""
-    # 단일 사업부문(SK하이닉스 등) 체크 먼저
-    single_markers = ["지배적 단일 사업부문", "단일 사업부문으로", "부문별 기재를 생략", "단일 영업부문"]
-    for marker in single_markers:
-        if marker in doc_text:
-            return "SINGLE_SEGMENT: 이 회사는 지배적 단일 사업부문(예: 반도체)으로, 부문 분할이 불필요합니다. 전사 영업이익을 그대로 사용하세요."
-
-    # 부문별 재무정보 표 추출 (영업이익이 포함된 표 우선)
-    anchors = [
-        "연결기준 사업부문별 재무정보", "부문별 주요 재무정보",
-        "사업부문별 재무정보", "사업부문별 요약 재무",
-        "부문별 재무정보", "영업부문별 정보",
-    ]
-    for anchor in anchors:
-        pos = doc_text.find(anchor)
-        if pos == -1:
-            continue
-        chunk = doc_text[pos:pos+5000]
-        clean = re.sub(r'<[^>]+>', ' | ', chunk)
-        clean = re.sub(r'\s*\|\s*(\|\s*)+', ' | ', clean)
-        clean = re.sub(r'\s+', ' ', clean).strip()
-        # 영업이익/영업손익 단어가 있는 표만 유효 (매출 비중만 있는 표 제외)
-        if "영업" in clean and ("이익" in clean or "손익" in clean or "손실" in clean):
-            return clean[:3000]
-    # 영업이익 표는 없지만 매출 비중표라도 있으면 반환
-    for anchor in anchors:
-        pos = doc_text.find(anchor)
-        if pos != -1:
-            chunk = doc_text[pos:pos+3000]
-            clean = re.sub(r'<[^>]+>', ' | ', chunk)
-            clean = re.sub(r'\s*\|\s*(\|\s*)+', ' | ', clean)
-            clean = re.sub(r'\s+', ' ', clean).strip()
-            return clean[:2500]
-    return None
-
-
-def get_segment_info(corp_code, bsns_year):
-    """부문별 재무정보 표 텍스트 반환 (없으면 None)"""
-    rcept_no = find_business_report(corp_code, bsns_year)
-    if not rcept_no:
-        print("  사업보고서 접수번호 못 찾음")
-        return None
-    doc = download_document(rcept_no)
-    if not doc:
-        return None
-    table = extract_segment_table(doc)
-    if table:
-        print(f"  부문별 재무정보 표 추출 성공 ({len(table)}자)")
-    else:
-        print("  부문별 재무정보 표 못 찾음")
-    return table
-
-
-# ── 자회사 정보 ──────────────────────────────────────────────────────
-def get_subsidiaries(corp_code, bsns_year, reprt_code="11011"):
-    """특수관계인 출자현황으로 자회사 정보 조회"""
-    results = []
-
-    # 방법1: 최대주주 현황 (투자자산 포함)
-    endpoints = [
-        ("invstgNtcsCmn.json", "투자현황"),     # 타법인 출자현황
-        ("otrCprInvstmntSttus.json", "타법인출자"),  # 타법인 출자현황
-    ]
-
-    for endpoint, desc in endpoints:
-        try:
-            url = f"{DART_BASE}/{endpoint}"
-            params = {
-                "crtfc_key":  DART_KEY,
-                "corp_code":  corp_code,
-                "bsns_year":  bsns_year,
-                "reprt_code": reprt_code,
-            }
-            res  = requests.get(url, params=params, timeout=10)
-            data = res.json()
-            print(f"  {desc} status: {data.get('status')} / 건수: {len(data.get('list',[]))}")
-            if data.get("status") == "000" and data.get("list"):
-                items = data.get("list", [])
-                if items and any(item.get("inv_prm") or item.get("corp_nm") for item in items):
-                    results = items
-                    break
-        except Exception as e:
-            print(f"  {desc} API 실패: {e}")
-
-    # 방법2: fnlttSinglAcntAll에서 관계기업투자 금액 직접 추출
-    if not results:
-        print("  자회사 정보 직접 조회 실패 - 재무제표 주석에서 추정")
-
-    return results
-
-
-# ── 최신 보고서 정보 자동 선택 ──────────────────────────────────────
-def get_latest_report():
-    """현재 시점 기준 가장 최신 보고서 코드와 사업연도 반환.
-    월별 기준:
-    - 1~3월: 전년도 3분기보고서 (11014)
-    - 4월:   전년도 사업보고서 (11011) - 아직 1분기 미공시
-    - 5~7월: 당해연도 1분기보고서 (11013)
-    - 8~10월: 당해연도 반기보고서 (11012)
-    - 11~12월: 당해연도 3분기보고서 (11014)
-    """
-    now = datetime.now(KST)
-    m, y = now.month, now.year
-    if m <= 3:
-        return str(y - 1), "11014"   # 전년도 3분기
-    elif m == 4:
-        return str(y - 1), "11011"   # 전년도 사업보고서
-    elif m <= 7:
-        return str(y), "11013"       # 당해 1분기
-    elif m <= 10:
-        return str(y), "11012"       # 당해 반기
-    else:
-        return str(y), "11014"       # 당해 3분기
-
-REPRT_NAMES = {
-    "11011": "사업보고서(연간)",
-    "11012": "반기보고서",
-    "11013": "1분기보고서",
-    "11014": "3분기보고서",
+{
+  "267260": {
+    "stock_code": "267260",
+    "name": "합계",
+    "bsns_year": "2026",
+    "reprt_name": "1분기보고서",
+    "operating_income": 258269322064,
+    "revenue": 1036500341405,
+    "shares_outstanding": 35992704,
+    "net_debt": {
+      "net_debt": -1221859107166,
+      "total_debt": 7191750000,
+      "total_cash": 1229050857166,
+      "detail": {
+        "short_borrowings": 7191750000,
+        "current_ltd": 0,
+        "long_borrowings": 0,
+        "bonds": 0,
+        "cash": 1222981242656,
+        "short_financial": 6069614510
+      }
+    },
+    "excess_cash": {
+      "excess_cash": 1197955846923.85,
+      "operating_cash_needed": 31095010242.149998,
+      "market_cap": 31637586816000.0,
+      "excess_cash_ratio": 3.8
+    },
+    "subsidiaries": [
+      {
+        "name": "HD Hyundai Electric\nHungary Kft.",
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 7585000000,
+        "investment_purpose": "경영\n참여"
+      },
+      {
+        "name": "HD Hyundai Electric\nTexas LLC.",
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 1439000000,
+        "investment_purpose": "경영\n참여"
+      },
+      {
+        "name": "건설공제조합",
+        "ownership_ratio": 0.01,
+        "shares_held": 450,
+        "book_value": 361000000,
+        "investment_purpose": "단순\n투자"
+      },
+      {
+        "name": "자본재공제조합",
+        "ownership_ratio": 0.73,
+        "shares_held": 10000,
+        "book_value": 2483000000,
+        "investment_purpose": "단순\n투자"
+      },
+      {
+        "name": "부산산업태양광㈜",
+        "ownership_ratio": 6.0,
+        "shares_held": 109000,
+        "book_value": 109000000,
+        "investment_purpose": "단순\n투자"
+      },
+      {
+        "name": "주식회사\n한국에너지파워",
+        "ownership_ratio": 10.0,
+        "shares_held": 13530,
+        "book_value": 135000000,
+        "investment_purpose": "단순\n투자"
+      },
+      {
+        "name": "주민산들바람발전\n주식회사",
+        "ownership_ratio": 19.9,
+        "shares_held": 55720,
+        "book_value": 557000000,
+        "investment_purpose": "단순\n투자"
+      },
+      {
+        "name": "신한-HD Global Green Way 펀드",
+        "ownership_ratio": 50.0,
+        "shares_held": 1999787883,
+        "book_value": 2000000000,
+        "investment_purpose": "단순\n투자"
+      },
+      {
+        "name": "HD Hyundai Electric\nSwitzerland Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 100,
+        "book_value": 123000000,
+        "investment_purpose": "경영\n참여"
+      },
+      {
+        "name": "HD Hyundai Electric\nChina Co.,Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 38448000000,
+        "investment_purpose": "경영\n참여"
+      },
+      {
+        "name": "HD Hyundai Power \nTransformers USA, Inc.",
+        "ownership_ratio": 100.0,
+        "shares_held": 100,
+        "book_value": 79021000000,
+        "investment_purpose": "경영\n참여"
+      },
+      {
+        "name": "HD Hyundai Electric\nArabia L.L.C",
+        "ownership_ratio": 100.0,
+        "shares_held": 4000,
+        "book_value": 1185000000,
+        "investment_purpose": "경영\n참여"
+      },
+      {
+        "name": "HD Hyundai Electric\nAmerica Corporation",
+        "ownership_ratio": 100.0,
+        "shares_held": 100,
+        "book_value": 18063000000,
+        "investment_purpose": "경영\n참여"
+      },
+      {
+        "name": "HD현대플라스포㈜",
+        "ownership_ratio": 73.99,
+        "shares_held": 2030769,
+        "book_value": 11150000000,
+        "investment_purpose": "경영\n참여"
+      },
+      {
+        "name": "HD Hyundai Electric\nEurope GmbH",
+        "ownership_ratio": 100.0,
+        "shares_held": 300000,
+        "book_value": 3177000000,
+        "investment_purpose": "경영\n참여"
+      },
+      {
+        "name": "대불그린1호㈜",
+        "ownership_ratio": 100.0,
+        "shares_held": 100620,
+        "book_value": 4878000000,
+        "investment_purpose": "경영\n참여"
+      },
+      {
+        "name": "합계",
+        "ownership_ratio": 0.0,
+        "shares_held": 2002412272,
+        "book_value": 170714000000,
+        "investment_purpose": "-"
+      }
+    ],
+    "segment_info": "SINGLE_SEGMENT: 이 회사는 지배적 단일 사업부문(예: 반도체)으로, 부문 분할이 불필요합니다. 전사 영업이익을 그대로 사용하세요.",
+    "updated_at": "2026-06-08 11:39:44"
+  },
+  "000660": {
+    "stock_code": "000660",
+    "name": "GigaIO Networks, Inc.",
+    "bsns_year": "2026",
+    "reprt_name": "1분기보고서",
+    "operating_income": 37610283000000,
+    "revenue": 52576287000000,
+    "shares_outstanding": 701691520,
+    "net_debt": {
+      "net_debt": -39386979000000,
+      "total_debt": 0,
+      "total_cash": 39386979000000,
+      "detail": {
+        "short_borrowings": 0,
+        "current_ltd": 0,
+        "long_borrowings": 0,
+        "bonds": 0,
+        "cash": 21166904000000,
+        "short_financial": 18220075000000
+      }
+    },
+    "excess_cash": {
+      "excess_cash": 37809690390000.0,
+      "operating_cash_needed": 1577288610000.0,
+      "market_cap": 1421839346673000.0,
+      "excess_cash_ratio": 2.7
+    },
+    "subsidiaries": [
+      {
+        "name": "에스케이하이이엔지㈜",
+        "ownership_ratio": 100.0,
+        "shares_held": 500689,
+        "book_value": 7521000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SK hynix Semiconductor Asia Pte.Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 196303500,
+        "book_value": 52380000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SK hynix Semiconductor HongKong Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 170693661,
+        "book_value": 32623000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SK hynix Japan Inc.",
+        "ownership_ratio": 100.0,
+        "shares_held": 20000,
+        "book_value": 42905000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SK hynix Semiconductor Taiwan Inc.",
+        "ownership_ratio": 100.0,
+        "shares_held": 35725000,
+        "book_value": 37562000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SK hynix Semiconductor India Private Ltd.",
+        "ownership_ratio": 1.0,
+        "shares_held": 270,
+        "book_value": 5000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SK hynix Semiconductor (China) Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 5679587000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "HITECH Semiconductor (Wuxi) Co., Ltd.",
+        "ownership_ratio": 45.0,
+        "shares_held": 0,
+        "book_value": 92608000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SK hynix (Wuxi) Semiconductor Sales Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 237000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SK hynix memory solutions Taiwan, Inc.",
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 7819000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SK APTECH Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 407000000,
+        "book_value": 440770000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "에스케이하이스텍㈜",
+        "ownership_ratio": 100.0,
+        "shares_held": 277203,
+        "book_value": 6760000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "STRATIO,INC.",
+        "ownership_ratio": 9.3,
+        "shares_held": 1136013,
+        "book_value": 394000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SK South East Asia Investment Pte. Ltd.",
+        "ownership_ratio": 20.0,
+        "shares_held": 0,
+        "book_value": 345800000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SK China Company Limited",
+        "ownership_ratio": 11.9,
+        "shares_held": 4754868,
+        "book_value": 257169000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SK hynix Ventures Hong Kong Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 9800001,
+        "book_value": 10941000000,
+        "investment_purpose": "일반투자"
+      },
+      {
+        "name": "MEMS Drive, Inc.",
+        "ownership_ratio": 2.4,
+        "shares_held": 305826,
+        "book_value": 1251000000,
+        "investment_purpose": "일반투자"
+      },
+      {
+        "name": "FemtoMetrix, Inc.",
+        "ownership_ratio": 10.0,
+        "shares_held": 31645570,
+        "book_value": 6820000000,
+        "investment_purpose": "일반투자"
+      },
+      {
+        "name": "ProMOS Technologies Inc.",
+        "ownership_ratio": 13.3,
+        "shares_held": 6000932,
+        "book_value": 1983000000,
+        "investment_purpose": "일반투자"
+      },
+      {
+        "name": "GigaIO Networks, Inc.",
+        "ownership_ratio": 7.5,
+        "shares_held": 1334152,
+        "book_value": 3242000000,
+        "investment_purpose": "일반투자"
+      }
+    ],
+    "segment_info": "SINGLE_SEGMENT: 이 회사는 지배적 단일 사업부문(예: 반도체)으로, 부문 분할이 불필요합니다. 전사 영업이익을 그대로 사용하세요.",
+    "updated_at": "2026-06-08 11:39:52"
+  },
+  "012330": {
+    "stock_code": "012330",
+    "name": "Hyundai Motor Group (China) Ltd.",
+    "bsns_year": "2026",
+    "reprt_name": "1분기보고서",
+    "operating_income": 802648000000,
+    "revenue": 15560513000000,
+    "shares_outstanding": 89176783,
+    "net_debt": {
+      "net_debt": 254591000000,
+      "total_debt": 5897656000000,
+      "total_cash": 5643065000000,
+      "detail": {
+        "short_borrowings": 963443000000,
+        "current_ltd": 963443000000,
+        "long_borrowings": 1985385000000,
+        "bonds": 1985385000000,
+        "cash": 5643065000000,
+        "short_financial": 0
+      }
+    },
+    "excess_cash": {
+      "excess_cash": 5176249610000.0,
+      "operating_cash_needed": 466815390000.0,
+      "market_cap": 54846058545000.0,
+      "excess_cash_ratio": 9.4
+    },
+    "subsidiaries": [
+      {
+        "name": "현대자동차",
+        "ownership_ratio": 22.0,
+        "shares_held": 45782000,
+        "book_value": 3880191000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "현대트랜시스",
+        "ownership_ratio": 16.0,
+        "shares_held": 12893000,
+        "book_value": 285678000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "현대아이에이치엘",
+        "ownership_ratio": 99.0,
+        "shares_held": 19080000,
+        "book_value": 0,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "푸본현대생명보험",
+        "ownership_ratio": 5.0,
+        "shares_held": 23051000,
+        "book_value": 23097000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "에이치그린파워",
+        "ownership_ratio": 100.0,
+        "shares_held": 29933000,
+        "book_value": 169746000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "지아이티",
+        "ownership_ratio": 46.0,
+        "shares_held": 4231000,
+        "book_value": 48450000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "모트라스",
+        "ownership_ratio": 100.0,
+        "shares_held": 36232000,
+        "book_value": 167302000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "유니투스",
+        "ownership_ratio": 100.0,
+        "shares_held": 59839000,
+        "book_value": 277902000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "에이치엠지에스 유한회사",
+        "ownership_ratio": 20.0,
+        "shares_held": 1836000,
+        "book_value": 18363000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "모아빛",
+        "ownership_ratio": 100.0,
+        "shares_held": 160000,
+        "book_value": 800000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "현대건설",
+        "ownership_ratio": 9.0,
+        "shares_held": 9720000,
+        "book_value": 1167118000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "Mobis Parts Middle East FZE",
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 0,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "Mobis Parts Europe N.V.",
+        "ownership_ratio": 100.0,
+        "shares_held": 3000,
+        "book_value": 59107000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "Hyundai Motor (Shanghai) Co., Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 18228000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "Shanghai Hyundai Mobis Automotive Parts Co., Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 116069000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "Jiangsu Mobis Automotive Parts Co., Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 85000000,
+        "book_value": 96915000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "Beijing Hyundai Mobis Automotive Parts Co., Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 223061000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "Beijing Hyundai Mobis Parts Co., Ltd.",
+        "ownership_ratio": 50.0,
+        "shares_held": 0,
+        "book_value": 20983000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "Hyundai Motor Group (China) Ltd.",
+        "ownership_ratio": 0.0,
+        "shares_held": 0,
+        "book_value": 0,
+        "investment_purpose": "경영참여"
+      }
+    ],
+    "segment_info": "사업부문별 요약 재무현황 | (1) 제 49기 (2025년) | (단위:백만원) | 구 분 | 모듈 및 부품제조사업부문 | A/S용 부품사업부문 | 공통부문 | 연결조정 | 합 계 | 총부문수익 | 58,702,105 | 17,842,842 | - | (15,426,820) | 61,118,127 | 연결조정 | (10,901,986) | (4,524,834) | - | 15,426,820 | - | 외부고객으로부터의 수익 | 47,800,119 | 13,318,008 | - | - | 61,118,127 | 영업이익 | 76,027 | 3,503,512 | - | (222,083) | 3,357,456 | 부문자산 : | 재고자산 | 4,595,047 | 3,854,921 | - | (1,588,134) | 6,861,834 | 유형자산 | 7,004,400 | 1,268,448 | 4,050,600 | 23,144 | 12,346,592 | 무형자산 | 875,967 | 90,478 | 277,559 | 21,624 | 1,265,628 | (2) 제 48기 (2024년) | (단위 : 백만원) | <TB",
+    "updated_at": "2026-06-08 11:40:00"
+  },
+  "005930": {
+    "stock_code": "005930",
+    "name": "SSS",
+    "bsns_year": "2026",
+    "reprt_name": "1분기보고서",
+    "operating_income": 57232797000000,
+    "revenue": 133873444000000,
+    "shares_outstanding": 5827808935,
+    "net_debt": {
+      "net_debt": -119216042000000,
+      "total_debt": 28138794000000,
+      "total_cash": 147354836000000,
+      "detail": {
+        "short_borrowings": 19546315000000,
+        "current_ltd": 1191168000000,
+        "long_borrowings": 7393796000000,
+        "bonds": 7515000000,
+        "cash": 73306751000000,
+        "short_financial": 74048085000000
+      }
+    },
+    "excess_cash": {
+      "excess_cash": 143338632680000.0,
+      "operating_cash_needed": 4016203320000.0,
+      "market_cap": 2015934873542000.0,
+      "excess_cash_ratio": 7.1
+    },
+    "subsidiaries": [
+      {
+        "name": "삼성전기㈜",
+        "ownership_ratio": 23.7,
+        "shares_held": 17693000,
+        "book_value": 445244000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "스테코㈜",
+        "ownership_ratio": 70.0,
+        "shares_held": 2590000,
+        "book_value": 35861000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SDMA",
+        "ownership_ratio": 75.0,
+        "shares_held": 71400000,
+        "book_value": 18741000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SEMA",
+        "ownership_ratio": 100.0,
+        "shares_held": 16247000,
+        "book_value": 103402000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SAVINA",
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 28365000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SEIN",
+        "ownership_ratio": 100.0,
+        "shares_held": 46000,
+        "book_value": 118909000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "TSE",
+        "ownership_ratio": 91.8,
+        "shares_held": 11020000,
+        "book_value": 279163000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SEAU",
+        "ownership_ratio": 100.0,
+        "shares_held": 53200000,
+        "book_value": 111964000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SIEL",
+        "ownership_ratio": 100.0,
+        "shares_held": 216787000,
+        "book_value": 75263000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SRI-Bangalore",
+        "ownership_ratio": 100.0,
+        "shares_held": 17000,
+        "book_value": 31787000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SJC",
+        "ownership_ratio": 100.0,
+        "shares_held": 1560000,
+        "book_value": 253108000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SRJ",
+        "ownership_ratio": 100.0,
+        "shares_held": 122000,
+        "book_value": 1482000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "세메스㈜",
+        "ownership_ratio": 91.5,
+        "shares_held": 2173000,
+        "book_value": 71906000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SCIC",
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 640452000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SEHK",
+        "ownership_ratio": 100.0,
+        "shares_held": 274250000,
+        "book_value": 79033000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SET",
+        "ownership_ratio": 100.0,
+        "shares_held": 27270000,
+        "book_value": 112949000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SSEC",
+        "ownership_ratio": 69.1,
+        "shares_held": 0,
+        "book_value": 130551000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SESC",
+        "ownership_ratio": 73.7,
+        "shares_held": 0,
+        "book_value": 34028000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "TSTC",
+        "ownership_ratio": 90.0,
+        "shares_held": 0,
+        "book_value": 260092000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SSS",
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 19189000000,
+        "investment_purpose": "경영참여"
+      }
+    ],
+    "segment_info": "사업부문별 요약 재무 현황' 항목을 참고하시기 바랍니다. | 지역별로 보면, 국내에서는 DX 부문 및 DS 부문 등을 총괄하는 본사와 34개의 종속기업이 사업을 운영하고 있습니다. 본사는 수원, 구미, 광주, 기흥, 화성, 평택사업장 등으로 구성되어 있으며, 국내 종속기업은 디스플레이 패널을 생산하는 삼성디스플레이㈜와 국내 대리점 판매를 전담하는 삼성전자판매㈜, 제품 수리 서비스를 담당하는 삼성전자서비스㈜, 제품 운송을 담당하는 삼성전자로지텍㈜ 등으로 구성되어 있습니다. | 해외(미주, 유럽ㆍCIS, 중동ㆍ아프리카, 아시아 등지)에서는 생산, 판매, 연구활동 등을 담당하는 274개의 비상장 종속기업이 운영되고 있습니다.미주에는 TV, 스마트폰 등 Set제품의 미국판매를 담당하는 SEA(New Jersey, USA),TV 생산을 담당하는 SII(California, USA), 반도체ㆍ디스플레이 패널 판매를 담당하는 SSI(California, USA), 반도체 생산을 담당하는 SAS(Texas, USA), Set제품 복합 생산법인 SEDA(Brazil), 전장부품사업 등을 담당하는 Harman(Connecticut, USA)등을 포함하여 총 66개의 판매ㆍ생산 등을 담당하는 법인이 있습니다. | 유럽ㆍCIS에는 SEUK(UK), SEG(Germany), SEF(France), SEI(Italy) 등 Set제품 판매법인과 SEH(Hungary) 등 TV 생산법인, 가전제품 생산법인 SEPM(Poland) 등을 포함하여 총 114개의 법인이 운영되고 있습니다.중동ㆍ아프리카에는 SGE(UAE), SSA(South Africa) 등 Set제품 판매법인과 SEEG(Egypt), SSAP(South Africa) 등 TV 생산법인을 포함한 총 21개 법인이 운영되고 있습니다.아시아(중국 제외)에는 SESP(Singapore), SEAU(Australia), SEPCO(Philippines), SME(Malaysia) 등 판매법인과 스마트폰 등 생산법인 SEVㆍSEVT(Vietnam), TV 등 생산법인 SEHC(Vietnam), 디스플레이 패널 생산법인 SDV(Vietnam), 복합 생산법인 SIEL(India) 등을 포함한 총 36개의 법인이 운영되고 있습니다.중국에는 SCIC(Beijing), SEHK(Hong Kong) 등 Set제품 판매법인과 SSS(Shanghai),SSCX(Xian) 등 반도체ㆍ디스플레이 패널 판매법인, SSEC(Suzhou) 등 Set제품 생산법인, SCS(Xian) 등 반도체 생산법인을 포함하여 총 37개의 법인이 운영되고 있습니다. | 2025년 당사의 매출은 333조 6,059억원으로 전년 동기 대비 10.9% 증가하였으며, 주요 매출처는 Alphabet, Apple, Deutsche Telekom, Hong Kong Techtronics, Supreme Electronics 등(알파벳순)이 있습니다. | 2. 주요 제품 및 서비스 | 가. 주요 제품 매출 | 당사는 TV, 냉장고, 세탁기, 에어컨, 스마트폰 등 완제품과 DRAM, NAND Flash, 모바일AP 등 반도체 부품 및 스마트폰용 OLED 패널 등을 생산ㆍ판매하고 있습니다. 아울러 Harman을 통해 디지털 콕핏, 카오디오, 포터블 스피커 등을 생산ㆍ판매하고 있습니다.2025년(제57기) 매출은 DX 부문이 187조 9,673억원(56.3%), DS 부문이 130조 1,282억원(39%)이며, SDC가 29조 8,417억원(8.9%), Harman은 15조 7,833억원(4.7%)입니다. | (단위 : 억원, %) | 부 문 | 주요 제품 | 매출액 | 비중 | DX 부문 | TV, 모",
+    "updated_at": "2026-06-08 11:40:09"
+  }
 }
-
-
-# ── 종목 분석 ────────────────────────────────────────────────────────
-def analyze_stock(stock_code, name, corp_code):
-    print(f"\n{'='*50}")
-    print(f"분석 중: {name} ({stock_code}) / corp_code: {corp_code}")
-
-    bsns_year, reprt_code = get_latest_report()
-    reprt_name = REPRT_NAMES.get(reprt_code, reprt_code)
-    print(f"  기준: {bsns_year}년 {reprt_name} ({reprt_code})")
-
-    # 연결재무제표 우선, 없으면 개별
-    fin_list = get_financial_data(corp_code, bsns_year, "CFS", reprt_code)
-    if not fin_list:
-        print("  연결재무제표 없음 → 개별재무제표 시도")
-        fin_list = get_financial_data(corp_code, bsns_year, "OFS", reprt_code)
-    if not fin_list:
-        # 폴백: 직전 보고서 시도 (사업보고서)
-        print("  최신 보고서 없음 → 직전 사업보고서 시도")
-        prev_year = str(int(bsns_year) - 1) if reprt_code != "11011" else bsns_year
-        fin_list = get_financial_data(corp_code, prev_year, "CFS", "11011")
-        if fin_list:
-            bsns_year = prev_year
-            reprt_code = "11011"
-            reprt_name = "사업보고서(연간)"
-            print(f"  → 전년도 사업보고서 사용: {bsns_year}")
-    if not fin_list:
-        return {"error": "재무데이터 없음"}
-
-    print(f"  재무항목 수: {len(fin_list)}개")
-
-    # 연간 사업보고서 연도 결정 (발행주식수/자회사/부문정보용)
-    # 분기 데이터를 쓰는 경우, 직전 완료된 연간 사업보고서를 따로 조회
-    now = datetime.now(KST)
-    annual_year = str(now.year - 1) if now.month >= 4 else str(now.year - 2)
-    print(f"  연간 사업보고서 기준연도: {annual_year}")
-
-    # 순부채 (최신 분기 기준)
-    print("  [순부채 계산]")
-    net_debt_data = calc_net_debt(fin_list)
-
-    # 영업이익 (최신 분기 기준)
-    op_income = get_operating_income(fin_list)
-    print(f"  영업이익: {op_income:,}원")
-
-    # 발행주식수 (연간 사업보고서 기준 - 분기엔 없을 수 있음)
-    shares = get_shares_outstanding(corp_code, annual_year, "11011")
-    if not shares:
-        shares = get_shares_outstanding(corp_code, bsns_year, reprt_code)
-    print(f"  발행주식수: {shares:,}주")
-
-    # 자회사 (연간 사업보고서 기준)
-    subs = get_subsidiaries(corp_code, annual_year, "11011")
-    sub_list = []
-    for sub in subs[:20]:
-        name  = sub.get("inv_prm", "").strip()
-        ratio = sub.get("trmend_blce_qota_rt", "").strip()  # 기말 지분율
-        qty   = sub.get("trmend_blce_qy", "0").replace(",", "").strip()  # 기말 보유주식수
-        book  = sub.get("trmend_blce_acntbk_amount", "0").replace(",", "").strip()  # 기말 장부가액
-        purps = sub.get("invstmnt_purps", "")  # 투자목적
-
-        if not name:
-            continue
-
-        # 경영참여 목적인 것만 포함 (단순투자 제외)
-        if purps and "단순투자" in purps:
-            continue
-
-        try:
-            ratio_f = float(ratio) if ratio and ratio != "-" else 0.0
-            qty_i   = int(qty) if qty and qty.isdigit() else 0
-            book_i  = int(book) if book and book.lstrip("-").isdigit() else 0
-        except:
-            ratio_f, qty_i, book_i = 0.0, 0, 0
-
-        sub_list.append({
-            "name":            name,
-            "ownership_ratio": ratio_f,
-            "shares_held":     qty_i,
-            "book_value":      book_i,
-            "investment_purpose": purps,
-        })
-        print(f"    자회사: {name} ({ratio_f}%) 보유주식: {qty_i:,}주 장부가: {book_i:,}원")
-
-    # 잉여현금 계산
-    print("  [잉여현금 계산]")
-    revenue = get_revenue(fin_list)
-    total_cash = net_debt_data["total_cash"]
-    excess_cash_data = calc_excess_cash(total_cash, revenue, stock_code)
-
-    # 부문별 재무정보 (공시 원문에서 추출)
-    print("  [부문별 재무정보 추출]")
-    segment_info = get_segment_info(corp_code, annual_year)
-
-    return {
-        "stock_code":        stock_code,
-        "name":              name,
-        "bsns_year":         bsns_year,
-        "reprt_name":        reprt_name,
-        "operating_income":  op_income,
-        "revenue":           revenue,
-        "shares_outstanding": shares,
-        "net_debt":          net_debt_data,
-        "excess_cash":       excess_cash_data,
-        "subsidiaries":      sub_list,
-        "segment_info":      segment_info,
-        "updated_at":        datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S"),
-    }
-
-
-# ── 메인 ─────────────────────────────────────────────────────────────
-def main():
-    if not DART_KEY:
-        print("DART_API_KEY 없음")
-        return
-
-    kr_holdings = load_kr_holdings()
-    if not kr_holdings:
-        print("한국 종목 없음")
-        return
-
-    # 전체 기업목록으로 corp_code 매핑
-    corp_map = build_corp_map()
-    if not corp_map:
-        print("기업목록 로드 실패")
-        return
-
-    results = {}
-    for stock_code, info in kr_holdings.items():
-        corp_code = corp_map.get(stock_code)
-        if not corp_code:
-            print(f"  {stock_code} ({info['name']}): corp_code 없음")
-            results[stock_code] = {"error": f"corp_code 없음: {stock_code}"}
-            continue
-        try:
-            results[stock_code] = analyze_stock(stock_code, info["name"], corp_code)
-            time.sleep(1)
-        except Exception as e:
-            results[stock_code] = {"error": str(e)}
-            print(f"  {stock_code} 분석 실패: {e}")
-
-    with open(OUTPUT, "w", encoding="utf-8") as f:
-        json.dump(results, f, ensure_ascii=False, indent=2, default=str)
-
-    print(f"\n✓ sotp_data.json 저장 완료")
-
-
-if __name__ == "__main__":
-    main()
