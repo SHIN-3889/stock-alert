@@ -339,8 +339,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-08 12:43';
-  const DASHBOARD_VERSION = 'v49.0';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -853,7 +853,10 @@
             // DART 실제 부문별 재무정보 주입
             var segInfo = dartInfo.segment_info;
             if (segInfo && segInfo.indexOf('SINGLE_SEGMENT') !== -1) {
-              dartStr += ' [부문 정보 - 전사 계산 모드] 이 회사는 부문 분할이 부적절합니다(단일부문이거나 부문 데이터 불명확). 절대 사업부문을 여러 개로 쪼개지 마세요. 위에 제공된 전사(회사 전체) 영업이익 하나만 사용하세요. 전사 EBITDA = 전사 영업이익 + 추정 감가상각비. 그리고 segments 필드에는 "전사|현재EBITDA|정상화EBITDA|배수|보수적가치|정상화가치" 형식으로 한 줄만 작성하세요.';
+              dartStr += ' [부문 정보 - 전사 계산 모드] 이 회사는 부문 분할이 부적절합니다(단일부문이거나 부문 데이터 불명확). 절대 사업부문을 여러 개로 쪼개지 마세요. 위에 제공된 전사(회사 전체) 영업이익 하나만 사용하세요.' +
+                ' 계산법: (1) 전사 EBITDA = 전사 영업이익 + 감가상각비(영업이익의 약 20~40% 추정해서 더하세요. 0으로 두지 마세요).' +
+                ' (2) 시나리오A(보수적) 배수와 시나리오B(정상화) 배수를 다르게 적용하세요. 업종별 적정 EV/EBITDA: 반도체 5~8배(정상화 8~11배), 중전기/전력기기 6~9배(정상화 9~12배), 일반 제조 5~7배(정상화 7~9배). 시나리오A는 하단, 시나리오B는 상단을 쓰세요. ⚠️ 15배 같은 과도한 배수 절대 금지.' +
+                ' (3) segments 필드에는 "전사|현재EBITDA|정상화EBITDA|보수배수/정상배수|보수적가치|정상화가치" 형식으로 한 줄만 작성하세요.';
             } else if (segInfo) {
               dartStr += ' [DART 실제 부문별 재무정보] ' + segInfo +
                 ' ⚠️⚠️ 단위 주의(매우 중요): 위 표의 모든 숫자는 백만원 단위입니다. 억원으로 환산하려면 100으로 나누세요. 예: 표에 3,503,512 라고 적혀있으면 3,503,512백만원 = 35,035억원 = 3.5조원입니다. 절대 3,503,512를 억원으로 읽지 마세요. 위 표에서 각 사업부문의 실제 영업이익(영업손익)을 백만원 단위로 읽고, 반드시 ÷100 하여 억원으로 환산한 뒤 SOTP 계산에 사용하세요. 적자 부문은 음수로 반영. 임의 추정 금지.';
