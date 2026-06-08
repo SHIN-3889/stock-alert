@@ -13,14 +13,6 @@
       "kr_query": "TIGER 미국30년국채 커버드콜",
       "en_query": null
     },
-    "GEV": {
-      "name": "GE버노바",
-      "market": "US",
-      "shares": 42,
-      "avg_price": 1044.9593,
-      "kr_query": "GE버노바",
-      "en_query": "GE Vernova"
-    },
     "005930": {
       "name": "삼성전자",
       "market": "KR",
@@ -28,6 +20,22 @@
       "avg_price": 310000,
       "kr_query": "HBM",
       "en_query": "엔비디아"
+    },
+    "NVDA": {
+      "name": "엔비디아",
+      "market": "US",
+      "shares": 189,
+      "avg_price": 208.29,
+      "kr_query": "엔비디아",
+      "en_query": "데이터센터"
+    },
+    "012330": {
+      "name": "현대모비스",
+      "market": "KR",
+      "shares": 49,
+      "avg_price": 614300,
+      "kr_query": "현대모비스",
+      "en_query": "아틀라스"
     }
   },
   "watchlist": {
