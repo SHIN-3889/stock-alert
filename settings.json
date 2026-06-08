@@ -20,6 +20,14 @@
       "avg_price": 1044.9593,
       "kr_query": "GE버노바",
       "en_query": "GE Vernova"
+    },
+    "005930": {
+      "name": "삼성전자",
+      "market": "KR",
+      "shares": 97,
+      "avg_price": 310000,
+      "kr_query": "HBM",
+      "en_query": "엔비디아"
     }
   },
   "watchlist": {
