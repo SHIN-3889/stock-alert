@@ -5,6 +5,14 @@
     "15:30"
   ],
   "holdings": {
+    "267260": {
+      "name": "HD현대일렉트릭",
+      "market": "KR",
+      "shares": 22,
+      "avg_price": 926900,
+      "kr_query": "HD현대일렉트릭",
+      "en_query": null
+    },
     "476550": {
       "name": "TIGER 미국30년국채커버드콜액티브(H)",
       "market": "KR",
@@ -39,10 +47,6 @@
     }
   },
   "watchlist": {
-    "267260": {
-      "name": "HD현대일렉트릭",
-      "market": "KR"
-    },
     "000660": {
       "name": "SK하이닉스",
       "market": "KR"
