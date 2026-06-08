@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-08 17:31:01",
+  "updated_at": "2026-06-08 17:45:47",
   "portfolio": {
     "rows": [
       {
@@ -16,12 +16,12 @@
       {
         "name": "GE버노바",
         "currency": "USD",
-        "price": 938.4,
-        "day_change_pct": 1.5540452794251347,
+        "price": 937.825,
+        "day_change_pct": 1.4918185359941218,
         "shares": 42,
-        "value_krw": 60351639.025781244,
-        "pl_krw": -6853184.578473926,
-        "pl_pct": -10.197459365163793,
+        "value_krw": 60323323.20384522,
+        "pl_krw": -6891154.538552195,
+        "pl_pct": -10.25248543172925,
         "session": "pre"
       },
       {
@@ -37,12 +37,12 @@
       }
     ],
     "summary": {
-      "total_value_krw": 92609074.02578124,
-      "day_change_krw": -2358655.425820321,
-      "day_change_pct": -2.483638852313894,
-      "total_pl_krw": -8265217.578473926,
-      "total_pl_pct": -8.193581780875945,
-      "usdkrw": 1531.27001953125
+      "total_value_krw": 92580758.20384522,
+      "day_change_krw": -2395508.2403540015,
+      "day_change_pct": -2.5222177392721776,
+      "total_pl_krw": -8303187.538552195,
+      "total_pl_pct": -8.23043495915,
+      "usdkrw": 1531.489990234375
     },
     "watchlist": [
       {
@@ -86,8 +86,8 @@
         "name": "구글",
         "market": "US",
         "currency": "USD",
-        "price": 360.7788,
-        "day_change_pct": -0.2298608998645015,
+        "price": 360.46,
+        "day_change_pct": -0.31802217859020326,
         "session": "pre"
       },
       {
@@ -95,14 +95,18 @@
         "name": "마이크론",
         "market": "US",
         "currency": "USD",
-        "price": 907.8174,
-        "day_change_pct": 5.904969668688751,
+        "price": 900.9074,
+        "day_change_pct": 5.098856742883808,
         "session": "pre"
       },
       {
-        "code": "AVDA.O",
+        "code": "NVDA",
         "name": "엔비디아",
-        "error": "AVDA.O 시세 조회 실패"
+        "market": "US",
+        "currency": "USD",
+        "price": 207.9882,
+        "day_change_pct": 1.936111838100588,
+        "session": "pre"
       }
     ]
   },
