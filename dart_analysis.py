@@ -304,19 +304,15 @@ def extract_segment_table(doc_text):
         clean = re.sub(r'<[^>]+>', ' | ', chunk)
         clean = re.sub(r'\s*\|\s*(\|\s*)+', ' | ', clean)
         clean = re.sub(r'\s+', ' ', clean).strip()
-        # 영업이익/영업손익 단어가 있는 표만 유효 (매출 비중만 있는 표 제외)
-        if "영업" in clean and ("이익" in clean or "손익" in clean or "손실" in clean):
+        # 영업이익/영업손익이 있고, 부문이 2개 이상 구분되는 표만 유효
+        has_profit = "영업" in clean and ("이익" in clean or "손익" in clean or "손실" in clean)
+        # 부문 구분 확인: 표에 숫자가 충분히 많아야 함 (단일부문이면 데이터 빈약)
+        digit_groups = re.findall(r'[\d,]{4,}', clean)
+        if has_profit and len(digit_groups) >= 6:
             return clean[:3000]
-    # 영업이익 표는 없지만 매출 비중표라도 있으면 반환
-    for anchor in anchors:
-        pos = doc_text.find(anchor)
-        if pos != -1:
-            chunk = doc_text[pos:pos+3000]
-            clean = re.sub(r'<[^>]+>', ' | ', chunk)
-            clean = re.sub(r'\s*\|\s*(\|\s*)+', ' | ', clean)
-            clean = re.sub(r'\s+', ' ', clean).strip()
-            return clean[:2500]
-    return None
+    # 영업이익이 명확한 부문 표를 못 찾으면 → 전사 계산 (단일부문 취급)
+    # (매출 비중만 있는 부실한 표는 오히려 혼란을 주므로 사용 안 함)
+    return "SINGLE_SEGMENT: 부문별 영업이익 데이터가 명확하지 않습니다. 사업부문을 나누지 말고 전사(회사 전체) 영업이익으로 EBITDA를 계산하세요."
 
 
 def get_segment_info(corp_code, bsns_year):
