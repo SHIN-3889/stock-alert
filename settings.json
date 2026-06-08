@@ -44,6 +44,14 @@
       "avg_price": 614300,
       "kr_query": "현대모비스",
       "en_query": "아틀라스"
+    },
+    "006400": {
+      "name": "삼성SDI",
+      "market": "KR",
+      "shares": 38,
+      "avg_price": 518100,
+      "kr_query": "삼성SDI",
+      "en_query": null
     }
   },
   "watchlist": {
@@ -58,10 +66,6 @@
     "MU": {
       "name": "마이크론",
       "market": "US"
-    },
-    "006400": {
-      "name": "삼성SDI",
-      "market": "KR"
     }
   }
 }
