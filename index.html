@@ -346,8 +346,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-11 01:27';
-  const DASHBOARD_VERSION = 'v63.0';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -952,8 +952,9 @@
         '  (1) DART 부문별 재무정보가 제공되면 그 부문 구분을 따르세요. 단일부문이거나 부문정보가 없으면 전사(전체) 1개로 하세요.',
         '  (2) 각 부문(또는 전사)마다 다음 5개 값을 판단하세요. ⚠️ 절대 금액(억원/조원)을 쓰지 말고 비율(%)과 배수만:',
         '      - 부문명',
-        '      - 현재비중%: 그 부문 영업이익이 전사 영업이익 절대값에서 차지하는 비율. DART 부문 표의 부문별 영업이익 비중을 참고. 흑자 부문은 양수, 적자 부문은 음수(예: -107). 전 부문 합이 전사와 일치해야 함(전사가 흑자면 합 +100, 적자면 합 -100). 단일부문/전사면 100.',
-        '      - 정상화비중%: 정상 업황(회복 후) 시 그 부문 영업이익이 [현재 전사 영업이익 절대값] 대비 몇 %일지. 회복이 크면 100 초과 가능(예: 130). 안정 업종은 현재비중과 동일.',
+        '      - 현재비중%: 그 부문 영업이익이 [전사 영업이익 절대값] 대비 몇 %인지. 흑자 부문은 양수, 적자 부문은 음수. 전 부문 합 = 전사가 흑자면 +100, 적자면 -100. 단일부문이면 100.',
+        '      ⚠️ 적자 기업 예시(중요): 전사 영업손실 -6000억, 배터리 부문 -7000억 적자, 소재 부문 +1000억 흑자라면 → 배터리 현재비중 -117, 소재 +17 (합 -100). 부호를 절대 뒤집지 마세요. 적자 부문이 음수입니다.',
+        '      - 정상화비중%: 정상 업황(회복 후) 그 부문 영업이익이 [현재 전사 영업이익 절대값] 대비 몇 %일지. 적자 기업의 회복은 100 훨씬 초과 가능(예: 배터리 회복 시 +240). 흑자 안정 업종은 현재비중과 동일.',
         '      - DA비율: 감가상각비를 영업이익 대비 몇 %로 볼지 (자본집약 업종 20~40, 경공업 10~20).',
         '      - 보수배수밴드(하단~상단): 시나리오A EV/EBITDA 밴드. 2차전지셀 6~9, 양극재 8~12, 반도체 5~8, 자동차부품 4~6, 화학 5~7, 중전기/전력기기 6~9, 일반제조 5~7.',
         '      - 정상배수밴드(하단~상단): 시나리오B EV/EBITDA 밴드. 2차전지셀 12~15, 양극재 12~16, 반도체 8~11, 자동차부품 6~8, 화학 7~9, 중전기/전력기기 9~12, 일반제조 7~9.',
@@ -1224,6 +1225,10 @@
             });
             // 비중 합이 ±100 근처가 아니면(금액 오인 등) 무효 처리
             if (rows.length === 0 || Math.abs(sumPct) > 250 || Math.abs(sumPct) < 20) return null;
+            // 부호 검증: 비중 합의 부호가 실제 전사 영업이익 부호와 달라야 하면 무효
+            // (적자 회사인데 합이 +100이면 AI가 부호를 뒤집은 것)
+            var expectSign = operatingProfit ? 1 : (opWonRef >= 0 ? 1 : -1);
+            if ((sumPct > 0 ? 1 : -1) !== expectSign) return null;
             rows.forEach(function(s){
               var opCur = dartOpEok * s.curPct / 100;    // 억원
               var opNorm = dartOpEok * s.normPct / 100;
@@ -1279,8 +1284,11 @@
           parsed.method2_price = (normPrice && normPrice > 0) ? normPrice.toLocaleString() + '원' : '-';
 
           // segments 표시용 텍스트 생성 (부문명|EBITDA|배수|가치)
-          var firstSc = validResults.find ? validResults.find(function(r){return r.segments_calc;}) : null;
-          if (!firstSc) { for (var fi=0; fi<validResults.length; fi++){ if(validResults[fi].segments_calc){ firstSc=validResults[fi]; break; } } }
+          // 표시용: 검증(부호·비중 합)을 통과한 회차만 사용
+          var firstSc = null;
+          for (var fi=0; fi<validResults.length; fi++){
+            if (validResults[fi].segments_calc && bizValuesFromResult(validResults[fi]) !== null) { firstSc = validResults[fi]; break; }
+          }
           if (firstSc && firstSc.segments_calc) {
             // 비율 기반 표시: 금액 = 전사 영업이익 × 비중%, 배수는 밴드 × 퀄리티 위치
             var segLines = String(firstSc.segments_calc).split('/').map(function(p){
