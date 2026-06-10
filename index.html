@@ -346,8 +346,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-11 06:16';
-  const DASHBOARD_VERSION = 'v64.0';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -1193,7 +1193,7 @@
 
           // 각 회차의 segments_calc 파싱 (비율 기반: 금액 = 전사 영업이익 × 비중%)
           // AI는 비중%와 배수 밴드만 주므로 단위/자릿수 오류가 구조적으로 불가능
-          function bizValuesFromResult(r) {
+          function bizValuesFromResult(r, allowFlip) {
             var sc = r.segments_calc;
             if (!sc) return null;
             var parts = String(sc).split('/');
@@ -1225,10 +1225,13 @@
             });
             // 비중 합이 ±100 근처가 아니면(금액 오인 등) 무효 처리
             if (rows.length === 0 || Math.abs(sumPct) > 250 || Math.abs(sumPct) < 20) return null;
-            // 부호 검증: 비중 합의 부호가 실제 전사 영업이익 부호와 달라야 하면 무효
-            // (적자 회사인데 합이 +100이면 AI가 부호를 뒤집은 것)
+            // 부호 검증: 비중 합의 부호가 실제 전사 영업이익 부호와 다르면
+            // 1차에선 무효 처리, allowFlip(2차)에선 전체 부호 반전으로 교정
             var expectSign = operatingProfit ? 1 : (opWonRef >= 0 ? 1 : -1);
-            if ((sumPct > 0 ? 1 : -1) !== expectSign) return null;
+            if ((sumPct > 0 ? 1 : -1) !== expectSign) {
+              if (!allowFlip) return null;
+              rows.forEach(function(s){ s.curPct = -s.curPct; s.normPct = -s.normPct; });
+            }
             rows.forEach(function(s){
               var opCur = dartOpEok * s.curPct / 100;    // 억원
               var opNorm = dartOpEok * s.normPct / 100;
@@ -1242,12 +1245,18 @@
             return { cons: consTotal, norm: normTotal };  // 억원
           }
 
-          // 회차별 본업가치 → 중앙값
+          // 회차별 본업가치 → 중앙값 (1차: 엄격 검증, 실패 시 2차: 부호 반전 교정)
           var consBizArr = [], normBizArr = [];
           validResults.forEach(function(r){
-            var bv = bizValuesFromResult(r);
+            var bv = bizValuesFromResult(r, false);
             if (bv) { consBizArr.push(bv.cons); normBizArr.push(bv.norm); }
           });
+          if (consBizArr.length === 0) {
+            validResults.forEach(function(r){
+              var bv = bizValuesFromResult(r, true);
+              if (bv) { consBizArr.push(bv.cons); normBizArr.push(bv.norm); }
+            });
+          }
           function median(arr){ if(arr.length===0) return null; arr.sort(function(a,b){return a-b;}); return arr[Math.floor(arr.length/2)]; }
           var consBizEok = median(consBizArr);  // 본업가치 억원
           var normBizEok = median(normBizArr);
@@ -1284,10 +1293,23 @@
           parsed.method2_price = (normPrice && normPrice > 0) ? normPrice.toLocaleString() + '원' : '-';
 
           // segments 표시용 텍스트 생성 (부문명|EBITDA|배수|가치)
-          // 표시용: 검증(부호·비중 합)을 통과한 회차만 사용
-          var firstSc = null;
+          // 표시용: 검증 통과 회차 우선, 없으면 반전 교정 회차, 그래도 없으면 원본 진단 표시
+          var firstSc = null, scFlipped = false;
           for (var fi=0; fi<validResults.length; fi++){
-            if (validResults[fi].segments_calc && bizValuesFromResult(validResults[fi]) !== null) { firstSc = validResults[fi]; break; }
+            if (validResults[fi].segments_calc && bizValuesFromResult(validResults[fi], false) !== null) { firstSc = validResults[fi]; break; }
+          }
+          if (!firstSc) {
+            for (var fj=0; fj<validResults.length; fj++){
+              if (validResults[fj].segments_calc && bizValuesFromResult(validResults[fj], true) !== null) { firstSc = validResults[fj]; scFlipped = true; break; }
+            }
+          }
+          if (!firstSc) {
+            for (var fk=0; fk<validResults.length; fk++){
+              if (validResults[fk].segments_calc) {
+                parsed.segments = '⚠️ AI 응답 검증 실패 (원본): ' + validResults[fk].segments_calc;
+                break;
+              }
+            }
           }
           if (firstSc && firstSc.segments_calc) {
             // 비율 기반 표시: 금액 = 전사 영업이익 × 비중%, 배수는 밴드 × 퀄리티 위치
@@ -1299,6 +1321,7 @@
               var normPct = parseFloat(String(f[2]).replace(/[^0-9.\-]/g,''));
               if (isNaN(curPct) || Math.abs(curPct) > 300) return '';
               if (isNaN(normPct) || Math.abs(normPct) > 300) normPct = curPct;
+              if (scFlipped) { curPct = -curPct; normPct = -normPct; }
               var da = parseFloat(String(f[3]).replace(/[^0-9.]/g,''))||25;
               function bandTxt(s){
                 var mm = String(s).split('~');
