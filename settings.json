@@ -25,7 +25,7 @@
       "name": "삼성전자",
       "market": "KR",
       "shares": 97,
-      "avg_price": 310000,
+      "avg_price": 310116,
       "kr_query": "HBM",
       "en_query": "엔비디아"
     },
@@ -49,7 +49,7 @@
       "name": "삼성SDI",
       "market": "KR",
       "shares": 38,
-      "avg_price": 518100,
+      "avg_price": 518000,
       "kr_query": "삼성SDI",
       "en_query": null
     }
