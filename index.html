@@ -346,8 +346,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-10 18:19';
-  const DASHBOARD_VERSION = 'v60.0';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -874,11 +874,15 @@
               dartStr += ' [DART 실제 부문별 재무정보] ' + segInfo +
                 ' ⚠️ 단위 확인 필수: 위 표 안에 "(단위 : 억원)" 또는 "(단위:백만원)"이 적혀 있습니다. 반드시 그 단위를 확인하세요. 백만원 단위면 ÷100 하여 억원으로 환산(예: 3,503,512백만원=35,035억원). 억원 단위면 그대로 사용(예: 248,581억원=24.8조원). segments_calc의 현재영업이익_억원에는 억원 단위로 넣으세요. 표가 분기 기준이면 연환산(×4 등). 정상화영업이익은 정상 업황 기준. 적자 부문은 현재영업이익 음수, 정상화는 회복 예상치. 이 부문 구분을 segments_calc에 그대로 사용하세요.';
             }
-            dartStr += ' 위 DART 데이터(순부채, 발행주식수, 부문별 재무정보)는 절대 임의로 바꾸지 마세요.';
+            if (operatingProfit) {
+              dartStr += ' 위 DART 데이터 중 순부채와 발행주식수는 절대 바꾸지 마세요. 단, 부문별 영업이익은 아래 사용자 지정 영업이익을 따르세요(부문 구조와 비중 판단에만 DART 표를 참고).';
+            } else {
+              dartStr += ' 위 DART 데이터(순부채, 발행주식수, 부문별 재무정보)는 절대 임의로 바꾸지 마세요.';
+            }
           }
           return '당신은 전문 주식 애널리스트입니다. ' + name + '(한국 주식)의 적정주가를 SOTP 방식과 NTM P/E 방식으로 계산하세요.' +
             dartStr +
-            (operatingProfit ? ' ⚠️⚠️ [사용자 지정 영업이익 - 최우선] 사용자가 예상 연간 영업이익을 직접 입력했습니다: ' + operatingProfit + ' . segments_calc의 부문별 현재영업이익은 DART 표 값 대신, 부문 합계가 이 사용자 입력값(억원 환산)이 되도록 배분하세요. 배분 방법: 산업 사이클과 업황을 고려해 현실적으로 배분하세요. 예를 들어 반도체 슈퍼사이클로 이익이 급증했다면 증가분 대부분을 반도체 부문(DS 등)에 집중 배분하고, 다른 부문은 기존 수준을 유지하세요. 균등 비례 배분은 비현실적이니 금지. 정상화영업이익도 이 수준을 기준으로 재판단하세요.' : '');
+            (operatingProfit ? ' ⚠️⚠️⚠️ [최우선 명령 - 사용자 지정 영업이익] 사용자가 예상 연간 영업이익을 직접 입력했습니다: ' + operatingProfit + ' . 이것이 DART 표 값보다 우선합니다. segments_calc 작성 규칙: (1) 모든 부문의 현재영업이익_억원 합계가 정확히 이 사용자 입력값(억원 환산)이 되어야 합니다. (2) DART 표의 부문별 영업이익을 그대로 쓰면 안 됩니다. 그 표는 부문 구조(어떤 부문이 있는지)와 비중 참고용입니다. (3) 증가/감소분은 산업 사이클을 고려해 현실적으로 배분하세요. 반도체 호황이면 증가분을 반도체 부문에 집중. (4) 검산: segments_calc의 현재영업이익 합 = 사용자 입력값. 다르면 다시 작성하세요.' : '');
         })(),
         priceWarn,
         '',
@@ -1155,6 +1159,11 @@
               // 비율이 50배 이상이면 ÷100 (백만원을 억원으로 착각), 0.02배 이하면 ×100
               if (ratio >= 50) corr = 0.01;
               else if (ratio <= 0.02) corr = 100;
+              else if (operatingProfit && (ratio < 0.8 || ratio > 1.25)) {
+                // 사용자 영업이익 입력이 있는데 AI가 반영 안 한 경우(합이 ±25% 밖)
+                // → 코드가 비례 스케일링으로 강제 반영 (AI 배분 실패 폴백)
+                corr = dartOpEok / sumAbs;
+              }
             }
 
             var consTotal = 0, normTotal = 0;
@@ -1222,6 +1231,7 @@
             if (dartOpEok > 0 && dispSumAbs > 0) {
               var dr = dispSumAbs / dartOpEok;
               if (dr >= 50) dispCorr = 0.01; else if (dr <= 0.02) dispCorr = 100;
+              else if (operatingProfit && (dr < 0.8 || dr > 1.25)) dispCorr = dartOpEok / dispSumAbs;
             }
             var segLines = dispParts.map(function(p){
               var f = p.split(';');
