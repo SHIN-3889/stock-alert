@@ -228,16 +228,26 @@ def get_shares_outstanding(corp_code, bsns_year, reprt_code="11011"):
         res  = requests.get(url, params=params, timeout=10)
         data = res.json()
         if data.get("status") == "000":
+            common, preferred = 0, 0
             for item in data.get("list", []):
                 se = item.get("se", "")
-                if "보통주" in se and "합계" not in se:
-                    val = item.get("distb_stock_co", "0") or "0"
-                    val = val.replace(",", "").strip()
-                    if val and val != "-":
-                        shares = int(val)
-                        if shares > 0:
-                            print(f"  발행주식수(보통주): {shares:,}주")
-                            return shares
+                if "합계" in se:
+                    continue
+                val = (item.get("distb_stock_co", "0") or "0").replace(",", "").strip()
+                if not val or val == "-":
+                    continue
+                try:
+                    n = int(val)
+                except:
+                    continue
+                if "보통주" in se and n > 0:
+                    common = n
+                elif "우선주" in se and n > 0:
+                    preferred = n
+            if common > 0:
+                total = common + preferred
+                print(f"  발행주식수: 보통주 {common:,} + 우선주 {preferred:,} = {total:,}주")
+                return total
     except Exception as e:
         print(f"  발행주식수 조회 실패: {e}")
 
