@@ -96,7 +96,8 @@ def extract_amount(fin_list, keywords):
             if kw in acct_id or kw in acct_nm:
                 raw = (item.get("thstrm_amount") or "0").replace(",", "").replace(" ", "")
                 try:
-                    val = int(raw.lstrip("-"))
+                    # 부호 보존 (영업손실 등 음수 값 유지. lstrip("-") 쓰면 적자가 흑자로 둔갑)
+                    val = int(raw)
                     return val
                 except:
                     pass
