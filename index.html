@@ -346,8 +346,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-11 06:27';
-  const DASHBOARD_VERSION = 'v66.1';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -1230,7 +1230,8 @@
             var expectSign = operatingProfit ? 1 : (opWonRef >= 0 ? 1 : -1);
             if ((sumPct > 0 ? 1 : -1) !== expectSign) {
               if (!allowFlip) return null;
-              rows.forEach(function(s){ s.curPct = -s.curPct; s.normPct = -s.normPct; });
+              // 현재비중만 반전 (적자 복원). 정상화비중은 회복 시나리오이므로 양수 유지
+              rows.forEach(function(s){ s.curPct = -s.curPct; s.normPct = Math.abs(s.normPct); });
             }
             rows.forEach(function(s){
               var opCur = dartOpEok * s.curPct / 100;    // 억원
@@ -1321,7 +1322,7 @@
               var normPct = parseFloat(String(f[2]).replace(/[^0-9.\-]/g,''));
               if (isNaN(curPct) || Math.abs(curPct) > 300) return '';
               if (isNaN(normPct) || Math.abs(normPct) > 300) normPct = curPct;
-              if (scFlipped) { curPct = -curPct; normPct = -normPct; }
+              if (scFlipped) { curPct = -curPct; normPct = Math.abs(normPct); }
               var da = parseFloat(String(f[3]).replace(/[^0-9.]/g,''))||25;
               function bandTxt(s){
                 var mm = String(s).split('~');
