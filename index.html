@@ -346,8 +346,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-10 18:33';
-  const DASHBOARD_VERSION = 'v61.2';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -777,6 +777,70 @@
         peEl.placeholder = '조회 실패 - P/E 배수 직접 입력';
       }
     }
+  }
+
+  // ── 퀄리티 등급 계산 (수익성/안정성/성장성, 코드 직접 계산) ──
+  function calcQualityGrade(dartInfo, marketCap) {
+    var h = dartInfo && dartInfo.history_3yr;
+    if (!h || !h.op || h.op.length < 3) return null;
+    var op = h.op;    // [전전기, 전기, 당기] 원 단위
+    var ocf = (h.ocf && h.ocf.length === 3) ? h.ocf : null;
+
+    // ① 수익성 (0~100): 영업현금흐름 수익률 (OCF ÷ 시가총액)
+    var profitScore = 50;
+    if (ocf && marketCap > 0) {
+      var ocfYield = ocf[2] / marketCap * 100;  // 당기 OCF / 시총 %
+      // 2% 미만 0점 ~ 12% 이상 100점 선형
+      profitScore = Math.max(0, Math.min(100, (ocfYield - 2) / 10 * 100));
+    } else if (marketCap > 0) {
+      var opYield = op[2] / marketCap * 100;
+      profitScore = Math.max(0, Math.min(100, (opYield - 2) / 10 * 100));
+    }
+
+    // ② 안정성 (0~100): 3개년 영업이익 변동계수(CV). 적자 있으면 감점
+    var mean = (op[0] + op[1] + op[2]) / 3;
+    var stabScore = 50;
+    if (mean > 0) {
+      var variance = (Math.pow(op[0]-mean,2) + Math.pow(op[1]-mean,2) + Math.pow(op[2]-mean,2)) / 3;
+      var cv = Math.sqrt(variance) / Math.abs(mean);  // 변동계수
+      // CV 0.1 이하 100점 ~ 1.0 이상 0점
+      stabScore = Math.max(0, Math.min(100, (1.0 - cv) / 0.9 * 100));
+      // 적자 연도가 있으면 추가 감점
+      var lossYears = op.filter(function(v){ return v < 0; }).length;
+      stabScore = Math.max(0, stabScore - lossYears * 25);
+    } else {
+      stabScore = 10;  // 평균 적자면 매우 불안정
+    }
+
+    // ③ 성장성 (0~100): 3개년 CAGR (전전기→당기)
+    var growScore = 50;
+    if (op[0] > 0 && op[2] > 0) {
+      var cagr = (Math.pow(op[2] / op[0], 0.5) - 1) * 100;  // 2년 CAGR %
+      // -10% 이하 0점, 0% 30점, +15% 70점, +40% 이상 100점
+      if (cagr <= -10) growScore = 0;
+      else if (cagr <= 0) growScore = 30 * (cagr + 10) / 10;
+      else if (cagr <= 15) growScore = 30 + 40 * cagr / 15;
+      else if (cagr <= 40) growScore = 70 + 30 * (cagr - 15) / 25;
+      else growScore = 100;
+    } else if (op[0] <= 0 && op[2] > 0) {
+      growScore = 85;  // 적자→흑자 턴어라운드는 높은 성장
+    } else if (op[2] <= 0) {
+      growScore = 10;  // 당기 적자
+    }
+
+    // 종합: 성장 45% + 안정 35% + 수익 20%
+    var total = growScore * 0.45 + stabScore * 0.35 + profitScore * 0.20;
+    function grade(s){ return s >= 80 ? 'A' : s >= 65 ? 'B' : s >= 50 ? 'C' : 'D'; }
+    // 등급별 SOTP 가중 계수
+    var coefMap = { A: 1.35, B: 1.15, C: 1.0, D: 0.85 };
+    var g = grade(total);
+    return {
+      profit: Math.round(profitScore), profitG: grade(profitScore),
+      stab: Math.round(stabScore), stabG: grade(stabScore),
+      grow: Math.round(growScore), growG: grade(growScore),
+      total: Math.round(total), totalG: g,
+      coef: coefMap[g]
+    };
   }
 
   async function evaluateStock(code, name, market, currentPrice, operatingProfit, peRatio) {
@@ -1268,6 +1332,24 @@
               parsed.gap_rate = (gap >= 0 ? '+' : '') + gap.toFixed(2) + '%';
             }
 
+            // ── 퀄리티 등급 + 퀄리티 조정 적정주가 (5번째 지표) ──
+            var mcap = currentPrice * dartShares;
+            var quality = calcQualityGrade(dartCode, mcap);
+            if (quality && consPrice && consPrice > 0) {
+              var qPrice = Math.round(consPrice * quality.coef);
+              parsed.method5_label = '퀄리티 조정 적정주가 (등급 ' + quality.totalG + ' × ' + quality.coef + ')';
+              parsed.method5_price = qPrice.toLocaleString() + '원';
+              parsed.quality_detail = '성장 ' + quality.growG + '(' + quality.grow + ') · 안정 ' + quality.stabG + '(' + quality.stab + ') · 수익 ' + quality.profitG + '(' + quality.profit + ') → 종합 ' + quality.totalG + '(' + quality.total + '점)';
+              prices.push(qPrice);
+              // target 재계산 (method5 포함)
+              parsed.target_1 = Math.min.apply(null, prices).toLocaleString() + '원';
+              parsed.target_2 = Math.max.apply(null, prices).toLocaleString() + '원';
+              if (currentPrice > 0) {
+                var gap2 = (Math.max.apply(null, prices) - currentPrice) / currentPrice * 100;
+                parsed.gap_rate = (gap2 >= 0 ? '+' : '') + gap2.toFixed(2) + '%';
+              }
+            }
+
             // summary를 코드 계산값 기반으로 재생성 (Gemini의 자릿수 오류 방지)
             var curStr = currentPrice.toLocaleString() + '원';
             var parts2 = [];
@@ -1276,6 +1358,7 @@
             if (normPrice && normPrice > 0) parts2.push('정상화 시 ' + normPrice.toLocaleString() + '원');
             if (!isNaN(m3) && m3 > 0) parts2.push('시장 기대(NTM P/E)는 ' + Math.round(m3).toLocaleString() + '원');
             if (!isNaN(m4) && m4 > 0) parts2.push('애널리스트 목표주가는 ' + Math.round(m4).toLocaleString() + '원');
+            if (quality && parsed.method5_price) parts2.push('퀄리티 조정가(' + quality.totalG + '등급)는 ' + parsed.method5_price);
             var sentence = parts2.slice(1).join(', ') + '으로 추정돼요. ';
             // 현재가 위치 해석
             var maxP = Math.max.apply(null, prices);
@@ -1353,6 +1436,7 @@
         '<div class="eval-row"><span class="eval-label">' + (parsed.method2_label || '방법2') + '</span><span class="eval-value">' + parsed.method2_price + '</span></div>' +
         (parsed.method3_label && parsed.method3_price && parsed.method3_price !== '-' ? '<div class="eval-row"><span class="eval-label">' + parsed.method3_label + '</span><span class="eval-value">' + parsed.method3_price + '</span></div>' + (market === 'US' && parsed.target_detail ? '<div style="font-size:10px;color:#888;padding:2px 4px 6px;line-height:1.4;">ℹ️ ' + parsed.target_detail + '</div>' : '') : '') +
         (parsed.method4_label && parsed.method4_price && parsed.method4_price !== '-' ? '<div class="eval-row" style="background:#f0f7ff;"><span class="eval-label">' + parsed.method4_label + '</span><span class="eval-value">' + parsed.method4_price + '</span></div>' + (parsed.target_detail ? '<div style="font-size:10px;color:#888;padding:2px 4px 6px;line-height:1.4;">ℹ️ ' + parsed.target_detail + '</div>' : '') : '') +
+        (parsed.method5_label && parsed.method5_price ? '<div class="eval-row" style="background:#fff8e6;"><span class="eval-label">' + parsed.method5_label + '</span><span class="eval-value">' + parsed.method5_price + '</span></div>' + (parsed.quality_detail ? '<div style="font-size:10px;color:#888;padding:2px 4px 6px;line-height:1.4;">📊 ' + parsed.quality_detail + '</div>' : '') : '') +
         '<div class="eval-row"><span class="eval-label">1차 적정주가 (보수적)</span><span class="eval-value" style="color:#0066cc;">' + parsed.target_1 + '</span></div>' +
         '<div class="eval-row"><span class="eval-label">2차 적정주가 (기본)</span><span class="eval-value" style="color:#1967d2;">' + parsed.target_2 + '</span></div>' +
         '<div class="eval-row"><span class="eval-label">현재가 대비 괴리율</span><span class="eval-value" style="color:' + gapColor + ';">' + parsed.gap_rate + '</span></div>' +
