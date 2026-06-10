@@ -346,8 +346,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-10 18:07';
-  const DASHBOARD_VERSION = 'v59.1';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -878,7 +878,7 @@
           }
           return '당신은 전문 주식 애널리스트입니다. ' + name + '(한국 주식)의 적정주가를 SOTP 방식과 NTM P/E 방식으로 계산하세요.' +
             dartStr +
-            (operatingProfit ? ' 사용자가 직접 입력한 예상 연간 영업이익: ' + operatingProfit + ' (어떤 형태든 원화로 환산하여 사용하세요.)' : '');
+            (operatingProfit ? ' ⚠️⚠️ [사용자 지정 영업이익 - 최우선] 사용자가 예상 연간 영업이익을 직접 입력했습니다: ' + operatingProfit + ' . segments_calc의 부문별 현재영업이익은 DART 표 값 대신, 부문 합계가 이 사용자 입력값(억원 환산)이 되도록 배분하세요. 배분 방법: 산업 사이클과 업황을 고려해 현실적으로 배분하세요. 예를 들어 반도체 슈퍼사이클로 이익이 급증했다면 증가분 대부분을 반도체 부문(DS 등)에 집중 배분하고, 다른 부문은 기존 수준을 유지하세요. 균등 비례 배분은 비현실적이니 금지. 정상화영업이익도 이 수준을 기준으로 재판단하세요.' : '');
         })(),
         priceWarn,
         '',
@@ -1107,6 +1107,19 @@
           var rnRef = dartCode.reprt_name || '';
           var multRef = rnRef.indexOf('1분기') !== -1 ? 4 : rnRef.indexOf('반기') !== -1 ? 2 : rnRef.indexOf('3분기') !== -1 ? (4/3) : 1;
           var dartOpEok = Math.abs(opWonRef / 100000000 * multRef);  // 전사 연환산 영업이익(억원, 절대값)
+          // 사용자가 영업이익을 직접 입력했으면 보정 기준점을 사용자 입력값으로 교체
+          // (사용자 입력을 DART 기준 보정이 되돌리는 것 방지)
+          if (operatingProfit) {
+            var userOp = String(operatingProfit).replace(/,/g,'');
+            var userOpNum = parseFloat(userOp.replace(/[^0-9.]/g,''));
+            if (!isNaN(userOpNum) && userOpNum > 0) {
+              // 단위 추정: '조' 포함시 ×10000, '억' 포함시 그대로, 그 외 큰 숫자(>1e10)면 원→억
+              if (userOp.indexOf('조') !== -1) userOpNum = userOpNum * 10000;
+              else if (userOp.indexOf('억') !== -1) { /* 억원 그대로 */ }
+              else if (userOpNum > 10000000000) userOpNum = userOpNum / 100000000;  // 원 단위 입력
+              dartOpEok = Math.abs(userOpNum);
+            }
+          }
 
           // 각 회차의 segments_calc를 파싱 (단위 자동 보정 포함)
           function bizValuesFromResult(r) {
