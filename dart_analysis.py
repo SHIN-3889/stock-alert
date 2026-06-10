@@ -1,1895 +1,593 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>건호의 작업공간</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "맑은 고딕", sans-serif;
-      background: #f5f5f7; color: #111111;
-      max-width: 600px; margin: 0 auto;
-      padding: 20px 16px 40px; min-height: 100vh;
-    }
-    h1 { font-size: 24px; margin-bottom: 4px; color: #111111; }
-    .subtitle { color: #555; font-size: 14px; margin-bottom: 4px; }
-    .updated { color: #888; font-size: 12px; margin-bottom: 24px; }
+# -*- coding: utf-8 -*-
+"""
+DART API를 이용한 종목별 재무 분석
+- corp_code: 전체 기업목록 ZIP 다운로드 후 종목코드로 매핑
+- 순부채: 총차입금 - 현금성자산 (DART 정의)
+- 영업이익, 발행주식수, 자회사 정보
+결과를 sotp_data.json에 저장
+"""
 
-    /* 잠금 화면 */
-    #lock-screen {
-      position: fixed; inset: 0; background: #1d1d1f; z-index: 9999;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center; padding: 40px 20px;
-    }
-    .lock-icon { font-size: 56px; margin-bottom: 16px; }
-    .lock-title { color: white; font-size: 22px; font-weight: 600; margin-bottom: 8px; }
-    .lock-subtitle { color: #86868b; font-size: 14px; margin-bottom: 32px; }
-    #lock-input {
-      width: 100%; max-width: 320px; padding: 14px 16px; font-size: 16px;
-      border: 1px solid #424245; border-radius: 12px;
-      background: #2c2c2e; color: white; margin-bottom: 12px; text-align: center;
-    }
-    #lock-input:focus { outline: none; border-color: #0a84ff; }
-    #lock-btn {
-      width: 100%; max-width: 320px; padding: 14px;
-      background: #0a84ff; color: white; border: none;
-      border-radius: 12px; font-size: 16px; font-weight: 500; cursor: pointer;
-    }
-    #lock-btn:active { background: #0064d2; }
-    .lock-error { color: #ff453a; font-size: 14px; margin-top: 12px; min-height: 20px; }
-    body.unlocked #lock-screen { display: none; }
-    body:not(.unlocked) #main-content { display: none; }
+import os
+import io
+import re
+import json
+import time
+import zipfile
+import requests
+import xml.etree.ElementTree as ET
+from datetime import datetime, timezone, timedelta
 
-    /* 평가손익 */
-    .pl-hero {
-      background: white; border-radius: 16px; padding: 24px;
-      margin-bottom: 12px; text-align: center;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 2px solid #e8e8ed;
-    }
-    .pl-hero.profit { border-color: #d70015; }
-    .pl-hero.loss   { border-color: #0066cc; }
-    .pl-label  { font-size: 13px; color: #555; margin-bottom: 6px; }
-    .pl-value  { font-size: 32px; font-weight: 700; margin-bottom: 4px; color: #111111; }
-    .pl-percent{ font-size: 16px; font-weight: 500; }
-    .profit-color { color: #d70015; }
-    .loss-color   { color: #0066cc; }
+DART_KEY   = os.environ.get("DART_API_KEY", "")
+DART_BASE  = "https://opendart.fss.or.kr/api"
+KST        = timezone(timedelta(hours=9))
+OUTPUT     = os.path.join(os.path.dirname(__file__), "sotp_data.json")
+SETTINGS   = os.path.join(os.path.dirname(__file__), "settings.json")
 
-    /* 자산 요약 */
-    .summary {
-      background: white; border-radius: 12px; padding: 16px 20px;
-      margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-    }
-    .summary-row {
-      display: flex; justify-content: space-between;
-      align-items: center; padding: 6px 0; font-size: 14px;
-    }
-    .summary-label { color: #555; }
-    .summary-value { font-weight: 500; color: #111111; }
 
-    /* 공통 카드 */
-    .card {
-      background: white; border-radius: 12px; padding: 20px;
-      margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-      border: 1px solid #e2e2e7;
-    }
-    .stock-header {
-      display: flex; align-items: center;
-      justify-content: space-between; margin-bottom: 14px;
-    }
-    .stock-name { font-size: 16px; font-weight: 600; color: #111111; }
-    .market-badge {
-      font-size: 11px; padding: 2px 8px; border-radius: 10px;
-      background: #e8e8ed; color: #424245;
-    }
-    .market-us { background: #fef3c7; color: #92400e; }
-    .market-kr { background: #dbeafe; color: #1e40af; }
-    .stock-price  { font-size: 20px; font-weight: 600; margin-bottom: 4px; color: #111111; }
-    .stock-change { font-size: 13px; margin-bottom: 14px; }
-    .stock-info {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 12px; padding-top: 12px; border-top: 1px solid #e8e8ed;
-    }
-    .info-label { font-size: 12px; color: #555; margin-bottom: 4px; }
-    .info-value { font-size: 14px; font-weight: 500; color: #111111; }
-    .editable-value {
-      cursor: pointer; display: inline-flex; align-items: center; gap: 4px;
-      padding: 2px 6px; margin: -2px -6px; border-radius: 4px;
-    }
-    .editable-value:active { background: #f5f5f7; }
-    .edit-icon { font-size: 11px; opacity: 0.4; }
-    .stock-pl {
-      margin-top: 12px; padding: 10px 12px; background: #f5f5f7;
-      border-radius: 8px; font-size: 14px; font-weight: 500; text-align: center;
-    }
-    .delete-stock-btn {
-      background: transparent; border: none; color: #aaa;
-      font-size: 14px; cursor: pointer; padding: 2px 4px; border-radius: 4px;
-    }
-    .delete-stock-btn:active { color: #d70015; }
+# ── 설정에서 한국 종목 가져오기 ─────────────────────────────────────
+def load_kr_holdings():
+    try:
+        with open(SETTINGS, "r", encoding="utf-8") as f:
+            s = json.load(f)
+        result = {}
+        for code, info in {**s.get("holdings", {}), **s.get("watchlist", {})}.items():
+            if info.get("market") == "KR":
+                # ETF 제외 (ETF는 보통 4로 시작. 2로 시작하는 일반주식 많으므로 4만 제외)
+                # 정확한 판별은 DART corp_code 존재 여부로 하므로 여기선 명백한 ETF만 거름
+                if code.startswith('4'):
+                    print(f"  ETF 제외: {info['name']} ({code})")
+                    continue
+                result[code] = info
+        return result
+    except Exception as e:
+        print(f"설정 로드 실패: {e}")
+        return {}
 
-    /* 알림 시간 칩 */
-    .times { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-    .time-chip {
-      background: #e8f0fe; color: #1967d2; padding: 6px 12px;
-      border-radius: 14px; font-size: 13px; font-weight: 500;
-      display: inline-flex; align-items: center; gap: 6px;
-    }
-    .time-chip .delete-btn {
-      background: rgba(25,103,210,0.15); border: none; color: #1967d2;
-      width: 18px; height: 18px; border-radius: 50%; font-size: 11px;
-      cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0;
-    }
-    .time-chip.add-chip {
-      background: transparent; color: #888; border: 1px dashed #888; cursor: pointer;
-    }
 
-    /* 섹션 구분선 */
-    .section-divider {
-      display: flex; align-items: center; margin: 24px 0 12px; gap: 12px;
-    }
-    .section-divider::before, .section-divider::after {
-      content: ''; flex: 1; height: 1px; background: #d2d2d7;
-    }
-    .section-label { font-size: 13px; font-weight: 600; color: #333; white-space: nowrap; }
+# ── DART 전체 기업목록 다운로드 → stock_code → corp_code 매핑 ───────
+def build_corp_map():
+    print("DART 기업목록 다운로드 중...")
+    try:
+        url = f"{DART_BASE}/corpCode.xml"
+        res = requests.get(url, params={"crtfc_key": DART_KEY}, timeout=30)
+        z = zipfile.ZipFile(io.BytesIO(res.content))
+        xml_data = z.read("CORPCODE.xml")
+        root = ET.fromstring(xml_data)
+        corp_map = {}
+        for item in root.findall("list"):
+            stock_code = item.findtext("stock_code", "").strip()
+            corp_code  = item.findtext("corp_code", "").strip()
+            if stock_code:
+                corp_map[stock_code] = corp_code
+        print(f"  기업 수: {len(corp_map):,}개")
+        return corp_map
+    except Exception as e:
+        print(f"기업목록 다운로드 실패: {e}")
+        return {}
 
-    /* 종목 추가/삭제 */
-    .add-btn {
-      width: 100%; padding: 12px;
-      display: flex; align-items: center; justify-content: center; gap: 6px;
-      border: 1px dashed #aaa; background: transparent;
-      border-radius: 12px; color: #666; font-size: 14px;
-      cursor: pointer; margin-bottom: 12px;
-    }
-    .add-btn:active { background: #f5f5f7; }
-    .new-card {
-      background: white; border-radius: 12px; padding: 20px;
-      margin-bottom: 12px; border: 1px dashed #aaa;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-    }
-    .new-card-title { font-size: 14px; font-weight: 500; color: #333; margin-bottom: 14px; }
-    .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .field-item { display: flex; flex-direction: column; }
-    .field-item .info-label { margin-bottom: 6px; }
-    .field-full { margin-top: 12px; }
-    .field-full .info-label { margin-bottom: 6px; }
-    .ns-input {
-      width: 100%; padding: 10px 12px; font-size: 13px;
-      border: 1.5px solid #b0b8c1; border-radius: 8px;
-      background: white; color: #111111;
-    }
-    .ns-input:focus { outline: none; border-color: #1967d2; }
-    .card-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
-    .btn-cancel {
-      padding: 10px; font-size: 13px; background: transparent;
-      color: #555; border: 1px solid #ccc; border-radius: 8px; cursor: pointer;
-    }
-    .btn-confirm {
-      padding: 10px; font-size: 13px; font-weight: 500;
-      background: #e8f0fe; color: #1967d2;
-      border: 1px solid #1967d2; border-radius: 8px; cursor: pointer;
-    }
 
-    /* 관심종목 카드 */
-    .watch-card {
-      background: white; border-radius: 12px; padding: 16px 20px;
-      margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-    }
-    .watch-price  { font-size: 18px; font-weight: 600; color: #111111; }
-    .watch-change { font-size: 13px; }
-
-    /* 버튼들 */
-    .refresh-btn {
-      width: 100%; padding: 12px; background: white; color: #111111;
-      border: 1px solid #d2d2d7; border-radius: 12px;
-      font-size: 14px; font-weight: 500; margin-bottom: 16px; cursor: pointer;
-    }
-    .save-bar {
-      position: sticky; top: 0; z-index: 100;
-      background: #fff8e1; border: 1px solid #ffc107;
-      border-radius: 12px; padding: 12px 16px; margin-bottom: 16px;
-      display: none; align-items: center; justify-content: space-between; gap: 12px;
-    }
-    .save-bar.show { display: flex; }
-    .save-bar-text { font-size: 14px; color: #6d4c00; flex: 1; }
-    .save-bar-cancel {
-      background: transparent; color: #6d4c00; border: 1px solid #6d4c00;
-      padding: 8px 12px; border-radius: 8px; font-size: 13px; cursor: pointer;
-    }
-    .save-bar-btn {
-      padding: 8px 16px; background: #ff9800; color: white;
-      border: none; border-radius: 8px; font-size: 14px; font-weight: 500;
-      cursor: pointer; white-space: nowrap;
-    }
-    .save-bar-btn:disabled { background: #ccc; cursor: not-allowed; }
-
-    /* 설정 섹션 */
-    .settings-section { margin-top: 32px; padding-top: 24px; border-top: 1px solid #d2d2d7; }
-    .settings-title { font-size: 13px; color: #888; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .token-card {
-      background: white; border-radius: 12px; padding: 20px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-bottom: 12px;
-    }
-    .token-label { font-size: 14px; font-weight: 500; margin-bottom: 4px; color: #111111; }
-    .token-help  { font-size: 12px; color: #888; margin-bottom: 12px; }
-    .token-input {
-      width: 100%; padding: 10px 12px; font-size: 13px;
-      font-family: monospace; border: 1.5px solid #b0b8c1;
-      border-radius: 8px; background: #f5f5f7; margin-bottom: 12px;
-    }
-    .token-input:focus { outline: none; border-color: #1967d2; background: white; }
-    .token-btn {
-      width: 100%; padding: 12px; background: #1967d2; color: white;
-      border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer;
-    }
-    .token-btn:active { background: #1557b0; }
-    .token-status { font-size: 13px; padding: 10px 12px; border-radius: 8px; margin-bottom: 12px; text-align: center; }
-    .token-status.ok   { background: #e8f5e9; color: #2e7d32; }
-    .token-status.none { background: #fff3e0; color: #e65100; }
-    .loading, .error { text-align: center; padding: 40px 20px; color: #888; }
-    .error { color: #d70015; }
-    .settings-section.hidden { display: none; }
-    .settings-toggle {
-      text-align: center; font-size: 12px; color: #aaa;
-      padding: 12px 0; cursor: pointer;
-    }
-    .settings-toggle:hover { color: #555; }
-
-    /* 종목 평가 */
-    .eval-btn {
-      width: 100%; margin-top: 12px; padding: 10px;
-      background: #f0f4ff; color: #1967d2;
-      border: 1px solid #1967d2; border-radius: 8px;
-      font-size: 13px; font-weight: 500; cursor: pointer;
-    }
-    .eval-btn:active { background: #1967d2; color: white; }
-    .move-btn {
-      width: 100%; margin-top: 8px; padding: 9px;
-      background: #f0fff4; color: #2e7d32;
-      border: 1px solid #2e7d32; border-radius: 8px;
-      font-size: 13px; font-weight: 500; cursor: pointer;
-    }
-    .move-btn:active { background: #2e7d32; color: white; }
-    .eval-result {
-      margin-top: 12px; padding: 14px;
-      background: #f8f9ff; border-radius: 10px;
-      border: 1px solid #dce3ff; font-size: 13px; line-height: 1.7;
-    }
-    .eval-result .eval-title {
-      font-size: 13px; font-weight: 600; color: #1967d2;
-      margin-bottom: 10px; padding-bottom: 6px;
-      border-bottom: 1px solid #dce3ff;
-    }
-    .eval-row {
-      display: flex; justify-content: space-between;
-      align-items: center; padding: 5px 0;
-      border-bottom: 1px solid #eef0ff;
-    }
-    .eval-row:last-child { border-bottom: none; }
-    .eval-label { color: #555; font-size: 12px; }
-    .eval-value { font-weight: 600; color: #111; font-size: 13px; text-align: right; max-width: 60%; }
-    .eval-loading {
-      text-align: center; padding: 16px; color: #888; font-size: 13px;
-    }
-    .eval-disclaimer {
-      margin-top: 8px; font-size: 11px; color: #999;
-      text-align: center; font-style: italic;
-    }
-    .eval-error { color: #d70015; font-size: 13px; padding: 8px 0; }
-  </style>
-</head>
-<body>
-  <!-- 잠금 화면 -->
-  <div id="lock-screen">
-    <div class="lock-icon">🔒</div>
-    <div class="lock-title">건호의 작업공간</div>
-    <div class="lock-subtitle">비밀번호를 입력하세요</div>
-    <input type="password" id="lock-input" placeholder="비밀번호" autocomplete="off" />
-    <button id="lock-btn">잠금 해제</button>
-    <div class="lock-error" id="lock-error"></div>
-  </div>
-
-  <!-- 본문 -->
-  <div id="main-content">
-    <h1>📊 주식 대시보드</h1>
-    <p class="subtitle" id="subtitle">불러오는 중...</p>
-    <p class="updated" id="updated"></p>
-
-    <div id="save-bar" class="save-bar">
-      <div class="save-bar-text" id="save-bar-text">변경된 내용이 있어요</div>
-      <button class="save-bar-cancel" id="cancel-btn">취소</button>
-      <button class="save-bar-btn"    id="save-btn">저장</button>
-    </div>
-
-    <button class="refresh-btn" id="refresh-btn">🔄 새로고침</button>
-    <div id="content" class="loading">불러오는 중...</div>
-
-    <!-- 설정 -->
-    <div class="settings-toggle" id="settings-toggle" onclick="toggleSettings()">⚙️ 설정 보기</div>
-    <div class="settings-section" id="settings-section">
-      <div class="settings-title">⚙️ 수정 권한 설정</div>
-      <div class="token-card">
-        <div id="token-status" class="token-status none">GitHub 토큰이 저장되지 않았어요</div>
-        <div class="token-label">GitHub 토큰</div>
-        <div class="token-help">종목·시간 수정에 필요해요. 이 브라우저에만 저장돼요.</div>
-        <input type="password" id="token-input" class="token-input" placeholder="github_pat_... 으로 시작하는 토큰" autocomplete="off" />
-        <button class="token-btn" id="save-token-btn">기억하기</button>
-        <div style="margin-top:12px;">
-          <button class="token-btn" id="clear-token-btn" style="background:transparent;color:#d70015;border:1px solid #d70015;">저장된 토큰 지우기</button>
-        </div>
-      </div>
-      <div class="token-card">
-        <div id="cronjob-status" class="token-status none">cron-job.org API 키가 저장되지 않았어요</div>
-        <div class="token-label">cron-job.org API 키</div>
-        <div class="token-help">알림 시간 수정 시 자동으로 cron-job.org도 업데이트해요.</div>
-        <input type="password" id="cronjob-input" class="token-input" placeholder="cron-job.org API 키를 붙여넣으세요" autocomplete="off" />
-        <button class="token-btn" id="save-cronjob-btn">기억하기</button>
-        <div style="margin-top:12px;">
-          <button class="token-btn" id="clear-cronjob-btn" style="background:transparent;color:#d70015;border:1px solid #d70015;">저장된 키 지우기</button>
-        </div>
-      </div>
-      <div class="token-card">
-        <div id="gemini-status" class="token-status none">Gemini API 키가 저장되지 않았어요</div>
-        <div class="token-label">Gemini API 키</div>
-        <div class="token-help">AI 종목 평가 기능에 필요해요. 이 브라우저에만 저장돼요.</div>
-        <input type="password" id="gemini-input" class="token-input" placeholder="Gemini API 키를 붙여넣으세요" autocomplete="off" />
-        <button class="token-btn" id="save-gemini-btn">기억하기</button>
-        <div style="margin-top:12px;">
-          <button class="token-btn" id="clear-gemini-btn" style="background:transparent;color:#d70015;border:1px solid #d70015;">저장된 키 지우기</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-  // ── 상수 ───────────────────────────────────────────────────────────
-  const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
-  const SESSION_KEY   = 'gunho_unlocked';
-  const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-02 07:27';
-  const DASHBOARD_VERSION = 'v3.0';
-  const CRONJOB_KEY   = 'cronjob_api_key';
-  const REPO_OWNER    = 'SHIN-3889';
-  const REPO_NAME     = 'stock-alert';
-  const FILE_PATH     = 'settings.json';
-  const BRANCH        = 'main';
-  const GEMINI_KEY_K  = 'gemini_api_key';
-  const GEMINI_MODEL  = 'gemini-2.5-flash-lite';
-
-  // ── 상태 ───────────────────────────────────────────────────────────
-  let originalSettings = null;
-  let currentSettings  = null;
-  let currentLatest    = null;
-  let fileSha          = null;
-  let addingStock      = false;
-  let addingWatch      = false;
-
-  // ── 유틸 ───────────────────────────────────────────────────────────
-  async function sha256(text) {
-    const buf = new TextEncoder().encode(text);
-    const hash = await crypto.subtle.digest('SHA-256', buf);
-    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
-  }
-  function fmtWon(n) { return (n >= 0 ? '+' : '') + Math.round(n).toLocaleString() + '원'; }
-  function fmtPct(n) { return (n >= 0 ? '+' : '') + n.toFixed(2) + '%'; }
-  function mark(n)   { return n > 0 ? '▲' : n < 0 ? '▼' : '-'; }
-  function getToken()     { return localStorage.getItem(TOKEN_KEY) || ''; }
-  function getCronjobKey(){ return localStorage.getItem(CRONJOB_KEY) || ''; }
-  function getGeminiKey() { return localStorage.getItem(GEMINI_KEY_K) || ''; }
-  function deepCopy(obj)  { return JSON.parse(JSON.stringify(obj)); }
-
-  // ── 잠금 ───────────────────────────────────────────────────────────
-  async function checkPassword() {
-    const input = document.getElementById('lock-input');
-    const err   = document.getElementById('lock-error');
-    if (!input.value) { err.textContent = '비밀번호를 입력하세요'; return; }
-    const hash = await sha256(input.value);
-    if (hash === PASSWORD_HASH) {
-      sessionStorage.setItem(SESSION_KEY, '1');
-      document.body.classList.add('unlocked');
-      err.textContent = '';
-      input.value = '';
-      startApp();
-    } else {
-      err.textContent = '비밀번호가 틀렸어요';
-      input.value = '';
-      input.focus();
-    }
-  }
-
-  // ── 앱 시작 ────────────────────────────────────────────────────────
-  function startApp() {
-    updateTokenStatus();
-    updateCronjobStatus();
-    updateGeminiStatus();
-    updateSettingsVisibility();
-    refreshData();
-  }
-
-  function refreshData() {
-    document.getElementById('content').innerHTML = '<div class="loading">불러오는 중...</div>';
-    document.getElementById('refresh-btn').textContent = '🔄 업데이트 중...';
-    document.getElementById('refresh-btn').disabled = true;
-    addingStock = false;
-    addingWatch = false;
-
-    var sotpUrl = 'https://raw.githubusercontent.com/SHIN-3889/stock-alert/main/sotp_data.json?' + Date.now();
-    Promise.all([
-      loadSettings(),
-      loadLatest(),
-      fetch(sotpUrl).then(function(r){ return r.ok ? r.json() : {}; }).catch(function(){ return {}; })
-    ])
-      .then(function(results) {
-        var sr     = results[0];
-        var latest = results[1];
-        var sotpData = results[2] || {};
-        window.sotpData = sotpData;
-        console.log('DART 데이터 로드됨:', Object.keys(sotpData));
-        originalSettings = sr.content;
-        currentSettings  = deepCopy(sr.content);
-        fileSha          = sr.sha;
-        currentLatest    = latest;
-
-        renderContent(currentSettings, currentLatest);
-        markChanged();
-        document.getElementById('refresh-btn').textContent = '🔄 새로고침';
-        document.getElementById('refresh-btn').disabled = false;
-      })
-      .catch(function(e) {
-        document.getElementById('content').innerHTML =
-          '<div class="error">⚠️ 데이터를 불러올 수 없어요<br><small>' + e.message + '</small></div>';
-        document.getElementById('refresh-btn').textContent = '🔄 새로고침';
-        document.getElementById('refresh-btn').disabled = false;
-      });
-  }
-
-  // ── 변경 감지 ──────────────────────────────────────────────────────
-  function markChanged() {
-    var bar  = document.getElementById('save-bar');
-    var same = JSON.stringify(originalSettings) === JSON.stringify(currentSettings);
-    same ? bar.classList.remove('show') : bar.classList.add('show');
-  }
-
-  function cancelChanges() {
-    if (!confirm('수정한 내용을 취소할까요?')) return;
-    currentSettings = deepCopy(originalSettings);
-    addingStock = false;
-    addingWatch = false;
-    renderContent(currentSettings, currentLatest);
-    markChanged();
-  }
-
-  // ── 시간 칩 ────────────────────────────────────────────────────────
-  function addTime() {
-    var t = prompt('시간을 입력하세요 (예: 09:00)', '12:00');
-    if (!t) return;
-    if (!/^\d{1,2}:\d{2}$/.test(t)) { alert('형식이 올바르지 않아요. 예: 09:00'); return; }
-    var parts = t.split(':').map(Number);
-    if (parts[0] > 23 || parts[1] > 59) { alert('시간 범위를 벗어났어요'); return; }
-    var norm = String(parts[0]).padStart(2,'0') + ':' + String(parts[1]).padStart(2,'0');
-    if (currentSettings.run_times.includes(norm)) { alert('이미 추가된 시간이에요'); return; }
-    currentSettings.run_times.push(norm);
-    currentSettings.run_times.sort();
-    renderContent(currentSettings, currentLatest);
-    markChanged();
-  }
-
-  function deleteTime(idx) {
-    if (currentSettings.run_times.length <= 1) { alert('최소 한 개는 필요해요'); return; }
-    if (!confirm('이 시간을 삭제할까요?')) return;
-    currentSettings.run_times.splice(idx, 1);
-    renderContent(currentSettings, currentLatest);
-    markChanged();
-  }
-
-  // ── 보유 종목 수정 ─────────────────────────────────────────────────
-  function editShares(code) {
-    var h = currentSettings.holdings[code];
-    var v = prompt(h.name + ' - 보유 수량', h.shares);
-    if (v === null) return;
-    var n = Number(v.replace(/,/g,''));
-    if (!Number.isFinite(n) || n < 0) { alert('올바른 숫자가 아니에요'); return; }
-    h.shares = n;
-    renderContent(currentSettings, currentLatest);
-    markChanged();
-  }
-
-  function editAvgPrice(code) {
-    var h    = currentSettings.holdings[code];
-    var unit = h.market === 'US' ? '$' : '원';
-    var v    = prompt(h.name + ' - 평균 단가 (' + unit + ')', h.avg_price);
-    if (v === null) return;
-    var n = Number(v.replace(/,/g,''));
-    if (!Number.isFinite(n) || n < 0) { alert('올바른 숫자가 아니에요'); return; }
-    h.avg_price = n;
-    renderContent(currentSettings, currentLatest);
-    markChanged();
-  }
-
-  function deleteStock(code) {
-    var h = currentSettings.holdings[code];
-    if (!h || !confirm(h.name + ' 종목을 삭제할까요?')) return;
-    delete currentSettings.holdings[code];
-    renderContent(currentSettings, currentLatest);
-    markChanged();
-  }
-
-  function startAddStock()  { addingStock = true;  renderContent(currentSettings, currentLatest); }
-  function cancelAddStock() { addingStock = false; renderContent(currentSettings, currentLatest); }
-
-  function confirmAddStock() {
-    var name    = document.getElementById('ns-name').value.trim();
-    var code    = document.getElementById('ns-code').value.trim().toUpperCase();
-    var market  = document.getElementById('ns-market').value;
-    var shares  = Number(document.getElementById('ns-shares').value);
-    var avg     = Number(document.getElementById('ns-avg').value);
-    var krQuery = document.getElementById('ns-kr-query').value.trim();
-    var enQuery = document.getElementById('ns-en-query').value.trim();
-    if (!name)  { alert('종목명을 입력해주세요'); return; }
-    if (!code)  { alert('종목코드를 입력해주세요'); return; }
-    if (currentSettings.holdings[code]) { alert('이미 등록된 코드예요: ' + code); return; }
-    if (!shares || shares <= 0) { alert('보유 수량을 입력해주세요'); return; }
-    if (!avg    || avg    <= 0) { alert('평균 단가를 입력해주세요'); return; }
-    if (!krQuery) { alert('국내 뉴스 검색어를 입력해주세요'); return; }
-    currentSettings.holdings[code] = {
-      name: name, market: market, shares: shares, avg_price: avg,
-      kr_query: krQuery, en_query: enQuery || null
-    };
-    addingStock = false;
-    renderContent(currentSettings, currentLatest);
-    markChanged();
-    alert('✓ ' + name + ' 추가됐어요! 저장 버튼을 눌러 반영하세요.');
-  }
-
-  // ── 종목 평가 결과 저장/불러오기 ───────────────────────────────────
-  var EVAL_STORAGE_KEY = 'saved_eval_';
-
-  function saveEvalResult(code, htmlContent) {
-    try {
-      localStorage.setItem(EVAL_STORAGE_KEY + code, htmlContent);
-    } catch(e) {}
-  }
-
-  function loadEvalResult(code) {
-    try {
-      return localStorage.getItem(EVAL_STORAGE_KEY + code);
-    } catch(e) { return null; }
-  }
-
-  function clearEvalResult(code) {
-    try {
-      localStorage.removeItem(EVAL_STORAGE_KEY + code);
-    } catch(e) {}
-  }
-
-  function onSaveEvalCheck(chk) {
-    var code = chk.id.replace('save-eval-', '');
-    var resultDiv = document.getElementById('eval-' + code);
-    if (!resultDiv) return;
-    if (chk.checked) {
-      saveEvalResult(code, resultDiv.innerHTML);
-    } else {
-      clearEvalResult(code);
-    }
-  }
-
-  // ── 종목 평가 (Gemini) ────────────────────────────────────────────
-  // ── 컨센서스 단일 호출 ────────────────────────────────────────────
-  // 현재 시점 기준 적절한 컨센서스 연도 계산 (10월~ 는 다음연도)
-  function getConsensusYear() {
-    var now = new Date();
-    var month = now.getMonth() + 1; // 1~12
-    var year = now.getFullYear();
-    return month >= 10 ? year + 1 : year;
-  }
-
-  async function fetchConsensusOnce(code, name, market, key) {
-    var cy = getConsensusYear();
-    var prevY = cy - 1;
-    var prevY2 = cy - 2;
-    var nowM = new Date().getMonth() + 1;
-    var nowY = new Date().getFullYear();
-
-    var promptUS = '당신은 월가 리서치 전문가입니다. ' + name + '(' + code + ')의 ' + cy + '년 예상 연간 영업이익 컨센서스를 찾으세요.' +
-      ' 지금은 ' + nowY + '년 ' + nowM + '월입니다.' +
-      ' ⚠️ 반드시 ' + cy + '년 전망치(예상치)를 반환하세요. ' + prevY + '년이나 ' + prevY2 + '년 실적을 반환하면 안 됩니다.' +
-      ' ' + cy + '년 컨센서스가 없으면 op_income을 "NOT_FOUND"로 반환하세요.' +
-      ' 그리고 최신 월가 애널리스트 목표주가 평균(target price)도 찾으세요. 이 값에는 미래 성장 기대가 반영되어 있습니다.' +
-      ' 반드시 JSON만 반환. 마크다운 절대 금지.' +
-      ' {"op_income":"' + cy + '년 월가 컨센서스 연간 영업이익을 한국어로(예: 190억달러)","pe_avg":"이 종목 섹터 글로벌 평균P/E(숫자만)","target_price":"목표주가 평균(숫자+$, 없으면 NOT_FOUND)","target_source":"출처","source":"출처"}';
-
-    var promptKR = '당신은 한국 증권사 리서치 전문가입니다. ' + name + '(' + code + ')의 ' + cy + '년 예상 연간 영업이익 컨센서스를 찾으세요.' +
-      ' 지금은 ' + nowY + '년 ' + nowM + '월입니다.' +
-      ' ⚠️ 반드시 ' + cy + '년 전망치(예상치)를 반환하세요. ' + prevY + '년이나 ' + prevY2 + '년 실적을 반환하면 안 됩니다.' +
-      ' ' + cy + '년 컨센서스가 없으면 op_income을 "NOT_FOUND"로 반환하세요.' +
-      ' 또한 이 기업이 속한 산업의 글로벌 동종업계 평균 P/E를 조사하고,' +
-      ' KOSPI 시가총액 상위 10개 기업(삼성전자,SK하이닉스,LG에너지솔루션,삼성바이오로직스,현대차,기아,셀트리온,POSCO홀딩스,삼성SDI,KB금융)이면 글로벌 평균P/E × 0.8, 아니면 × 0.6 적용.' +
-      ' 그리고 최신 증권사 애널리스트 목표주가 평균(target price consensus)도 찾으세요. 이 값에는 미래 신기술/성장 기대가 반영되어 있습니다.' +
-      ' 반드시 JSON만 반환. 마크다운 절대 금지.' +
-      ' {"op_income":"' + cy + '년 예상 영업이익(예: 84조원)","pe_avg":"적정P/E 배수(숫자만)","pe_detail":"근거","target_price":"증권사 목표주가 평균(숫자+원, 없으면 NOT_FOUND)","target_source":"목표주가 출처 증권사","source":"출처"}';
-
-    var prompt = market === 'US' ? promptUS : promptKR;
-    var res = await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + GEMINI_MODEL + ':generateContent?key=' + key,
-      { method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ contents:[{parts:[{text:prompt}]}], generationConfig:{temperature:0.3, maxOutputTokens:2048} }) }
-    );
-    var data = await res.json();
-    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) return null;
-    var raw = data.candidates[0].content.parts[0].text;
-    var s = raw.indexOf('{'), e = raw.lastIndexOf('}');
-    if (s === -1 || e === -1) return null;
-    try { return JSON.parse(raw.slice(s, e+1)); } catch(err) { return null; }
-  }
-
-  // ── 컨센서스 다회 병렬 → 극단값 제거 → 평균 ──────────────────────
-  async function fetchConsensus(code, name, market, key) {
-    async function consWithRetry() {
-      try {
-        var r = await fetchConsensusOnce(code, name, market, key);
-        if (r) return r;
-      } catch(e) {}
-      await new Promise(function(res){ setTimeout(res, 1000); });
-      try { return await fetchConsensusOnce(code, name, market, key); } catch(e) { return null; }
-    }
-    var promises = [];
-    for (var i = 0; i < 2; i++) {
-      promises.push(consWithRetry());
-      await new Promise(function(res){ setTimeout(res, 500); });
-    }
-    var results = await Promise.allSettled(promises);
-    var valid = results.filter(function(r){ return r.status==='fulfilled' && r.value; }).map(function(r){ return r.value; });
-    if (valid.length === 0) {
-      // 유효한 응답 없으면 DART 데이터로 대체
-      var dart = window.sotpData && window.sotpData[code];
-      if (dart && dart.operating_income) {
-        return {
-          op_income: 'NOT_FOUND',
-          pe_avg: '',
-          source: 'DART 대체'
-        };
-      }
-      return null;
-    }
-
-    // 영업이익: 숫자 추출 후 극단값 제거 평균, 원래 표현은 중간값 사용
-    var opNums = valid.map(function(v){ return parseFloat(String(v.op_income||'').replace(/[^0-9.]/g,'')); }).filter(function(n){ return !isNaN(n) && n>0; });
-    var opMid = valid[Math.floor(valid.length/2)].op_income || valid[0].op_income || '';
-    if (opNums.length >= 3) {
-      opNums.sort(function(a,b){return a-b;});
-      opNums = opNums.slice(1, opNums.length-1);
-      // 중간값에 가장 가까운 결과의 op_income 텍스트 사용
-      var avgNum = opNums.reduce(function(a,b){return a+b;},0)/opNums.length;
-      var closest = valid.reduce(function(prev, cur) {
-        var pn = parseFloat(String(prev.op_income||'').replace(/[^0-9.]/g,''));
-        var cn = parseFloat(String(cur.op_income||'').replace(/[^0-9.]/g,''));
-        return Math.abs(cn-avgNum) < Math.abs(pn-avgNum) ? cur : prev;
-      });
-      opMid = closest.op_income || opMid;
-    }
-
-    // P/E: 숫자 추출 후 극단값 제거 평균
-    var peNums = valid.map(function(v){ return parseFloat(String(v.pe_avg||'').replace(/[^0-9.]/g,'')); }).filter(function(n){ return !isNaN(n) && n>=1 && n<=200; });
-    var peAvg = '';
-    if (peNums.length >= 3) {
-      peNums.sort(function(a,b){return a-b;});
-      peNums = peNums.slice(1, peNums.length-1);
-      peAvg = Math.round(peNums.reduce(function(a,b){return a+b;},0)/peNums.length);
-    } else if (peNums.length > 0) {
-      peAvg = Math.round(peNums.reduce(function(a,b){return a+b;},0)/peNums.length);
-    }
-
-    return { op_income: opMid, pe_avg: peAvg ? String(peAvg) : '', source: valid[0].source || '' };
-  }
-
-  async function reEvaluate(btn) {
-    var code   = btn.getAttribute('data-code');
-    var name   = btn.getAttribute('data-name');
-    var market = btn.getAttribute('data-market');
-    var price  = parseFloat(btn.getAttribute('data-price')) || 0;
-    var opInput = document.getElementById('op-input-' + code);
-    var peInput = document.getElementById('pe-input-' + code);
-    var opVal  = opInput ? opInput.value.trim() : '';
-    var peVal  = peInput ? peInput.value.trim() : '';
-    if (!opVal && !peVal) {
-      alert('영업이익 또는 P/E 배수 중 하나 이상 입력해주세요.');
-      return;
-    }
-    await evaluateStock(code, name, market, price, opVal || null, peVal || null);
-    // 재계산 후 새로 그려진 입력칸에 사용자가 입력했던 값 복원
-    await new Promise(function(resolve){ setTimeout(resolve, 100); });
-    var newOp = document.getElementById('op-input-' + code);
-    var newPe = document.getElementById('pe-input-' + code);
-    if (newOp && opVal) {
-      newOp.value = opVal;
-      newOp.style.background = '#90caf9';
-      newOp.placeholder = '';
-      newOp.title = '사용자가 직접 입력한 값으로 재계산했어요';
-    }
-    if (newPe && peVal) {
-      newPe.value = peVal;
-      newPe.style.background = '#90caf9';
-      newPe.placeholder = '';
-      newPe.title = '사용자가 직접 입력한 값으로 재계산했어요';
-    }
-  }
-
-  async function onEvalClick(btn) {
-    var code  = btn.getAttribute('data-code');
-    var name  = btn.getAttribute('data-name');
-    var market= btn.getAttribute('data-market');
-    var price = parseFloat(btn.getAttribute('data-price')) || 0;
-    var key   = getGeminiKey();
-    if (!key) { alert('먼저 화면 아래 설정에서 Gemini API 키를 저장해주세요.'); return; }
-
-    var resultDiv = document.getElementById('eval-' + code);
-    if (resultDiv) {
-      resultDiv.style.display = 'block';
-      resultDiv.innerHTML = '<div class="eval-loading">📡 1단계: 컨센서스 조회 중... (10~20초)</div>';
-    }
-
-    // 1단계: 컨센서스 조회 완료까지 대기
-    var consensus = null;
-    try { consensus = await fetchConsensus(code, name, market, key); } catch(e) {}
-
-    // 2단계: AI 분석 시작 (백지 상태)
-    await evaluateStock(code, name, market, price, null, null);
-
-    // 3단계: 분석 완료 후 입력칸에 컨센서스 값 표시 (DOM 렌더링 대기)
-    await new Promise(function(resolve){ setTimeout(resolve, 100); });
-    var opEl = document.getElementById('op-input-' + code);
-    var peEl = document.getElementById('pe-input-' + code);
-    var dartFallback = (window.sotpData && window.sotpData[code]);
-
-    // ── 영업이익 칸 채우기 ──
-    if (opEl) {
-      var opVal = consensus && consensus.op_income;
-      if (opVal && opVal !== 'NOT_FOUND') {
-        // 컨센서스 조회 성공
-        opEl.value = opVal;
-        opEl.style.background = '#c8f7c5';
-        opEl.title = '출처: ' + ((consensus && consensus.source) || '컨센서스');
-      } else if (dartFallback && dartFallback.operating_income) {
-        // 컨센서스 실패 → DART 확정 실적을 참고값으로
-        var opStr = Math.round(dartFallback.operating_income / 100000000).toLocaleString() + '억원';
-        opEl.value = opStr;
-        opEl.style.background = '#ffe082';
-        opEl.title = '⚠️ 예상치 아님 - DART ' + dartFallback.bsns_year + '년 확정 실적입니다. 예상 영업이익을 직접 입력하면 더 정확해요.';
-        opEl.placeholder = '예상 영업이익 직접 입력';
-      } else {
-        // 둘 다 없음
-        opEl.value = '';
-        opEl.style.background = '#fff';
-        opEl.placeholder = '조회 실패 - 예상 영업이익 직접 입력';
-      }
-    }
-
-    // ── P/E 칸 채우기 ──
-    if (peEl) {
-      var peVal = consensus && consensus.pe_avg;
-      if (peVal) {
-        peEl.value = peVal;
-        peEl.style.background = '#c8f7c5';
-        if (consensus.pe_detail) peEl.title = consensus.pe_detail;
-      } else {
-        peEl.value = '';
-        peEl.style.background = '#fff';
-        peEl.placeholder = '조회 실패 - P/E 배수 직접 입력';
-      }
-    }
-  }
-
-  async function evaluateStock(code, name, market, currentPrice, operatingProfit, peRatio) {
-    var key = getGeminiKey();
-    if (!key) {
-      alert('먼저 화면 아래 설정에서 Gemini API 키를 저장해주세요.');
-      return;
-    }
-    var resultId = 'eval-' + code;
-    var resultDiv = document.getElementById(resultId);
-    if (!resultDiv) return;
-    resultDiv.innerHTML = '<div class="eval-loading">🤖 Gemini가 분석 중이에요... (10~30초 소요)</div>';
-    resultDiv.style.display = 'block';
-
-    var marketStr = market === 'US' ? '미국 주식' : '한국 주식';
-    var priceStr = market === 'US'
-      ? '$' + currentPrice.toFixed(2)
-      : Math.round(currentPrice).toLocaleString() + '원';
-
-    var priceWarn = '⚠️ 매우 중요: 제공된 현재가 ' + priceStr + '는 실제 시장에서 거래되는 정확한 가격입니다. 이 가격을 절대 오기(오타)로 판단하지 말고, 임의로 자릿수를 바꾸거나 수정하지 마세요. 반드시 ' + priceStr + ' 를 현재가로 그대로 사용하여 괴리율을 계산하세요.';
-
-    var promptLines;
-    if (market === 'US') {
-      // 미국 주식: Forward EPS x P/E 배수 방식 (3단계) - 정확도 강화
-      promptLines = [
-        '당신은 월가의 미국 주식 전문 애널리스트입니다. ' + name + '의 적정주가를 아래 방식대로 정확히 계산하세요.' + (operatingProfit ? ' 사용자가 직접 입력한 예상 연간 영업이익: ' + operatingProfit + ' (이 수치를 반드시 Forward EPS 계산에 활용하세요. 임의로 다른 수치로 바꾸지 마세요.)' : ''),
-        priceWarn,
-        '',
-        '[1. 데이터 수집 - 반드시 최신 실제 데이터 사용]',
-        '· Forward EPS: 향후 12개월(NTM) 예상 주당순이익. 반드시 최신 월가 컨센서스(애널리스트 평균 추정치)의 실제 숫자를 사용하세요. 최근 분기 실적 서프라이즈와 연간 가이던스 상향을 반영하세요.',
-        '· 적정 P/E 배수:' + (peRatio ? ' 사용자 입력값 ' + peRatio + '배를 사용하세요.' : ' 반드시 해당 종목 산업의 글로벌 동종업계 평균 P/E를 조사해 사용하세요. 자의적 고배수 금지, 성장 프리미엄 최대 20% 이내만 가산 가능.'),
-        '· Peak P/E 배수: 업황이 초호황(피크)일 때 시장이 부여하는 최대 프리미엄 멀티플. 보통 적정 P/E보다 10~20% 높습니다.',
-        '',
-        '[2. 3단계 계산 - 이 공식을 정확히 따르세요]',
-        '· 1차 적정가 = Forward EPS × 적정 P/E 배수',
-        '· 2차 적정가 = Forward EPS × Peak P/E 배수',
-        '· 보수적 바닥선 = DCF로 보수적 할인한 하단 가치',
-        '',
-        '[3. 검증]',
-        '계산한 적정주가가 현재가 ' + priceStr + '와 지나치게 동떨어지면(예: 1/10 수준) 자릿수나 EPS 단위를 잘못 본 것이니 다시 점검하세요. 적정주가는 보통 현재가와 같은 자릿수입니다.',
-        '',
-        '⚠️ 출력 규칙: 아래 JSON 하나만 반환하세요. 마크다운(**, \n, ```) 절대 사용 금지. 모든 값은 한 줄 문자열.',
-        '{"breakdown":"실제 수치로 계산식 명시(예: Forward EPS $35 × 적정P/E 32배 = $1,120)","method1_label":"적정가 (EPS×적정P/E)","method1_price":"적정가 값($)","method2_label":"낙관가 (EPS×Peak P/E)","method2_price":"낙관가 값($)","method3_label":"애널리스트 목표주가 (전문가 컨센서스)","method3_price":"최신 월가 목표주가 평균($, 미래기술 기대 반영)","target_detail":"이 목표주가의 출처 기관들과 대략적 시점(예: 2025년 하반기 Morgan Stanley/Goldman 등 평균). 학습 데이터 기준이라 최신이 아닐 수 있다는 점 명시","target_1":"가장 낮은값","target_2":"가장 높은값","gap_rate":"현재가 대비 애널리스트 목표주가 괴리율(+ 또는 -)","sell_point":"차트 기술적 분석 매도 지점","stop_loss":"보수적 바닥선(DCF 하단)","summary":"핵심 투자의견: 적정가/낙관가/전문가목표 사이 현재가 위치 해석"}',
-        '모든 내용은 한국어로, 가격은 $ 단위 포함하여 작성하세요.'
-      ];
-    } else {
-      // 한국 주식: SOTP + NTM P/E
-      promptLines = [
-        (function() {
-          var dartInfo = (window.sotpData && window.sotpData[code]) || null;
-          var dartStr = '';
-          if (dartInfo && !dartInfo.error) {
-            var nd = dartInfo.net_debt || {};
-            // 자회사 정보 문자열 생성
-            var subStr = '';
-            var subs = dartInfo.subsidiaries || [];
-            var majorSubs = subs.filter(function(s){ return s.ownership_ratio >= 5; }).slice(0, 10);
-            if (majorSubs.length > 0) {
-              subStr = ' [자회사 보유현황(지분율 5% 이상)] ';
-              majorSubs.forEach(function(s) {
-                subStr += s.name + '(' + s.ownership_ratio + '% ' + Math.round(s.book_value/100000000).toLocaleString() + '억원), ';
-              });
-            }
-            // 잉여현금 정보
-            var ec = dartInfo.excess_cash || {};
-            var excessStr = '';
-            if (ec.excess_cash_ratio !== undefined) {
-              var ecLevel = ec.excess_cash_ratio >= 20 ? 'A (매우 튼튼)' :
-                            ec.excess_cash_ratio >= 10 ? 'B (튼튼)' :
-                            ec.excess_cash_ratio >= 5  ? 'C (보통)' : 'D (제한적)';
-              excessStr = ' [재무건전성 등급(정성 평가용, 적정주가 계산에는 절대 포함 금지)] 시총 대비 잉여현금 비율 ' + ec.excess_cash_ratio + '% → 등급 ' + ecLevel + '.' +
-                ' ⚠️ 중요: 현금은 이미 순부채 계산에서 차감되어 적정주가에 반영되었습니다. 잉여현금을 적정주가에 다시 더하면 이중계산이 됩니다. 따라서 이 잉여현금 정보는 적정주가 숫자에 절대 더하지 말고, 오직 summary에서 재무 안정성/주주환원 여력을 정성적으로 언급하는 용도로만 사용하세요.';
-            }
-
-            dartStr = ' [DART 실제 재무데이터 - 반드시 이 수치를 사용하세요] ' +
-              '순부채: ' + (nd.net_debt || 0).toLocaleString() + '원 ' +
-              '(총차입금 ' + (nd.total_debt || 0).toLocaleString() + '원 - 현금성자산 ' + (nd.total_cash || 0).toLocaleString() + '원), ' +
-              '영업이익: ' + (dartInfo.operating_income || 0).toLocaleString() + '원' +
-              (function(){
-                var rn = dartInfo.reprt_name || '';
-                if (rn.indexOf('1분기') !== -1) return '(⚠️ 이것은 1분기 영업이익입니다. SOTP 계산 시 반드시 ×4 하여 연간 영업이익으로 환산해서 사용하세요)';
-                if (rn.indexOf('반기') !== -1) return '(⚠️ 이것은 반기(상반기) 영업이익입니다. SOTP 계산 시 반드시 ×2 하여 연간으로 환산하세요)';
-                if (rn.indexOf('3분기') !== -1) return '(⚠️ 이것은 3분기 누적 영업이익입니다. SOTP 계산 시 ×4/3 하여 연간으로 환산하세요)';
-                return '(연간 영업이익)';
-              })() + ', ' +
-              '발행주식수: ' + (dartInfo.shares_outstanding || 0).toLocaleString() + '주.' +
-              subStr + excessStr;
-            // DART 실제 부문별 재무정보 주입
-            var segInfo = dartInfo.segment_info;
-            if (segInfo && segInfo.indexOf('SINGLE_SEGMENT') !== -1) {
-              dartStr += ' [부문 정보 - 전사 계산 모드] 이 회사는 부문 분할이 부적절합니다(단일부문이거나 부문 데이터 불명확). 절대 사업부문을 여러 개로 쪼개지 마세요. segments_calc에는 "전사" 부문 하나만 작성하세요.' +
-                ' ⚠️ segments_calc 형식 그대로 따르되 부문명만 "전사"로: "전사;현재영업이익_억원;정상화영업이익_억원;DA비율;보수배수;정상배수". 예: "전사;3000;3500;30;7;10".' +
-                ' 영업이익은 위 DART 전사 영업이익을 연환산해서 쓰고(분기면 ×4 등), 업종 배수는 중전기/전력기기 6~9(정상화 9~12), 반도체 5~8(정상화 8~11), 일반제조 5~7(정상화 7~9). ⚠️ 15배 초과 금지.';
-            } else if (segInfo) {
-              dartStr += ' [DART 실제 부문별 재무정보] ' + segInfo +
-                ' ⚠️ 단위 확인 필수: 위 표 안에 "(단위 : 억원)" 또는 "(단위:백만원)"이 적혀 있습니다. 반드시 그 단위를 확인하세요. 백만원 단위면 ÷100 하여 억원으로 환산(예: 3,503,512백만원=35,035억원). 억원 단위면 그대로 사용(예: 248,581억원=24.8조원). segments_calc의 현재영업이익_억원에는 억원 단위로 넣으세요. 표가 분기 기준이면 연환산(×4 등). 정상화영업이익은 정상 업황 기준. 적자 부문은 현재영업이익 음수, 정상화는 회복 예상치. 이 부문 구분을 segments_calc에 그대로 사용하세요.';
-            }
-            if (operatingProfit) {
-              dartStr += ' 위 DART 데이터 중 순부채와 발행주식수는 절대 바꾸지 마세요. 단, 부문별 영업이익은 아래 사용자 지정 영업이익을 따르세요(부문 구조와 비중 판단에만 DART 표를 참고).';
-            } else {
-              dartStr += ' 위 DART 데이터(순부채, 발행주식수, 부문별 재무정보)는 절대 임의로 바꾸지 마세요.';
-            }
-          }
-          return '당신은 전문 주식 애널리스트입니다. ' + name + '(한국 주식)의 적정주가를 SOTP 방식과 NTM P/E 방식으로 계산하세요.' +
-            dartStr +
-            (operatingProfit ? ' ⚠️⚠️⚠️ [최우선 명령 - 사용자 지정 영업이익] 사용자가 예상 연간 영업이익을 직접 입력했습니다: ' + operatingProfit + ' . 이것이 DART 표 값보다 우선합니다. segments_calc 작성 규칙: (1) 모든 부문의 현재영업이익_억원 합계가 정확히 이 사용자 입력값(억원 환산)이 되어야 합니다. (2) DART 표의 부문별 영업이익을 그대로 쓰면 안 됩니다. 그 표는 부문 구조(어떤 부문이 있는지)와 비중 참고용입니다. (3) 증가/감소분은 산업 사이클을 고려해 현실적으로 배분하세요. 반도체 호황이면 증가분을 반도체 부문에 집중. (4) 검산: segments_calc의 현재영업이익 합 = 사용자 입력값. 다르면 다시 작성하세요.' : '');
-        })(),
-        priceWarn,
-        '',
-        '[SOTP 분석 - 당신은 비율과 판단만, 금액 계산은 프로그램이 합니다]',
-        '⚠️ 매우 중요: 당신은 절대 큰 금액의 곱셈/나눗셈을 하지 마세요. 자릿수 실수를 막기 위해 모든 금액 계산(EBITDA, 부문가치, 합산, ÷발행주식수)은 프로그램이 합니다. 당신은 아래 항목만 판단해서 segments_calc 배열로 주세요.',
-        '',
-        '【부문 구분과 각 부문 정보 산출】',
-        '  (1) DART 부문별 재무정보가 제공되면 그 부문 구분을 따르세요. 단일부문이거나 부문정보가 없으면 전사(전체) 1개로 하세요.',
-        '  (2) 각 부문(또는 전사)마다 다음 5개 값을 판단하세요:',
-        '      - 부문명',
-        '      - 현재영업이익_억원: 최근 연환산 영업이익(억원). ⚠️ DART가 분기면 연간 환산(1분기×4, 반기×2, 3분기×4/3). 적자면 음수.',
-        '      - 정상화영업이익_억원: 정상 업황(과거 3~5년 평균 또는 회복 후) 기준 예상 영업이익(억원). 경기민감주 적자 부문도 정상화 시 보통 흑자. 안정 업종은 현재와 동일.',
-        '      - DA비율: 감가상각비를 영업이익 대비 몇 %로 볼지 (자본집약 업종 20~40, 경공업 10~20). EBITDA = 영업이익×(1+DA비율/100)을 프로그램이 계산함.',
-        '      - 보수배수: 시나리오A(보수적) EV/EBITDA 배수. 2차전지셀 6~9, 양극재 8~12, 반도체 5~8, 자동차부품 4~6, 화학 5~7, 중전기/전력기기 6~9, 일반제조 5~7.',
-        '      - 정상배수: 시나리오B(정상화) EV/EBITDA 배수(상단). 2차전지셀 12~15, 양극재 12~16, 반도체 8~11, 자동차부품 6~8, 화학 7~9, 중전기/전력기기 9~12, 일반제조 7~9.',
-        '  ⚠️ 15배 초과 같은 과도한 배수 금지. 적자 부문도 영업이익 음수로 그대로 두면 프로그램이 음수 가치로 반영합니다.',
-        '',
-        '【자회사 / 순부채 / 미래기술】',
-        '  - 자회사 가치와 순부채는 프로그램이 DART 데이터로 직접 계산하니 당신은 신경쓰지 마세요.',
-        '  - future_tech_jo: 아직 실적화 안 된 신사업/기술 프리미엄만 조원 단위로 판단(전체의 5~15% 이내, 없으면 0). 이 종목에 실제 해당하는 기술만.',
-        '',
-        '【NTM P/E 적정주가는 당신이 계산】',
-        '  ▶ method3_price: 향후 12개월 예상 EPS × 적정 P/E배수 = 주당 가격(원). 이건 주당 단위라 작은 숫자이니 당신이 직접 계산. 반드시 현재가 ' + priceStr + '와 같은 자릿수.',
-        '',
-        '[NTM P/E 방식]',
-        '⚠️ NTM P/E 계산 시 반드시 결과값이 현재가 ' + priceStr + '의 0.3배~5배 범위 안에 있어야 합니다. 이 범위를 벗어나면 계산 오류이므로 다시 계산하세요.',
-        operatingProfit
-          ? '입력된 영업이익 ' + operatingProfit + '에서 세율(약 22%)·비영업손익을 고려해 순이익과 EPS를 직접 계산하세요. P/E 배수는' + (peRatio ? ' 사용자 입력값 ' + peRatio + '배를 사용하세요.' : ' 반드시 해당 종목 산업의 글로벌 동종업계 평균 P/E를 조사해 사용하세요. 자의적 고배수 금지, 성장 프리미엄 최대 20% 이내만 가산 가능.') + ' EPS × P/E = NTM P/E 적정주가.'
-          : '향후 12개월 예상 EPS(원)는 최신 애널리스트 컨센서스를 사용하세요. P/E 배수는' + (peRatio ? ' 사용자 입력값 ' + peRatio + '배를 사용하세요.' : ' 반드시 해당 종목 산업의 글로벌 동종업계 평균 P/E를 조사해 사용하세요. 자의적 고배수 금지, 성장 프리미엄 최대 20% 이내만 가산 가능.'),
-        '',
-        '[최종 판정]',
-        '1차 적정주가(보수적) = SOTP와 NTM P/E 중 낮은 값',
-        '2차 적정주가(기본) = SOTP와 NTM P/E 중 높은 값',
-        '괴리율 = (2차 적정주가 - 현재가) ÷ 현재가 × 100',
-        '',
-        '⚠️ 출력 규칙: 아래 JSON 하나만 반환하세요. 마크다운(**, \n, ```) 절대 사용 금지. 모든 값은 한 줄 문자열.',
-        '{"segments_calc":"부문별 배열. 각 부문은 \'부문명;현재영업이익_억원;정상화영업이익_억원;DA비율;보수배수;정상배수\' 형식이고 부문 사이는 / 로 구분. 예: \'에너지솔루션;-18519;15000;30;7;13 / 전자재료;1295;1500;20;6;8\'. 현재영업이익은 최근 연환산 실적(적자면 음수), 정상화영업이익은 정상 업황 예상치(보통 양수). 억원 단위 정수. 세미콜론으로 6개 값 구분.","future_tech_jo":"미래기술 프리미엄 조원 단위 숫자(없으면 0)","breakdown":"SOTP 계산 요약을 한 문장으로(프로그램이 최종 계산하므로 설명만)","method1_label":"SOTP 적정주가 (보수적 바닥)","method1_price":"빈 문자열(코드가 계산)","method2_label":"SOTP 적정주가 (정상화/포워드)","method2_price":"빈 문자열(코드가 계산)","method3_label":"NTM P/E 적정주가 (시장기대)","method3_price":"NTM PE 값","method4_label":"애널리스트 목표주가 (전문가 컨센서스)","method4_price":"최신 증권사 목표주가 평균값(원 단위 숫자)","target_detail":"이 목표주가가 어느 시점 기준인지와 학습 데이터 한계를 간단히. 형식: \'OOOO년 OO반기 기준 주요 증권사 평균, 학습 데이터 기준이라 최신이 아닐 수 있음\'. ⚠️ 반드시 이 종목(' + name + ')에 실제 해당하는 내용만 쓰고, 전고체 등 이 종목과 무관한 기술은 절대 언급하지 마세요","target_1":"3가지 중 가장 낮은값(보수적)","target_2":"3가지 중 가장 높은값(낙관적)","gap_rate":"현재가 대비 정상화SOTP 괴리율(+ 또는 -)","sell_point":"매도 지점","stop_loss":"손절 라인","summary":"핵심 투자의견: 보수적바닥/정상화/시장기대 3개 값 사이에서 현재가 위치 해석 포함"}',
-        '모든 내용은 한국어로, 가격은 원 단위 포함하여 작성하세요.'
-      ];
-    }
-    var prompt = promptLines.join("\n");
-
-    // ── 단일 API 호출 함수 ──────────────────────────────────────
-    async function callGeminiOnce(prompt, key) {
-      var res = await fetch(
-        'https://generativelanguage.googleapis.com/v1beta/models/' + GEMINI_MODEL + ':generateContent?key=' + key,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0.3, maxOutputTokens: 16000 }
-          })
+# ── 재무제표 조회 ────────────────────────────────────────────────────
+def get_financial_data(corp_code, bsns_year, fs_div="CFS", reprt_code="11011"):
+    try:
+        url = f"{DART_BASE}/fnlttSinglAcntAll.json"
+        params = {
+            "crtfc_key": DART_KEY,
+            "corp_code":  corp_code,
+            "bsns_year":  bsns_year,
+            "reprt_code": reprt_code,
+            "fs_div":     fs_div,
         }
-      );
-      var data = await res.json();
-      if (!res.ok) throw new Error(data.error ? data.error.message : 'API 오류');
-      if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) return null;
-      var rawText = data.candidates[0].content.parts[0].text.trim();
+        res  = requests.get(url, params=params, timeout=20)
+        data = res.json()
+        if data.get("status") == "000":
+            return data.get("list", [])
+        print(f"  재무데이터 status: {data.get('status')} / {data.get('message')}")
+    except Exception as e:
+        print(f"  재무데이터 조회 실패: {e}")
+    return []
 
-      // { } 사이 JSON만 직접 추출 (특수문자/마크다운 무관)
-      var s = rawText.indexOf('{');
-      var e = rawText.lastIndexOf('}');
-      if (s === -1 || e === -1) return null;
-      var jsonStr = rawText.slice(s, e + 1);
 
-      try {
-        return JSON.parse(jsonStr);
-      } catch(err) {
-        // extractField로 폴백
-        function extractField(k) {
-          var rx = new RegExp('"' + k + '"\s*:\s*"([^"]*)"');
-          var m2 = jsonStr.match(rx);
-          return m2 ? m2[1] : null;
+# ── 계정과목 금액 추출 ───────────────────────────────────────────────
+def extract_amount(fin_list, keywords):
+    for item in fin_list:
+        acct_id = item.get("account_id", "") or ""
+        acct_nm = item.get("account_nm", "") or ""
+        for kw in keywords:
+            if kw in acct_id or kw in acct_nm:
+                raw = (item.get("thstrm_amount") or "0").replace(",", "").replace(" ", "")
+                try:
+                    val = int(raw.lstrip("-"))
+                    return val
+                except:
+                    pass
+    return 0
+
+
+# ── 순부채 계산 ──────────────────────────────────────────────────────
+def calc_net_debt(fin_list):
+    short_borrow = extract_amount(fin_list, ["ShortTermBorrowings",  "단기차입금"])
+    current_ltd  = extract_amount(fin_list, ["CurrentPortionOfLongTermBorrowings", "유동성장기부채", "유동성장기차입금"])
+    long_borrow  = extract_amount(fin_list, ["LongTermBorrowings",   "장기차입금"])
+    bonds        = extract_amount(fin_list, ["BondsIssued",          "사채"])
+    cash         = extract_amount(fin_list, ["CashAndCashEquivalents","현금및현금성자산"])
+    short_fin    = extract_amount(fin_list, ["ShortTermFinancialInstruments", "단기금융상품"])
+
+    total_debt = short_borrow + current_ltd + long_borrow + bonds
+    total_cash = cash + short_fin
+    net_debt   = total_debt - total_cash
+
+    print(f"    단기차입금:      {short_borrow:>20,}원")
+    print(f"    유동성장기부채:  {current_ltd:>20,}원")
+    print(f"    장기차입금:      {long_borrow:>20,}원")
+    print(f"    사채:            {bonds:>20,}원")
+    print(f"    총차입금:        {total_debt:>20,}원")
+    print(f"    현금및현금성자산:{cash:>20,}원")
+    print(f"    단기금융상품:    {short_fin:>20,}원")
+    print(f"    총현금성자산:    {total_cash:>20,}원")
+    print(f"    ▶ 순부채:        {net_debt:>20,}원")
+
+    return {
+        "net_debt":    net_debt,
+        "total_debt":  total_debt,
+        "total_cash":  total_cash,
+        "detail": {
+            "short_borrowings":  short_borrow,
+            "current_ltd":       current_ltd,
+            "long_borrowings":   long_borrow,
+            "bonds":             bonds,
+            "cash":              cash,
+            "short_financial":   short_fin,
         }
-        var r = {
-          segments:      extractField('segments'),
-          breakdown:     extractField('breakdown'),
-          segments_calc: extractField('segments_calc'),
-          future_tech_jo: extractField('future_tech_jo'),
-          method1_label: extractField('method1_label'),
-          method1_price: extractField('method1_price'),
-          method2_label: extractField('method2_label'),
-          method2_price: extractField('method2_price'),
-          method3_label: extractField('method3_label'),
-          method3_price: extractField('method3_price'),
-          method4_label: extractField('method4_label'),
-          method4_price: extractField('method4_price'),
-          target_detail: extractField('target_detail'),
-          target_1:      extractField('target_1'),
-          target_2:      extractField('target_2'),
-          gap_rate:      extractField('gap_rate'),
-          sell_point:    extractField('sell_point'),
-          stop_loss:     extractField('stop_loss'),
-          summary:       extractField('summary'),
-        };
-        return r.method1_price ? r : null;
-      }
     }
 
-    // ── 숫자 파싱 헬퍼 ──────────────────────────────────────────
-    function parsePrice(str) {
-      if (!str) return null;
-      // 숫자, 콤마, 점만 남기고 추출
-      var n = parseFloat(String(str).replace(/[^0-9.]/g, ''));
-      return isNaN(n) ? null : n;
+
+# ── 영업이익 ─────────────────────────────────────────────────────────
+def get_3yr_history(corp_code, annual_year):
+    """연간 사업보고서에서 과거 3개년 영업이익/매출/영업현금흐름 추출 (퀄리티 등급용)"""
+    result = {"op": [], "rev": [], "ocf": []}
+    try:
+        url = f"{DART_BASE}/fnlttSinglAcntAll.json"
+        params = {"crtfc_key":DART_KEY,"corp_code":corp_code,"bsns_year":annual_year,"reprt_code":"11011","fs_div":"CFS"}
+        data = requests.get(url, params=params, timeout=20).json()
+        if data.get("status") != "000":
+            return result
+        items = data.get("list", [])
+        targets = {
+            "op":  ["영업이익", "영업이익(손실)", "영업손익"],
+            "rev": ["매출액", "수익(매출액)", "영업수익"],
+            "ocf": ["영업활동현금흐름", "영업활동으로인한현금흐름", "영업활동으로 인한 현금흐름"],
+        }
+        def conv(x):
+            try: return int(str(x).replace(",","").strip() or 0)
+            except: return 0
+        for key, names in targets.items():
+            for item in items:
+                acct = (item.get("account_nm","") or "").replace(" ","")
+                if any(n.replace(" ","") == acct for n in names):
+                    # [전전기, 전기, 당기] 순서 (오래된 것부터)
+                    result[key] = [conv(item.get("bfefrmtrm_amount")), conv(item.get("frmtrm_amount")), conv(item.get("thstrm_amount"))]
+                    break
+        print(f"  3개년 이력: 영업이익 {len(result['op'])}개년, 매출 {len(result['rev'])}개년, 현금흐름 {len(result['ocf'])}개년")
+    except Exception as e:
+        print(f"  3개년 이력 조회 실패: {e}")
+    return result
+
+
+def get_operating_income(fin_list):
+    return extract_amount(fin_list, ["OperatingIncomeLoss", "영업이익"])
+
+
+def get_revenue(fin_list):
+    return extract_amount(fin_list, ["Revenue", "Revenues", "매출액", "수익(매출액)"])
+
+def calc_excess_cash(total_cash, revenue, stock_code):
+    """잉여현금 = 총현금 - 운영필요현금 (매출의 3%)"""
+    operating_cash_needed = revenue * 0.03
+    excess_cash = max(0, total_cash - operating_cash_needed)
+
+    market_cap = 0
+    try:
+        import yfinance as yf
+        ticker = f"{stock_code}.KS"
+        t = yf.Ticker(ticker)
+        price = float(t.fast_info.last_price)
+        shares = float(t.fast_info.shares)
+        market_cap = price * shares
+        print(f"  시가총액: {market_cap:,.0f}원")
+    except Exception as e:
+        print(f"  시가총액 조회 실패: {e}")
+
+    excess_cash_ratio = (excess_cash / market_cap * 100) if market_cap > 0 else 0
+
+    print(f"  매출액: {revenue:,.0f}원")
+    print(f"  운영필요현금(매출3%): {operating_cash_needed:,.0f}원")
+    print(f"  총현금: {total_cash:,.0f}원")
+    print(f"  ▶ 잉여현금: {excess_cash:,.0f}원")
+    print(f"  ▶ 시총 대비 잉여현금: {excess_cash_ratio:.1f}%")
+
+    return {
+        "excess_cash": excess_cash,
+        "operating_cash_needed": operating_cash_needed,
+        "market_cap": market_cap,
+        "excess_cash_ratio": round(excess_cash_ratio, 1),
     }
 
-    function avgPriceStr(values, isCurrency) {
-      // 유효한 숫자만
-      var nums = values.map(parsePrice).filter(function(v) { return v !== null && v > 0; });
-      if (nums.length === 0) return values[0] || '-';
-      // 최고·최저 1개씩 제거 (5개 → 3개)
-      if (nums.length >= 3) {
-        nums.sort(function(a,b){ return a-b; });
-        nums = nums.slice(1, nums.length - 1);
-      }
-      var avg = nums.reduce(function(a,b){ return a+b; }, 0) / nums.length;
 
-      // 현실적 범위 검증 (이상값 필터)
-      // KRW: 최소 1원, 최대 50,000,000원 (5000만원)
-      // USD: 최소 $0.01, 최대 $100,000
-      if (isCurrency === 'USD') {
-        if (avg > 100000 || avg < 0.01) return '-';
-        return '$' + avg.toLocaleString('en', {minimumFractionDigits:2, maximumFractionDigits:2});
-      }
-      if (avg > 50000000 || avg < 1) return '-';
-      return Math.round(avg).toLocaleString() + '원';
-    }
+# ── 발행주식수 ───────────────────────────────────────────────────────
+def get_shares_outstanding(corp_code, bsns_year, reprt_code="11011"):
+    """주식총수 현황에서 발행주식수 조회"""
+    try:
+        # 방법1: 주식총수 현황 API
+        url = f"{DART_BASE}/stockTotqySttus.json"
+        params = {
+            "crtfc_key":  DART_KEY,
+            "corp_code":  corp_code,
+            "bsns_year":  bsns_year,
+            "reprt_code": reprt_code,
+        }
+        res  = requests.get(url, params=params, timeout=10)
+        data = res.json()
+        if data.get("status") == "000":
+            for item in data.get("list", []):
+                se = item.get("se", "")
+                if "보통주" in se and "합계" not in se:
+                    val = item.get("distb_stock_co", "0") or "0"
+                    val = val.replace(",", "").strip()
+                    if val and val != "-":
+                        shares = int(val)
+                        if shares > 0:
+                            print(f"  발행주식수(보통주): {shares:,}주")
+                            return shares
+    except Exception as e:
+        print(f"  발행주식수 조회 실패: {e}")
 
-    function avgGapRate(values) {
-      var nums = values.map(function(v) {
-        if (!v) return null;
-        var n = parseFloat(String(v).replace(/[^0-9.\-]/g, ''));
-        return isNaN(n) ? null : n;
-      }).filter(function(v) { return v !== null; });
-      if (nums.length === 0) return values[0] || '-';
-      if (nums.length >= 3) {
-        nums.sort(function(a,b){ return a-b; });
-        nums = nums.slice(1, nums.length - 1);
-      }
-      var avg = nums.reduce(function(a,b){ return a+b; }, 0) / nums.length;
-      return (avg >= 0 ? '+' : '') + avg.toFixed(2) + '%';
-    }
+    # 방법2: 재무제표에서 추출
+    try:
+        url = f"{DART_BASE}/fnlttCmpnyIndx.json"
+        params = {
+            "crtfc_key":  DART_KEY,
+            "corp_code":  corp_code,
+            "bsns_year":  bsns_year,
+            "reprt_code": "11011",
+        }
+        res  = requests.get(url, params=params, timeout=10)
+        data = res.json()
+        if data.get("status") == "000":
+            for item in data.get("list", []):
+                if "주식수" in item.get("idx_nm", ""):
+                    val = item.get("idx_val", "0").replace(",", "")
+                    if val and val.isdigit():
+                        return int(val)
+    except Exception as e:
+        print(f"  발행주식수 방법2 실패: {e}")
+    return 0
 
-    try {
-      // ── 다회 병렬 호출 ────────────────────────────────────────
-      // 새로 분석 시작하면 저장 체크 해제
-    var saveChk = document.getElementById('save-eval-' + code);
-    if (saveChk) { saveChk.checked = false; }
-    clearEvalResult(code);
-    resultDiv.innerHTML = '<div class="eval-loading">🤖 2단계: Gemini 분석 중... (20~40초 소요)</div>';
-    resultDiv.style.display = 'block';
 
-      // 재시도 래퍼: 실패 시 1초 후 1번 재시도
-      async function callWithRetry(p, k) {
-        try {
-          var r = await callGeminiOnce(p, k);
-          if (r && r.method1_price) return r;
-        } catch(e) {}
-        await new Promise(function(res){ setTimeout(res, 1000); });
-        try { return await callGeminiOnce(p, k); } catch(e) { return null; }
-      }
 
-      // 호출을 500ms 간격으로 시작 (속도 제한 회피)
-      var promises = [];
-      for (var i = 0; i < 3; i++) {
-        promises.push(callWithRetry(prompt, key));
-        await new Promise(function(res){ setTimeout(res, 500); });
-      }
-      var results = await Promise.allSettled(promises);
-      var validResults = results
-        .filter(function(r) { return r.status === 'fulfilled' && r.value !== null; })
-        .map(function(r) { return r.value; });
+# ── 사업부문별 재무정보 (공시 원문에서 추출) ──────────────────────────
+def find_business_report(corp_code, bsns_year):
+    """사업보고서 등 정기공시 접수번호 찾기"""
+    try:
+        url = f"{DART_BASE}/list.json"
+        params = {
+            "crtfc_key": DART_KEY,
+            "corp_code": corp_code,
+            "bgn_de":    f"{bsns_year}0101",
+            "end_de":    f"{int(bsns_year)+1}0630",
+            "pblntf_ty": "A",
+            "page_count": 100,
+        }
+        res = requests.get(url, params=params, timeout=15)
+        data = res.json()
+        if data.get("status") != "000":
+            return None
+        reports = data.get("list", [])
+        # 부문 정보는 연간 사업보고서에만 상세히 나오므로 사업보고서 우선
+        for keyword in ["사업보고서", "반기보고서", "분기보고서"]:
+            for r in reports:
+                if keyword in r.get("report_nm", ""):
+                    print(f"  공시원문 기준: {r['report_nm']} ({r['rcept_dt']})")
+                    return r["rcept_no"]
+    except Exception as e:
+        print(f"  사업보고서 검색 실패: {e}")
+    return None
 
-      if (validResults.length === 0) {
-        resultDiv.innerHTML = '<div class="eval-result"><div class="eval-error">⚠️ 분석 실패: 잠시 후 다시 시도해주세요.<br><small>네트워크가 불안정하거나 일시적으로 요청이 많을 수 있어요.</small></div></div>';
-        return;
-      }
 
-      // ── 결과에서 극단값 제거 후 평균 계산 ───────────────
-      var isCur = market === 'US' ? 'USD' : 'KRW';
-      var parsed = {
-        method1_label: validResults[0].method1_label || '방법1',
-        method2_label: validResults[0].method2_label || '방법2',
-        method3_label: validResults[0].method3_label || '',
-        method4_label: validResults[0].method4_label || '',
-        method1_price: avgPriceStr(validResults.map(function(r){ return r.method1_price; }), isCur),
-        method2_price: avgPriceStr(validResults.map(function(r){ return r.method2_price; }), isCur),
-        method3_price: avgPriceStr(validResults.map(function(r){ return r.method3_price; }), isCur),
-        method4_price: avgPriceStr(validResults.map(function(r){ return r.method4_price; }), isCur),
-        target_detail: validResults[0].target_detail || '',
-        target_1:      avgPriceStr(validResults.map(function(r){ return r.target_1; }), isCur),
-        target_2:      avgPriceStr(validResults.map(function(r){ return r.target_2; }), isCur),
-        gap_rate:      avgGapRate(validResults.map(function(r){ return r.gap_rate; })),
-        sell_point:    avgPriceStr(validResults.map(function(r){ return r.sell_point; }), isCur),
-        stop_loss:     avgPriceStr(validResults.map(function(r){ return r.stop_loss; }), isCur),
-        segments:      validResults[0].segments || '',
-        breakdown:     validResults[0].breakdown || '',
-        summary:       validResults[Math.floor(validResults.length/2)].summary || '',
-        // 요약용 실제 평균값 (summary 텍스트 재구성용)
-        _target1_avg:  avgPriceStr(validResults.map(function(r){ return r.target_1; }), isCur),
-        _target2_avg:  avgPriceStr(validResults.map(function(r){ return r.target_2; }), isCur),
-        _gap_avg:      avgGapRate(validResults.map(function(r){ return r.gap_rate; })),
-      };
+def download_document(rcept_no):
+    """공시 원문 ZIP → 본문 XML 텍스트"""
+    try:
+        url = f"{DART_BASE}/document.xml"
+        res = requests.get(url, params={"crtfc_key": DART_KEY, "rcept_no": rcept_no}, timeout=60)
+        z = zipfile.ZipFile(io.BytesIO(res.content))
+        names = z.namelist()
+        biggest = max(names, key=lambda n: z.getinfo(n).file_size)
+        raw = z.read(biggest)
+        for enc in ["utf-8", "euc-kr", "cp949"]:
+            try:
+                return raw.decode(enc)
+            except:
+                continue
+        return raw.decode("utf-8", errors="ignore")
+    except Exception as e:
+        print(f"  공시원문 다운로드 실패: {e}")
+    return None
 
-      // ── 한국 주식 SOTP: 주주가치 총액 ÷ 발행주식수를 코드가 직접 계산 ──
-      // (Flash-Lite가 큰 숫자 나눗셈에서 자릿수를 틀리는 문제 해결)
-      if (market !== 'US') {
-        var dartShares = (window.sotpData && window.sotpData[code] && window.sotpData[code].shares_outstanding) || 0;
-        if (dartShares > 0) {
-          var dartCode = window.sotpData[code];
-          // ── 부문별 SOTP를 코드가 직접 계산 (AI는 비율만 제공) ──
-          // 자회사 가치 계산 (DART 데이터)
-          var subValue = 0;  // 원 단위
-          var subs = (dartCode.subsidiaries || []).filter(function(s){ return s.ownership_ratio >= 5; });
-          subs.forEach(function(s){
-            // 비상장 가정: 장부가액 × (1 - 0.3). 상장 여부 판별 어려우니 보수적으로 장부가 기준
-            subValue += (s.book_value || 0) * 0.7;
-          });
-          // 순부채 (원 단위, DART)
-          var netDebt = (dartCode.net_debt && dartCode.net_debt.net_debt) || 0;
 
-          // DART 전사 영업이익(연환산, 억원) - 단위 보정 기준점
-          var opWonRef = dartCode.operating_income || 0;
-          var rnRef = dartCode.reprt_name || '';
-          var multRef = rnRef.indexOf('1분기') !== -1 ? 4 : rnRef.indexOf('반기') !== -1 ? 2 : rnRef.indexOf('3분기') !== -1 ? (4/3) : 1;
-          var dartOpEok = Math.abs(opWonRef / 100000000 * multRef);  // 전사 연환산 영업이익(억원, 절대값)
-          // 사용자가 영업이익을 직접 입력했으면 보정 기준점을 사용자 입력값으로 교체
-          // (사용자 입력을 DART 기준 보정이 되돌리는 것 방지)
-          if (operatingProfit) {
-            var userOp = String(operatingProfit).replace(/,/g,'');
-            var userOpNum = parseFloat(userOp.replace(/[^0-9.]/g,''));
-            if (!isNaN(userOpNum) && userOpNum > 0) {
-              // 단위 추정: '조' 포함시 ×10000, '억' 포함시 그대로, 그 외 큰 숫자(>1e10)면 원→억
-              if (userOp.indexOf('조') !== -1) userOpNum = userOpNum * 10000;
-              else if (userOp.indexOf('억') !== -1) { /* 억원 그대로 */ }
-              else if (userOpNum > 10000000000) userOpNum = userOpNum / 100000000;  // 원 단위 입력
-              dartOpEok = Math.abs(userOpNum);
+def extract_segment_table(doc_text):
+    """사업부문별 재무정보 표를 텍스트로 추출. 단일부문이면 그 사실을 반환."""
+    # 단일 사업부문(SK하이닉스 등) 체크 먼저
+    single_markers = ["지배적 단일 사업부문", "단일 사업부문으로", "부문별 기재를 생략", "단일 영업부문"]
+    for marker in single_markers:
+        if marker in doc_text:
+            return "SINGLE_SEGMENT: 이 회사는 지배적 단일 사업부문(예: 반도체)으로, 부문 분할이 불필요합니다. 전사 영업이익을 그대로 사용하세요."
+
+    # 부문별 재무정보 표 추출 (영업이익+영업손익 단어가 있는 진짜 표 우선)
+    anchors = [
+        "연결기준 사업부문별 재무정보", "부문별 주요 재무정보",
+        "사업부문별 재무정보", "부문별 재무정보",
+        "사업부문별 요약 재무", "영업부문별 정보",
+    ]
+    # 각 앵커의 "모든" 출현 위치를 확인 (첫 출현은 회사소개 문단일 수 있음)
+    candidates = []
+    for anchor in anchors:
+        start = 0
+        while True:
+            pos = doc_text.find(anchor, start)
+            if pos == -1:
+                break
+            chunk = doc_text[pos:pos+5000]
+            clean = re.sub(r'<[^>]+>', ' | ', chunk)
+            clean = re.sub(r'\s*\|\s*(\|\s*)+', ' | ', clean)
+            clean = re.sub(r'\s+', ' ', clean).strip()
+            has_profit = ("영업이익" in clean) or ("영업손익" in clean) or ("영업손실" in clean)
+            digit_groups = re.findall(r'[\d,]{4,}', clean)
+            # 영업이익 단어 + 숫자 8개 이상 = 진짜 재무 표
+            if has_profit and len(digit_groups) >= 8:
+                # 숫자가 많을수록 좋은 표 (점수: 숫자 개수)
+                candidates.append((len(digit_groups), clean[:3000]))
+            start = pos + 1
+    if candidates:
+        # 숫자가 가장 많은 표 선택 (가장 상세한 재무 표)
+        candidates.sort(key=lambda x: x[0], reverse=True)
+        return candidates[0][1]
+    # 영업이익이 명확한 부문 표를 못 찾으면 → 전사 계산
+    return "SINGLE_SEGMENT: 부문별 영업이익 데이터가 명확하지 않습니다. 사업부문을 나누지 말고 전사(회사 전체) 영업이익으로 EBITDA를 계산하세요."
+
+
+def get_segment_info(corp_code, bsns_year):
+    """부문별 재무정보 표 텍스트 반환 (없으면 None)"""
+    rcept_no = find_business_report(corp_code, bsns_year)
+    if not rcept_no:
+        print("  사업보고서 접수번호 못 찾음")
+        return None
+    doc = download_document(rcept_no)
+    if not doc:
+        return None
+    table = extract_segment_table(doc)
+    if table:
+        print(f"  부문별 재무정보 표 추출 성공 ({len(table)}자)")
+    else:
+        print("  부문별 재무정보 표 못 찾음")
+    return table
+
+
+# ── 자회사 정보 ──────────────────────────────────────────────────────
+def get_subsidiaries(corp_code, bsns_year, reprt_code="11011"):
+    """특수관계인 출자현황으로 자회사 정보 조회"""
+    results = []
+
+    # 방법1: 최대주주 현황 (투자자산 포함)
+    endpoints = [
+        ("invstgNtcsCmn.json", "투자현황"),     # 타법인 출자현황
+        ("otrCprInvstmntSttus.json", "타법인출자"),  # 타법인 출자현황
+    ]
+
+    for endpoint, desc in endpoints:
+        try:
+            url = f"{DART_BASE}/{endpoint}"
+            params = {
+                "crtfc_key":  DART_KEY,
+                "corp_code":  corp_code,
+                "bsns_year":  bsns_year,
+                "reprt_code": reprt_code,
             }
-          }
+            res  = requests.get(url, params=params, timeout=10)
+            data = res.json()
+            print(f"  {desc} status: {data.get('status')} / 건수: {len(data.get('list',[]))}")
+            if data.get("status") == "000" and data.get("list"):
+                items = data.get("list", [])
+                if items and any(item.get("inv_prm") or item.get("corp_nm") for item in items):
+                    results = items
+                    break
+        except Exception as e:
+            print(f"  {desc} API 실패: {e}")
 
-          // 각 회차의 segments_calc를 파싱 (단위 자동 보정 포함)
-          function bizValuesFromResult(r) {
-            var sc = r.segments_calc;
-            if (!sc) return null;
-            var parts = String(sc).split('/');
-            // 1차 파싱: 부문 현재영업이익 절대값 합 구하기
-            var segData = [];
-            parts.forEach(function(p){
-              var f = p.split(';');
-              if (f.length < 6) return;
-              var opCur = parseFloat(String(f[1]).replace(/[^0-9.\-]/g,''));
-              var opNorm = parseFloat(String(f[2]).replace(/[^0-9.\-]/g,''));
-              var da = parseFloat(String(f[3]).replace(/[^0-9.]/g,''));
-              var consM = parseFloat(String(f[4]).replace(/[^0-9.]/g,''));
-              var normM = parseFloat(String(f[5]).replace(/[^0-9.]/g,''));
-              if (isNaN(opCur)) return;
-              if (isNaN(opNorm)) opNorm = opCur;
-              if (isNaN(da)) da = 25;
-              if (isNaN(consM)) consM = 6;
-              if (isNaN(normM)) normM = consM;
-              segData.push({opCur:opCur, opNorm:opNorm, da:da, consM:consM, normM:normM});
-            });
-            if (segData.length === 0) return null;
+    # 방법2: fnlttSinglAcntAll에서 관계기업투자 금액 직접 추출
+    if not results:
+        print("  자회사 정보 직접 조회 실패 - 재무제표 주석에서 추정")
 
-            // ── 단위 자동 보정 (B방식) ──
-            // 부문 현재영업이익 절대값 합 vs DART 전사 영업이익 비교
-            var sumAbs = 0;
-            segData.forEach(function(s){ sumAbs += Math.abs(s.opCur); });
-            var corr = 1;  // 보정계수
-            if (dartOpEok > 0 && sumAbs > 0) {
-              var ratio = sumAbs / dartOpEok;
-              // 비율이 50배 이상이면 ÷100 (백만원을 억원으로 착각), 0.02배 이하면 ×100
-              if (ratio >= 50) corr = 0.01;
-              else if (ratio <= 0.02) corr = 100;
-              else if (operatingProfit && (ratio < 0.8 || ratio > 1.25)) {
-                // 사용자 영업이익 입력이 있는데 AI가 반영 안 한 경우(합이 ±25% 밖)
-                // → 코드가 비례 스케일링으로 강제 반영 (AI 배분 실패 폴백)
-                corr = dartOpEok / sumAbs;
-              }
-            }
+    return results
 
-            var consTotal = 0, normTotal = 0;
-            segData.forEach(function(s){
-              var opCur = s.opCur * corr;
-              var opNorm = s.opNorm * corr;
-              var ebitdaCur = opCur * (1 + s.da/100);
-              var ebitdaNorm = opNorm * (1 + s.da/100);
-              consTotal += ebitdaCur > 0 ? ebitdaCur * s.consM : 0;
-              normTotal += ebitdaNorm > 0 ? ebitdaNorm * s.normM : 0;
-            });
-            return { cons: consTotal, norm: normTotal, corr: corr };  // 억원
-          }
 
-          // 회차별 본업가치 → 중앙값
-          var consBizArr = [], normBizArr = [];
-          validResults.forEach(function(r){
-            var bv = bizValuesFromResult(r);
-            if (bv) { consBizArr.push(bv.cons); normBizArr.push(bv.norm); }
-          });
-          function median(arr){ if(arr.length===0) return null; arr.sort(function(a,b){return a-b;}); return arr[Math.floor(arr.length/2)]; }
-          var consBizEok = median(consBizArr);  // 본업가치 억원
-          var normBizEok = median(normBizArr);
+# ── 최신 보고서 정보 자동 선택 ──────────────────────────────────────
+def get_latest_report():
+    """현재 시점 기준 가장 최신 보고서 코드와 사업연도 반환.
+    월별 기준:
+    - 1~3월: 전년도 3분기보고서 (11014)
+    - 4월:   전년도 사업보고서 (11011) - 아직 1분기 미공시
+    - 5~7월: 당해연도 1분기보고서 (11013)
+    - 8~10월: 당해연도 반기보고서 (11012)
+    - 11~12월: 당해연도 3분기보고서 (11014)
+    """
+    now = datetime.now(KST)
+    m, y = now.month, now.year
+    if m <= 3:
+        return str(y - 1), "11014"   # 전년도 3분기
+    elif m == 4:
+        return str(y - 1), "11011"   # 전년도 사업보고서
+    elif m <= 7:
+        return str(y), "11013"       # 당해 1분기
+    elif m <= 10:
+        return str(y), "11012"       # 당해 반기
+    else:
+        return str(y), "11014"       # 당해 3분기
 
-          // 폴백: segments_calc 파싱 전부 실패 시, DART 전사 영업이익으로 직접 계산
-          if (consBizEok === null || normBizEok === null) {
-            var opWon = dartCode.operating_income || 0;  // 원 단위
-            // 분기 연환산
-            var rn = dartCode.reprt_name || '';
-            var mult = rn.indexOf('1분기') !== -1 ? 4 : rn.indexOf('반기') !== -1 ? 2 : rn.indexOf('3분기') !== -1 ? (4/3) : 1;
-            var opEokAnnual = opWon / 100000000 * mult;  // 억원, 연환산
-            if (opEokAnnual > 0) {
-              var ebitda = opEokAnnual * 1.3;  // D&A 30% 가정
-              consBizEok = ebitda * 7;   // 보수 7배
-              normBizEok = ebitda * 10;  // 정상 10배
-            }
-          }
+REPRT_NAMES = {
+    "11011": "사업보고서(연간)",
+    "11012": "반기보고서",
+    "11013": "1분기보고서",
+    "11014": "3분기보고서",
+}
 
-          // 미래기술 (조원 → 억원)
-          var ftArr = validResults.map(function(r){ var v=parseFloat(String(r.future_tech_jo||'').replace(/[^0-9.]/g,'')); return isNaN(v)?0:v*10000; }).filter(function(v){return v>=0;});
-          var futureTechEok = ftArr.length ? median(ftArr) : 0;
 
-          // 최종 적정주가 = (본업 + 자회사 + 미래기술 - 순부채) ÷ 발행주식수
-          // 단위: 억원 → 원은 ×1e8. 자회사/순부채는 이미 원 단위.
-          function calcPrice(bizEok) {
-            if (bizEok === null) return null;
-            var totalWon = bizEok * 100000000 + subValue + futureTechEok * 100000000 - netDebt;
-            return Math.round(totalWon / dartShares);
-          }
-          var consPrice = calcPrice(consBizEok);
-          var normPrice = calcPrice(normBizEok);
+# ── 종목 분석 ────────────────────────────────────────────────────────
+def analyze_stock(stock_code, name, corp_code):
+    print(f"\n{'='*50}")
+    print(f"분석 중: {name} ({stock_code}) / corp_code: {corp_code}")
 
-          parsed.method1_price = (consPrice && consPrice > 0) ? consPrice.toLocaleString() + '원' : '-';
-          parsed.method2_price = (normPrice && normPrice > 0) ? normPrice.toLocaleString() + '원' : '-';
+    bsns_year, reprt_code = get_latest_report()
+    reprt_name = REPRT_NAMES.get(reprt_code, reprt_code)
+    print(f"  기준: {bsns_year}년 {reprt_name} ({reprt_code})")
 
-          // segments 표시용 텍스트 생성 (부문명|EBITDA|배수|가치)
-          var firstSc = validResults.find ? validResults.find(function(r){return r.segments_calc;}) : null;
-          if (!firstSc) { for (var fi=0; fi<validResults.length; fi++){ if(validResults[fi].segments_calc){ firstSc=validResults[fi]; break; } } }
-          if (firstSc && firstSc.segments_calc) {
-            // 표시용에도 같은 단위 보정 적용
-            var dispParts = String(firstSc.segments_calc).split('/');
-            var dispSumAbs = 0;
-            dispParts.forEach(function(p){ var f=p.split(';'); if(f.length>=6){ var v=parseFloat(String(f[1]).replace(/[^0-9.\-]/g,'')); if(!isNaN(v)) dispSumAbs+=Math.abs(v); } });
-            var dispCorr = 1;
-            if (dartOpEok > 0 && dispSumAbs > 0) {
-              var dr = dispSumAbs / dartOpEok;
-              if (dr >= 50) dispCorr = 0.01; else if (dr <= 0.02) dispCorr = 100;
-              else if (operatingProfit && (dr < 0.8 || dr > 1.25)) dispCorr = dartOpEok / dispSumAbs;
-            }
-            var segLines = dispParts.map(function(p){
-              var f = p.split(';');
-              if (f.length < 6) return '';
-              var nm = f[0].trim();
-              var opCur = (parseFloat(String(f[1]).replace(/[^0-9.\-]/g,''))||0) * dispCorr;
-              var opNorm = (parseFloat(String(f[2]).replace(/[^0-9.\-]/g,''))||opCur) * dispCorr;
-              var da = parseFloat(String(f[3]).replace(/[^0-9.]/g,''))||25;
-              var cm = parseFloat(String(f[4]).replace(/[^0-9.]/g,''))||6;
-              var nm2 = parseFloat(String(f[5]).replace(/[^0-9.]/g,''))||cm;
-              var ebC = opCur*(1+da/100);
-              var ebN = opNorm*(1+da/100);
-              function toJo(eok){ if(Math.abs(eok)>=10000) return (eok/10000).toFixed(1)+'조'; return Math.round(eok)+'억'; }
-              var cV = ebC>0?ebC*cm:0;
-              var nV = ebN>0?ebN*nm2:0;
-              return nm+'|영업이익 '+toJo(opCur)+'→'+toJo(opNorm)+'|'+cm+'~'+nm2+'배|가치 '+toJo(cV)+'~'+toJo(nV);
-            }).filter(function(x){return x;});
-            parsed.segments = segLines.join(' / ');
-          }
+    # 연결재무제표 우선, 없으면 개별
+    fin_list = get_financial_data(corp_code, bsns_year, "CFS", reprt_code)
+    if not fin_list:
+        print("  연결재무제표 없음 → 개별재무제표 시도")
+        fin_list = get_financial_data(corp_code, bsns_year, "OFS", reprt_code)
+    if not fin_list:
+        # 폴백: 직전 보고서 시도 (사업보고서)
+        print("  최신 보고서 없음 → 직전 사업보고서 시도")
+        prev_year = str(int(bsns_year) - 1) if reprt_code != "11011" else bsns_year
+        fin_list = get_financial_data(corp_code, prev_year, "CFS", "11011")
+        if fin_list:
+            bsns_year = prev_year
+            reprt_code = "11011"
+            reprt_name = "사업보고서(연간)"
+            print(f"  → 전년도 사업보고서 사용: {bsns_year}")
+    if not fin_list:
+        return {"error": "재무데이터 없음"}
 
-          // target_1(최저), target_2(최고), 괴리율 재계산
-          var prices = [];
-          if (consPrice && consPrice>0) prices.push(consPrice);
-          if (normPrice && normPrice>0) prices.push(normPrice);
-          var m3 = parseFloat(String(parsed.method3_price||'').replace(/[^0-9.]/g,''));
-          if (!isNaN(m3) && m3 > 0) prices.push(m3);
-          var m4 = parseFloat(String(parsed.method4_price||'').replace(/[^0-9.]/g,''));
-          if (!isNaN(m4) && m4 > 0) prices.push(m4);
-          if (prices.length > 0) {
-            parsed.target_1 = Math.min.apply(null, prices).toLocaleString() + '원';
-            parsed.target_2 = Math.max.apply(null, prices).toLocaleString() + '원';
-            if (currentPrice > 0) {
-              var gap = (Math.max.apply(null, prices) - currentPrice) / currentPrice * 100;
-              parsed.gap_rate = (gap >= 0 ? '+' : '') + gap.toFixed(2) + '%';
-            }
+    print(f"  재무항목 수: {len(fin_list)}개")
 
-            // summary를 코드 계산값 기반으로 재생성 (Gemini의 자릿수 오류 방지)
-            var curStr = currentPrice.toLocaleString() + '원';
-            var parts2 = [];
-            parts2.push('현재가 ' + curStr + ' 기준 분석이에요.');
-            if (consPrice && consPrice > 0) parts2.push('SOTP 보수적 바닥은 ' + consPrice.toLocaleString() + '원');
-            if (normPrice && normPrice > 0) parts2.push('정상화 시 ' + normPrice.toLocaleString() + '원');
-            if (!isNaN(m3) && m3 > 0) parts2.push('시장 기대(NTM P/E)는 ' + Math.round(m3).toLocaleString() + '원');
-            if (!isNaN(m4) && m4 > 0) parts2.push('애널리스트 목표주가는 ' + Math.round(m4).toLocaleString() + '원');
-            var sentence = parts2.slice(1).join(', ') + '으로 추정돼요. ';
-            // 현재가 위치 해석
-            var maxP = Math.max.apply(null, prices);
-            var minP = Math.min.apply(null, prices);
-            if (currentPrice > maxP) sentence += '현재가가 모든 적정주가 추정치보다 높아, 시장이 미래 성장 기대를 상당히 반영한 상태로 보여요.';
-            else if (currentPrice < minP) sentence += '현재가가 모든 추정치보다 낮아, 보수적 관점에서도 저평가 구간일 수 있어요.';
-            else sentence += '현재가가 보수적 바닥과 낙관적 기대 사이에 위치해 있어요. SOTP는 현재 실적 기준이라 미래 성장 기대가 큰 종목은 시장가보다 낮게 나오는 경향이 있어요.';
-            // Gemini summary 중 정성적 부분만 덧붙임 (숫자 없는 문장)
-            parsed.summary = parts2[0] + ' ' + sentence;
-          }
-        }
-      }
+    # 연간 사업보고서 연도 결정 (발행주식수/자회사/부문정보용)
+    # 분기 데이터를 쓰는 경우, 직전 완료된 연간 사업보고서를 따로 조회
+    now = datetime.now(KST)
+    annual_year = str(now.year - 1) if now.month >= 4 else str(now.year - 2)
+    print(f"  연간 사업보고서 기준연도: {annual_year}")
 
-      var gapColor = (parsed.gap_rate && parsed.gap_rate.indexOf('-') === -1) ? '#d70015' : '#0066cc';
-      resultDiv.innerHTML =
-        '<div class="eval-result">' +
-        '<div class="eval-title">🤖 AI 종목 평가 — ' + name + '</div>' +
-        (parsed.segments ? (function(){ var fmtSeg = function(s){
-      // 큰 숫자(콤마 유무, 원 유무 무관) 모두 변환
-      function conv(v){
-        // 1조 이상만 '조', 1000억 이상만 '억'으로 축약. 그 미만은 변환 안 함(주식수/적정주가 보호)
-        if(v>=1000000000000){var jo=Math.floor(v/1000000000000);var eok=Math.floor((v%1000000000000)/100000000);return jo+'조'+(eok>0?eok+'억':'');}
-        if(v>=100000000000){return Math.floor(v/100000000)+'억';}
-        return null;
-      }
-      // 콤마 포함 숫자 + 원 (예: 38,945,213,175,000원)
-      s = s.replace(/[\d,]{6,}\s*원/g, function(m){
-        var v = parseInt(m.replace(/[,원\s]/g,''));
-        if(isNaN(v)) return m;
-        var c = conv(v); return c !== null ? c+'원' : m;
-      });
-      // 콤마 포함 숫자(원 없음) - 단 뒤에 조/억/만 한글단위가 오면 스킵
-      s = s.replace(/[\d,]{6,}(?![\d,]*\s*[조억만])/g, function(m){
-        if(m.indexOf(',') === -1) return m; // 콤마 없으면 다음 단계로
-        var v = parseInt(m.replace(/,/g,''));
-        if(isNaN(v)) return m;
-        var c = conv(v); return c !== null ? c : m;
-      });
-      // 콤마 없는 순수 큰 숫자 - 뒤에 조/억/만 한글이 오면 스킵
-      s = s.replace(/\d{5,}(?![\d]*\s*[조억만])/g, function(n){
-        var v=parseInt(n);
-        var c = conv(v); return c !== null ? c : n;
-      });
-      return s;
-    }; return '<div style="font-size:11px;color:#444;background:#f8f4ff;padding:8px;border-radius:6px;margin-bottom:6px;line-height:1.8;">🏭 부문별 본업가치<br>' + parsed.segments.split(' / ').map(fmtSeg).join('<br>') + '</div>'; })() : '') +
-        (parsed.breakdown ? (function(){ var fmtBd = function(s){
-      // 큰 숫자(콤마 유무, 원 유무 무관) 모두 변환
-      function conv(v){
-        // 1조 이상만 '조', 1000억 이상만 '억'으로 축약. 그 미만은 변환 안 함(주식수/적정주가 보호)
-        if(v>=1000000000000){var jo=Math.floor(v/1000000000000);var eok=Math.floor((v%1000000000000)/100000000);return jo+'조'+(eok>0?eok+'억':'');}
-        if(v>=100000000000){return Math.floor(v/100000000)+'억';}
-        return null;
-      }
-      // 콤마 포함 숫자 + 원 (예: 38,945,213,175,000원)
-      s = s.replace(/[\d,]{6,}\s*원/g, function(m){
-        var v = parseInt(m.replace(/[,원\s]/g,''));
-        if(isNaN(v)) return m;
-        var c = conv(v); return c !== null ? c+'원' : m;
-      });
-      // 콤마 포함 숫자(원 없음) - 단 뒤에 조/억/만 한글단위가 오면 스킵
-      s = s.replace(/[\d,]{6,}(?![\d,]*\s*[조억만])/g, function(m){
-        if(m.indexOf(',') === -1) return m; // 콤마 없으면 다음 단계로
-        var v = parseInt(m.replace(/,/g,''));
-        if(isNaN(v)) return m;
-        var c = conv(v); return c !== null ? c : m;
-      });
-      // 콤마 없는 순수 큰 숫자 - 뒤에 조/억/만 한글이 오면 스킵
-      s = s.replace(/\d{5,}(?![\d]*\s*[조억만])/g, function(n){
-        var v=parseInt(n);
-        var c = conv(v); return c !== null ? c : n;
-      });
-      return s;
-    }; return '<div style="font-size:11px;color:#666;background:#fff;padding:8px;border-radius:6px;margin-bottom:8px;line-height:1.5;">📐 계산 근거: ' + fmtBd(parsed.breakdown) + '</div>'; })() : '') +
-        '<div class="eval-row"><span class="eval-label">' + (parsed.method1_label || '방법1') + '</span><span class="eval-value">' + parsed.method1_price + '</span></div>' +
-        '<div class="eval-row"><span class="eval-label">' + (parsed.method2_label || '방법2') + '</span><span class="eval-value">' + parsed.method2_price + '</span></div>' +
-        (parsed.method3_label && parsed.method3_price && parsed.method3_price !== '-' ? '<div class="eval-row"><span class="eval-label">' + parsed.method3_label + '</span><span class="eval-value">' + parsed.method3_price + '</span></div>' + (market === 'US' && parsed.target_detail ? '<div style="font-size:10px;color:#888;padding:2px 4px 6px;line-height:1.4;">ℹ️ ' + parsed.target_detail + '</div>' : '') : '') +
-        (parsed.method4_label && parsed.method4_price && parsed.method4_price !== '-' ? '<div class="eval-row" style="background:#f0f7ff;"><span class="eval-label">' + parsed.method4_label + '</span><span class="eval-value">' + parsed.method4_price + '</span></div>' + (parsed.target_detail ? '<div style="font-size:10px;color:#888;padding:2px 4px 6px;line-height:1.4;">ℹ️ ' + parsed.target_detail + '</div>' : '') : '') +
-        '<div class="eval-row"><span class="eval-label">1차 적정주가 (보수적)</span><span class="eval-value" style="color:#0066cc;">' + parsed.target_1 + '</span></div>' +
-        '<div class="eval-row"><span class="eval-label">2차 적정주가 (기본)</span><span class="eval-value" style="color:#1967d2;">' + parsed.target_2 + '</span></div>' +
-        '<div class="eval-row"><span class="eval-label">현재가 대비 괴리율</span><span class="eval-value" style="color:' + gapColor + ';">' + parsed.gap_rate + '</span></div>' +
-        '<div class="eval-row"><span class="eval-label">📈 차트 매도 지점</span><span class="eval-value">' + parsed.sell_point + '</span></div>' +
-        '<div class="eval-row"><span class="eval-label">🛡️ 손절 라인</span><span class="eval-value">' + parsed.stop_loss + '</span></div>' +
-        '<div style="margin-top:10px;padding:10px;background:#fff;border-radius:8px;font-size:12px;color:#333;line-height:1.6;">' +
-        '<div style="font-size:11px;color:#999;margin-bottom:6px;">📊 아래 수치는 여러 번 분석한 평균값 기준이에요.</div>' +
-        '1차 적정주가 <b>' + parsed.target_1 + '</b> / 2차 적정주가 <b>' + parsed.target_2 + '</b> / 현재가 대비 괴리율 <b>' + parsed.gap_rate + '</b><br><br>' +
-        parsed.summary +
-        '</div>' +
-        '<div class="eval-disclaimer">⚠️ AI 추정값으로 투자 참고용이에요. 실제 투자 결정은 본인 판단으로 해주세요.</div>' +
-        '<div style="margin-top:10px;display:flex;align-items:center;gap:8px;">' +
-        '<input type="checkbox" id="save-eval-' + code + '" onchange="onSaveEvalCheck(this)" style="width:16px;height:16px;cursor:pointer;" />' +
-        '<label for="save-eval-' + code + '" style="font-size:12px;color:#555;cursor:pointer;">이 결과 저장 (새로고침 후에도 유지)</label>' +
-        '</div>' +
-        '<div style="margin-top:12px;padding:12px;background:#f8f9ff;border-radius:8px;border:1px solid #e0e4ff;">' +
-        '<div style="font-size:12px;color:#555;margin-bottom:8px;font-weight:500;">📊 수동 입력으로 재계산</div>' +
-        '<div style="font-size:11px;color:#888;margin-bottom:6px;">AI가 컨센서스를 자동 조회해요. 수정 후 재계산하면 그 값으로 분석해요.</div>' +
-        '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px;font-size:10px;">' +
-        '<span style="display:flex;align-items:center;gap:4px;"><span style="display:inline-block;width:10px;height:10px;background:#f0fff0;border:1px solid #ccc;border-radius:2px;"></span><span style="color:#555;">컨센서스 조회 성공</span></span>' +
-        '<span style="display:flex;align-items:center;gap:4px;"><span style="display:inline-block;width:10px;height:10px;background:#fff8e1;border:1px solid #ccc;border-radius:2px;"></span><span style="color:#555;">DART 확정 실적 (예상치 아님)</span></span>' +
-        '<span style="display:flex;align-items:center;gap:4px;"><span style="display:inline-block;width:10px;height:10px;background:#fff;border:1px solid #ccc;border-radius:2px;"></span><span style="color:#555;">조회 실패 · 직접 입력</span></span>' +
-        '<span style="display:flex;align-items:center;gap:4px;"><span style="display:inline-block;width:10px;height:10px;background:#90caf9;border:1px solid #ccc;border-radius:2px;"></span><span style="color:#555;">직접 입력 후 재계산</span></span>' +
-        '</div>' +
-        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">' +
-        '<div>' +
-        '<div style="font-size:11px;color:#666;margin-bottom:4px;">예상 연간 영업이익</div>' +
-        '<textarea id="op-input-' + code + '" placeholder="컨센서스 자동 조회 중..." rows="2" style="width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid #ddd;border-radius:6px;font-size:12px;resize:none;font-family:inherit;"></textarea>' +
-        '</div>' +
-        '<div>' +
-        '<div style="font-size:11px;color:#666;margin-bottom:4px;">P/E 배수 (배)</div>' +
-        '<textarea id="pe-input-' + code + '" placeholder="P/E 자동 조회 중..." rows="2" style="width:100%;box-sizing:border-box;padding:7px 10px;border:1px solid #ddd;border-radius:6px;font-size:12px;resize:none;font-family:inherit;"></textarea>' +
-        '</div>' +
-        '</div>' +
-        '<button data-code="' + code + '" data-name="' + name + '" data-market="' + market + '" data-price="' + currentPrice + '" onclick="reEvaluate(this)" style="width:100%;padding:8px;background:#1967d2;color:white;border:none;border-radius:6px;font-size:13px;cursor:pointer;">재계산 →</button>' +
-        '</div>' +
-        '</div>';
+    # 순부채 (최신 분기 기준)
+    print("  [순부채 계산]")
+    net_debt_data = calc_net_debt(fin_list)
 
-      // 백지 분석 - 입력칸은 컨센서스 조회 결과만 표시
+    # 영업이익 (최신 분기 기준)
+    op_income = get_operating_income(fin_list)
+    print(f"  영업이익: {op_income:,}원")
 
-    } catch(e) {
-      resultDiv.innerHTML = '<div class="eval-result"><div class="eval-error">⚠️ 분석 실패: ' + e.message + '<br><small>잠시 후 다시 시도해주세요.</small></div></div>';
-    }
-  }
+    # 발행주식수 (연간 사업보고서 기준 - 분기엔 없을 수 있음)
+    shares = get_shares_outstanding(corp_code, annual_year, "11011")
+    if not shares:
+        shares = get_shares_outstanding(corp_code, bsns_year, reprt_code)
+    print(f"  발행주식수: {shares:,}주")
 
-  // ── 관심 종목 ──────────────────────────────────────────────────────
-  function deleteWatch(code) {
-    var w = currentSettings.watchlist && currentSettings.watchlist[code];
-    if (!w || !confirm(w.name + ' 관심 종목을 삭제할까요?')) return;
-    delete currentSettings.watchlist[code];
-    renderContent(currentSettings, currentLatest);
-    markChanged();
-  }
+    # 자회사 (연간 사업보고서 기준)
+    subs = get_subsidiaries(corp_code, annual_year, "11011")
+    sub_list = []
+    for sub in subs[:20]:
+        name  = sub.get("inv_prm", "").strip()
+        ratio = sub.get("trmend_blce_qota_rt", "").strip()  # 기말 지분율
+        qty   = sub.get("trmend_blce_qy", "0").replace(",", "").strip()  # 기말 보유주식수
+        book  = sub.get("trmend_blce_acntbk_amount", "0").replace(",", "").strip()  # 기말 장부가액
+        purps = sub.get("invstmnt_purps", "")  # 투자목적
 
-  // 관심 종목 → 보유 종목 이동
-  function moveToHoldings(code) {
-    var w = currentSettings.watchlist && currentSettings.watchlist[code];
-    if (!w) return;
-    var unit = w.market === 'US' ? '$' : '원';
-    var sharesStr = prompt(w.name + ' - 보유 수량을 입력하세요', '');
-    if (sharesStr === null) return;
-    var shares = Number(String(sharesStr).replace(/,/g,''));
-    if (!Number.isFinite(shares) || shares <= 0) { alert('올바른 수량이 아니에요'); return; }
-    var avgStr = prompt(w.name + ' - 평균 단가를 입력하세요 (' + unit + ')', '');
-    if (avgStr === null) return;
-    var avg = Number(String(avgStr).replace(/,/g,''));
-    if (!Number.isFinite(avg) || avg <= 0) { alert('올바른 단가가 아니에요'); return; }
+        if not name:
+            continue
 
-    if (!currentSettings.holdings) currentSettings.holdings = {};
-    if (currentSettings.holdings[code]) { alert('이미 보유 종목에 있어요'); return; }
+        # 경영참여 목적인 것만 포함 (단순투자 제외)
+        if purps and "단순투자" in purps:
+            continue
 
-    // 기존 관심종목의 검색어 정보가 있으면 가져오고, 없으면 종목명으로
-    currentSettings.holdings[code] = {
-      name: w.name,
-      market: w.market,
-      shares: shares,
-      avg_price: avg,
-      kr_query: w.kr_query || w.name,
-      en_query: w.en_query || null
-    };
-    delete currentSettings.watchlist[code];
-    renderContent(currentSettings, currentLatest);
-    markChanged();
-    alert('✓ ' + w.name + '이(가) 보유 종목으로 이동됐어요! 저장 버튼을 눌러 반영하세요.');
-  }
+        try:
+            ratio_f = float(ratio) if ratio and ratio != "-" else 0.0
+            qty_i   = int(qty) if qty and qty.isdigit() else 0
+            book_i  = int(book) if book and book.lstrip("-").isdigit() else 0
+        except:
+            ratio_f, qty_i, book_i = 0.0, 0, 0
 
-  function startAddWatch()  { addingWatch = true;  renderContent(currentSettings, currentLatest); }
-  function cancelAddWatch() { addingWatch = false; renderContent(currentSettings, currentLatest); }
+        sub_list.append({
+            "name":            name,
+            "ownership_ratio": ratio_f,
+            "shares_held":     qty_i,
+            "book_value":      book_i,
+            "investment_purpose": purps,
+        })
+        print(f"    자회사: {name} ({ratio_f}%) 보유주식: {qty_i:,}주 장부가: {book_i:,}원")
 
-  function confirmAddWatch() {
-    var name   = document.getElementById('nw-name').value.trim();
-    var code   = document.getElementById('nw-code').value.trim().toUpperCase();
-    var market = document.getElementById('nw-market').value;
-    if (!name) { alert('종목명을 입력해주세요'); return; }
-    if (!code) { alert('종목코드를 입력해주세요'); return; }
-    if (!currentSettings.watchlist) currentSettings.watchlist = {};
-    if (currentSettings.watchlist[code]) { alert('이미 등록된 코드예요: ' + code); return; }
-    if (currentSettings.holdings && currentSettings.holdings[code]) {
-      alert('보유 종목에 이미 있는 코드예요: ' + code); return;
-    }
-    currentSettings.watchlist[code] = { name: name, market: market };
-    addingWatch = false;
-    renderContent(currentSettings, currentLatest);
-    markChanged();
-    alert('✓ ' + name + ' 관심 종목 추가됐어요! 저장 버튼을 눌러 반영하세요.');
-  }
+    # 잉여현금 계산
+    print("  [잉여현금 계산]")
+    revenue = get_revenue(fin_list)
+    total_cash = net_debt_data["total_cash"]
+    excess_cash_data = calc_excess_cash(total_cash, revenue, stock_code)
 
-  // ── cron-job.org 업데이트 ──────────────────────────────────────────
-  async function updateCronjobs(runTimes) {
-    var apiKey = getCronjobKey();
-    if (!apiKey) return { skipped: true };
-    var listRes = await fetch('https://api.cron-job.org/jobs', {
-      headers: { 'Authorization': 'Bearer ' + apiKey }
-    });
-    if (!listRes.ok) throw new Error('cron-job.org 목록 조회 실패: ' + listRes.status);
-    var listData = await listRes.json();
-    var jobs     = (listData.jobs || []).filter(function(j) {
-      return j.title && j.title.startsWith('주식리포트-');
-    });
-    if (jobs.length === 0) return { updated: 0 };
-    var sorted = jobs.sort(function(a,b){ return a.title.localeCompare(b.title); });
-    var times  = runTimes.slice().sort();
-    var updated = 0;
-    for (var i = 0; i < sorted.length; i++) {
-      var job  = sorted[i];
-      var time = times[i] || times[times.length - 1];
-      var parts = time.split(':').map(Number);
-      var utcH  = ((parts[0] - 9) + 24) % 24;
-      var res = await fetch('https://api.cron-job.org/jobs/' + job.jobId, {
-        method: 'PATCH',
-        headers: { 'Authorization': 'Bearer ' + apiKey, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ job: { schedule: { hours: [utcH], minutes: [parts[1]], mdays: [-1], months: [-1], wdays: [-1] } } })
-      });
-      if (res.ok) updated++;
-    }
-    return { updated: updated, total: sorted.length };
-  }
+    # 부문별 재무정보 (공시 원문에서 추출)
+    print("  [부문별 재무정보 추출]")
+    segment_info = get_segment_info(corp_code, annual_year)
 
-  // ── 깃허브 저장 ────────────────────────────────────────────────────
-  async function saveToGitHub() {
-    var token = getToken();
-    if (!token) { alert('먼저 GitHub 토큰을 저장해주세요'); return; }
-    if (!fileSha) { alert('페이지를 새로고침해주세요'); return; }
-    var btn = document.getElementById('save-btn');
-    var txt = document.getElementById('save-bar-text');
-    btn.disabled = true; btn.textContent = '저장 중...';
-    txt.textContent = '깃허브에 저장하는 중...';
-    try {
-      var encoded = btoa(unescape(encodeURIComponent(JSON.stringify(currentSettings, null, 2))));
-      var url = 'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/' + FILE_PATH;
-      var ghRes = await fetch(url, {
-        method: 'PUT',
-        headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: 'Update settings.json from dashboard', content: encoded, sha: fileSha, branch: BRANCH })
-      });
-      if (!ghRes.ok) throw new Error('GitHub 저장 실패: HTTP ' + ghRes.status);
-      var ghResult  = await ghRes.json();
-      fileSha          = ghResult.content.sha;
-      originalSettings = deepCopy(currentSettings);
-      markChanged();
-      var cronjobMsg = '';
-      try {
-        var result = await updateCronjobs(currentSettings.run_times);
-        if (result.skipped) {
-          cronjobMsg = '\n\n⚠️ cron-job.org API 키가 없어서 알림 시간은 cron-job.org에서 직접 바꿔주세요.';
-        } else {
-          cronjobMsg = '\n✓ cron-job.org 알림 시간도 업데이트됐어요! (' + result.updated + '/' + result.total + '개)';
-        }
-      } catch(ce) {
-        cronjobMsg = '\n\n⚠️ cron-job.org 업데이트 실패: ' + ce.message;
-      }
-      alert('✓ 저장 완료!' + cronjobMsg);
-      btn.disabled = false; btn.textContent = '저장';
-    } catch(e) {
-      alert('저장 실패: ' + e.message);
-      btn.disabled = false; btn.textContent = '저장';
-      txt.textContent = '변경된 내용이 있어요';
-    }
-  }
+    # 퀄리티 등급용 3개년 이력
+    history_3yr = get_3yr_history(corp_code, annual_year)
 
-  // ── 데이터 로드 ────────────────────────────────────────────────────
-  async function loadSettings() {
-    var token   = getToken();
-    var url     = 'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/' + FILE_PATH + '?ref=' + BRANCH + '&t=' + Date.now();
-    var headers = { 'Accept': 'application/vnd.github+json' };
-    if (token) headers['Authorization'] = 'Bearer ' + token;
-    var res = await fetch(url, { headers: headers });
-    if (!res.ok) {
-      var fb = await fetch('settings.json?t=' + Date.now());
-      if (!fb.ok) throw new Error('settings.json 로드 실패');
-      return { content: await fb.json(), sha: null };
-    }
-    var data    = await res.json();
-    var decoded = decodeURIComponent(escape(atob(data.content.replace(/\n/g,''))));
-    return { content: JSON.parse(decoded), sha: data.sha };
-  }
-
-  async function loadLatest() {
-    try {
-      var r = await fetch('latest.json?t=' + Date.now());
-      return r.ok ? await r.json() : null;
-    } catch(e) { return null; }
-  }
-
-  // ── 토큰 관리 ──────────────────────────────────────────────────────
-  function updateTokenStatus() {
-    var s = document.getElementById('token-status');
-    var t = getToken();
-    if (t) {
-      s.textContent  = '✓ GitHub 토큰 저장됨 (' + t.slice(0,11) + '...' + t.slice(-4) + ')';
-      s.className    = 'token-status ok';
-    } else {
-      s.textContent  = 'GitHub 토큰이 저장되지 않았어요';
-      s.className    = 'token-status none';
-    }
-  }
-  function updateGeminiStatus() {
-    var s = document.getElementById('gemini-status');
-    var k = getGeminiKey();
-    if (k) {
-      s.textContent = '✓ Gemini API 키 저장됨';
-      s.className   = 'token-status ok';
-    } else {
-      s.textContent = 'Gemini API 키가 저장되지 않았어요 (AI 종목 평가에 필요)';
-      s.className   = 'token-status none';
-    }
-    updateSettingsVisibility();
-  }
-
-  function updateSettingsVisibility() {
-    var allOk = getToken() && getCronjobKey() && getGeminiKey();
-    var section = document.getElementById('settings-section');
-    var toggle  = document.getElementById('settings-toggle');
-    if (!section || !toggle) return;
-    if (allOk) {
-      section.classList.add('hidden');
-      toggle.textContent = '⚙️ 설정 보기';
-    } else {
-      section.classList.remove('hidden');
-      toggle.textContent = '⚙️ 설정 닫기';
-    }
-  }
-
-  function toggleSettings() {
-    var section = document.getElementById('settings-section');
-    var toggle  = document.getElementById('settings-toggle');
-    if (!section) return;
-    if (section.classList.contains('hidden')) {
-      section.classList.remove('hidden');
-      toggle.textContent = '⚙️ 설정 닫기';
-    } else {
-      section.classList.add('hidden');
-      toggle.textContent = '⚙️ 설정 보기';
-    }
-  }
-
-  function updateCronjobStatus() {
-    var s = document.getElementById('cronjob-status');
-    var k = getCronjobKey();
-    if (k) {
-      s.textContent = '✓ cron-job.org API 키 저장됨';
-      s.className   = 'token-status ok';
-    } else {
-      s.textContent = 'cron-job.org API 키가 저장되지 않았어요';
-      s.className   = 'token-status none';
-    }
-  }
-
-  // ── 화면 렌더링 ────────────────────────────────────────────────────
-  function renderContent(settings, latest) {
-    var html = '';
-    document.getElementById('subtitle').textContent = '내 자산 현황';
-    var updatedStr = (latest && latest.updated_at)
-      ? '최근 업데이트: ' + latest.updated_at
-      : '최근 업데이트: 로딩 중...';
-    document.getElementById('updated').innerHTML = updatedStr + '<br>현재 버전 ' + DASHBOARD_VERSION;
-
-    // 평가손익
-    if (latest && latest.portfolio && latest.portfolio.summary) {
-      var s    = latest.portfolio.summary;
-      var pl   = s.total_pl_krw;
-      var cls  = pl >= 0 ? 'profit' : 'loss';
-      var ccls = pl >= 0 ? 'profit-color' : 'loss-color';
-      html += '<div class="pl-hero ' + cls + '">';
-      html += '<div class="pl-label">💰 내 평가손익 (누적)</div>';
-      html += '<div class="pl-value ' + ccls + '">' + mark(pl) + ' ' + fmtWon(pl) + '</div>';
-      html += '<div class="pl-percent ' + ccls + '">(' + fmtPct(s.total_pl_pct) + ')</div>';
-      html += '</div>';
-      html += '<div class="summary">';
-      html += '<div class="summary-row"><span class="summary-label">총 평가금액</span><span class="summary-value">' + Math.round(s.total_value_krw).toLocaleString() + '원</span></div>';
-      var dCls = s.day_change_krw >= 0 ? 'profit-color' : 'loss-color';
-      html += '<div class="summary-row"><span class="summary-label">전일 대비</span><span class="summary-value ' + dCls + '">' + mark(s.day_change_krw) + ' ' + fmtWon(s.day_change_krw) + ' (' + fmtPct(s.day_change_pct) + ')</span></div>';
-      if (s.usdkrw) html += '<div class="summary-row"><span class="summary-label">적용 환율</span><span class="summary-value">' + s.usdkrw.toFixed(1) + '원/$</span></div>';
-      html += '</div>';
+    return {
+        "stock_code":        stock_code,
+        "name":              name,
+        "bsns_year":         bsns_year,
+        "reprt_name":        reprt_name,
+        "operating_income":  op_income,
+        "revenue":           revenue,
+        "shares_outstanding": shares,
+        "net_debt":          net_debt_data,
+        "excess_cash":       excess_cash_data,
+        "subsidiaries":      sub_list,
+        "segment_info":      segment_info,
+        "history_3yr":       history_3yr,
+        "updated_at":        datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S"),
     }
 
-    // 알림 시간
-    if (settings && settings.run_times && settings.run_times.length > 0) {
-      html += '<div class="card"><div class="stock-name">⏰ 알림 시간</div><div class="times">';
-      settings.run_times.forEach(function(time, idx) {
-        html += '<span class="time-chip">' + time + '<button class="delete-btn" onclick="deleteTime(' + idx + ')">✕</button></span>';
-      });
-      html += '<span class="time-chip add-chip" onclick="addTime()">+ 시간 추가</span>';
-      html += '</div></div>';
-    }
 
-    // 보유 종목 섹션
-    html += '<div class="section-divider"><div class="section-label">📈 보유 종목</div></div>';
-    var rowsByName = {};
-    if (latest && latest.portfolio && latest.portfolio.rows) {
-      latest.portfolio.rows.forEach(function(r) { rowsByName[r.name] = r; });
-    }
-    if (settings && settings.holdings) {
-      Object.entries(settings.holdings).forEach(function(entry) {
-        var code = entry[0];
-        var h    = entry[1];
-        var mCls = h.market === 'US' ? 'market-us' : 'market-kr';
-        var mTxt = h.market === 'US' ? '미국' : '한국';
-        var row  = rowsByName[h.name];
-        html += '<div class="card">';
-        html += '<div class="stock-header">';
-        html += '<div class="stock-name">' + h.name + '</div>';
-        html += '<div style="display:flex;align-items:center;gap:8px;">';
-        html += '<span class="market-badge ' + mCls + '">' + mTxt + '</span>';
-        html += '<button class="delete-stock-btn" onclick="deleteStock(' + "'" + code + "'" + ')">✕</button>';
-        html += '</div></div>';
-        if (row && !row.error) {
-          var priceStr = row.currency === 'USD'
-            ? '$' + row.price.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})
-            : Math.round(row.price).toLocaleString() + '원';
-          var dCls2 = row.day_change_pct >= 0 ? 'profit-color' : 'loss-color';
-          // 세션 배지
-          var sessionBadge = '';
-          if (row.session === 'open')          sessionBadge = ' <span style="font-size:11px;background:#e8f5e9;color:#2e7d32;padding:2px 6px;border-radius:8px;font-weight:500;">정규장</span>';
-          if (row.session === 'pre')           sessionBadge = ' <span style="font-size:11px;background:#e8f0fe;color:#1967d2;padding:2px 6px;border-radius:8px;font-weight:500;">프리마켓</span>';
-          if (row.session === 'after')         sessionBadge = ' <span style="font-size:11px;background:#fff3e0;color:#e65100;padding:2px 6px;border-radius:8px;font-weight:500;">애프터마켓</span>';
-          if (row.session === 'nxt')           sessionBadge = ' <span style="font-size:11px;background:#fce4ec;color:#c62828;padding:2px 6px;border-radius:8px;font-weight:500;">장 마감 (NXT)</span>';
-          if (row.session === 'market_closed') sessionBadge = ' <span style="font-size:11px;background:#f5f5f5;color:#666;padding:2px 6px;border-radius:8px;font-weight:500;">장 마감</span>';
-          if (row.session === 'closed')        sessionBadge = ' <span style="font-size:11px;background:#eeeeee;color:#999;padding:2px 6px;border-radius:8px;font-weight:500;">휴장</span>';
-          html += '<div class="stock-price">' + priceStr + sessionBadge + '</div>';
-          html += '<div class="stock-change ' + dCls2 + '">일간 ' + mark(row.day_change_pct) + ' ' + fmtPct(row.day_change_pct) + '</div>';
-        } else {
-          html += '<div class="stock-change">시세 데이터 대기 중</div>';
-        }
-        html += '<div class="stock-info">';
-        html += '<div><div class="info-label">보유 수량</div><div class="info-value"><span class="editable-value" onclick="editShares(' + "'" + code + "'" + ')">' + h.shares.toLocaleString() + '주 <span class="edit-icon">✎</span></span></div></div>';
-        var avgStr = h.market === 'US' ? '$' + h.avg_price.toLocaleString() : h.avg_price.toLocaleString() + '원';
-        html += '<div><div class="info-label">평균 단가</div><div class="info-value"><span class="editable-value" onclick="editAvgPrice(' + "'" + code + "'" + ')">' + avgStr + ' <span class="edit-icon">✎</span></span></div></div>';
-        html += '</div>';
-        if (row && !row.error) {
-          var plCls = row.pl_krw >= 0 ? 'profit-color' : 'loss-color';
-          html += '<div class="stock-pl ' + plCls + '">평가손익 ' + mark(row.pl_krw) + ' ' + fmtWon(row.pl_krw) + ' (' + fmtPct(row.pl_pct) + ')</div>';
-        }
-        var curPrice = (row && !row.error) ? row.price : 0;
-        var savedEval = loadEvalResult(code);
-        html += '<button class="eval-btn" data-code="' + code + '" data-name="' + h.name + '" data-market="' + h.market + '" data-price="' + curPrice + '" onclick="onEvalClick(this)">🤖 AI 종목 평가</button>';
-        if (savedEval) {
-          html += '<div id="eval-' + code + '" class="eval-result" style="display:block;">' + savedEval + '</div>';
-        } else {
-          html += '<div id="eval-' + code + '" class="eval-result" style="display:none;"></div>';
-        }
-        html += '</div>';
-      });
-    }
-    // 보유 종목 추가 카드
-    if (addingStock) {
-      html += '<div class="new-card"><div class="new-card-title">새 보유 종목</div>';
-      html += '<div class="field-grid">';
-      html += '<div class="field-item"><div class="info-label">종목명</div><input type="text" id="ns-name" class="ns-input" placeholder="예: 애플" /></div>';
-      html += '<div class="field-item"><div class="info-label">종목코드</div><input type="text" id="ns-code" class="ns-input" placeholder="예: AAPL" /></div>';
-      html += '</div>';
-      html += '<div class="field-grid" style="margin-top:12px;">';
-      html += '<div class="field-item"><div class="info-label">시장</div><select id="ns-market" class="ns-input"><option value="US">미국</option><option value="KR">한국</option></select></div>';
-      html += '<div class="field-item"><div class="info-label">보유 수량</div><input type="number" id="ns-shares" class="ns-input" placeholder="0" min="0" /></div>';
-      html += '</div>';
-      html += '<div class="field-full"><div class="info-label">평균 단가</div><input type="number" id="ns-avg" class="ns-input" placeholder="0" min="0" /></div>';
-      html += '<div class="field-full"><div class="info-label">뉴스 검색어 (국내)</div><input type="text" id="ns-kr-query" class="ns-input" placeholder="예: 애플" /></div>';
-      html += '<div class="field-full"><div class="info-label">뉴스 검색어 (해외, 미국 종목만)</div><input type="text" id="ns-en-query" class="ns-input" placeholder="예: Apple Inc (없으면 빈칸)" /></div>';
-      html += '<div class="card-btns"><button class="btn-cancel" onclick="cancelAddStock()">취소</button><button class="btn-confirm" onclick="confirmAddStock()">추가</button></div>';
-      html += '</div>';
-    }
-    if (!addingStock) {
-      html += '<button class="add-btn" onclick="startAddStock()"><span style="font-size:16px;">+</span> 보유 종목 추가</button>';
-    }
+# ── 메인 ─────────────────────────────────────────────────────────────
+def main():
+    if not DART_KEY:
+        print("DART_API_KEY 없음")
+        return
 
-    // 관심 종목 섹션
-    html += '<div class="section-divider"><div class="section-label">👀 관심 종목</div></div>';
-    var watchlist = (settings && settings.watchlist) ? settings.watchlist : {};
-    var watchKeys = Object.keys(watchlist);
-    var watchRows = {};
-    if (latest && latest.portfolio && latest.portfolio.watchlist) {
-      latest.portfolio.watchlist.forEach(function(r) { watchRows[r.code] = r; });
-    }
-    if (watchKeys.length === 0 && !addingWatch) {
-      html += '<div style="color:#888;font-size:13px;padding:8px 0 4px;">아직 관심 종목이 없어요.</div>';
-    }
-    watchKeys.forEach(function(code) {
-      var w    = watchlist[code];
-      var row  = watchRows[code];
-      var mCls = w.market === 'US' ? 'market-us' : 'market-kr';
-      var mTxt = w.market === 'US' ? '미국' : '한국';
-      html += '<div class="watch-card">';
-      html += '<div class="stock-header">';
-      html += '<div class="stock-name">' + w.name + '</div>';
-      html += '<div style="display:flex;align-items:center;gap:8px;">';
-      html += '<span class="market-badge ' + mCls + '">' + mTxt + '</span>';
-      html += '<button class="delete-stock-btn" onclick="deleteWatch(' + "'" + code + "'" + ')">✕</button>';
-      html += '</div></div>';
-      if (row && !row.error) {
-        var priceStr2 = row.currency === 'USD'
-          ? '$' + row.price.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})
-          : Math.round(row.price).toLocaleString() + '원';
-        var dCls3 = row.day_change_pct >= 0 ? 'profit-color' : 'loss-color';
-        var sessionBadge2 = '';
-        if (row.session === 'open')          sessionBadge2 = ' <span style="font-size:11px;background:#e8f5e9;color:#2e7d32;padding:2px 6px;border-radius:8px;font-weight:500;">정규장</span>';
-        if (row.session === 'pre')           sessionBadge2 = ' <span style="font-size:11px;background:#e8f0fe;color:#1967d2;padding:2px 6px;border-radius:8px;font-weight:500;">프리마켓</span>';
-        if (row.session === 'after')         sessionBadge2 = ' <span style="font-size:11px;background:#fff3e0;color:#e65100;padding:2px 6px;border-radius:8px;font-weight:500;">애프터마켓</span>';
-        if (row.session === 'nxt')           sessionBadge2 = ' <span style="font-size:11px;background:#fce4ec;color:#c62828;padding:2px 6px;border-radius:8px;font-weight:500;">장 마감 (NXT)</span>';
-        if (row.session === 'market_closed') sessionBadge2 = ' <span style="font-size:11px;background:#f5f5f5;color:#666;padding:2px 6px;border-radius:8px;font-weight:500;">장 마감</span>';
-        if (row.session === 'closed')        sessionBadge2 = ' <span style="font-size:11px;background:#eeeeee;color:#999;padding:2px 6px;border-radius:8px;font-weight:500;">휴장</span>';
-        html += '<div class="watch-price">' + priceStr2 + sessionBadge2 + '</div>';
-        html += '<div class="watch-change ' + dCls3 + '">일간 ' + mark(row.day_change_pct) + ' ' + fmtPct(row.day_change_pct) + '</div>';
-      } else {
-        html += '<div class="watch-change">시세 데이터 대기 중</div>';
-      }
-      var watchPrice = (row && !row.error) ? row.price : 0;
-      var savedEvalW = loadEvalResult(code);
-      html += '<button class="eval-btn" data-code="' + code + '" data-name="' + w.name + '" data-market="' + w.market + '" data-price="' + watchPrice + '" onclick="onEvalClick(this)">🤖 AI 종목 평가</button>';
-      html += '<button class="move-btn" onclick="moveToHoldings(' + "'" + code + "'" + ')">📥 보유 종목으로 이동</button>';
-      if (savedEvalW) {
-        html += '<div id="eval-' + code + '" class="eval-result" style="display:block;">' + savedEvalW + '</div>';
-      } else {
-        html += '<div id="eval-' + code + '" class="eval-result" style="display:none;"></div>';
-      }
-      html += '</div>';
-    });
-    // 관심 종목 추가 카드
-    if (addingWatch) {
-      html += '<div class="new-card"><div class="new-card-title">새 관심 종목</div>';
-      html += '<div class="field-grid">';
-      html += '<div class="field-item"><div class="info-label">종목명</div><input type="text" id="nw-name" class="ns-input" placeholder="예: 애플" /></div>';
-      html += '<div class="field-item"><div class="info-label">종목코드</div><input type="text" id="nw-code" class="ns-input" placeholder="예: AAPL" /></div>';
-      html += '</div>';
-      html += '<div class="field-full" style="margin-top:12px;"><div class="info-label">시장</div><select id="nw-market" class="ns-input"><option value="US">미국</option><option value="KR">한국</option></select></div>';
-      html += '<div class="card-btns"><button class="btn-cancel" onclick="cancelAddWatch()">취소</button><button class="btn-confirm" onclick="confirmAddWatch()">추가</button></div>';
-      html += '</div>';
-    }
-    if (!addingWatch) {
-      html += '<button class="add-btn" onclick="startAddWatch()"><span style="font-size:16px;">+</span> 관심 종목 추가</button>';
-    }
+    kr_holdings = load_kr_holdings()
+    if not kr_holdings:
+        print("한국 종목 없음")
+        return
 
-    document.getElementById('content').innerHTML = html;
+    # 전체 기업목록으로 corp_code 매핑
+    corp_map = build_corp_map()
+    if not corp_map:
+        print("기업목록 로드 실패")
+        return
 
-    // 저장된 결과가 있는 종목은 체크박스 자동 체크
-    if (settings && settings.holdings) {
-      Object.keys(settings.holdings).forEach(function(code) {
-        if (loadEvalResult(code)) {
-          var chk = document.getElementById('save-eval-' + code);
-          if (chk) chk.checked = true;
-        }
-      });
-    }
-    if (settings && settings.watchlist) {
-      Object.keys(settings.watchlist).forEach(function(code) {
-        if (loadEvalResult(code)) {
-          var chk = document.getElementById('save-eval-' + code);
-          if (chk) chk.checked = true;
-        }
-      });
-    }
-  }
+    results = {}
+    for stock_code, info in kr_holdings.items():
+        corp_code = corp_map.get(stock_code)
+        if not corp_code:
+            print(f"  {stock_code} ({info['name']}): corp_code 없음")
+            results[stock_code] = {"error": f"corp_code 없음: {stock_code}"}
+            continue
+        try:
+            results[stock_code] = analyze_stock(stock_code, info["name"], corp_code)
+            time.sleep(1)
+        except Exception as e:
+            results[stock_code] = {"error": str(e)}
+            print(f"  {stock_code} 분석 실패: {e}")
 
-  // ── 이벤트 등록 (DOM 로드 후) ──────────────────────────────────────
-  document.addEventListener('DOMContentLoaded', function() {
-    // 잠금 화면
-    var lockInput = document.getElementById('lock-input');
-    var lockBtn   = document.getElementById('lock-btn');
-    lockInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') checkPassword(); });
-    lockBtn.addEventListener('click', checkPassword);
+    with open(OUTPUT, "w", encoding="utf-8") as f:
+        json.dump(results, f, ensure_ascii=False, indent=2, default=str)
 
-    // 세션 확인
-    if (sessionStorage.getItem(SESSION_KEY) === '1') {
-      document.body.classList.add('unlocked');
-      startApp();
-    } else {
-      lockInput.focus();
-    }
+    print(f"\n✓ sotp_data.json 저장 완료")
 
-    // 버튼들
-    document.getElementById('refresh-btn').addEventListener('click', refreshData);
-    document.getElementById('cancel-btn').addEventListener('click', cancelChanges);
-    document.getElementById('save-btn').addEventListener('click', saveToGitHub);
 
-    document.getElementById('save-token-btn').addEventListener('click', function() {
-      var v = document.getElementById('token-input').value.trim();
-      if (!v) { alert('토큰을 입력해주세요'); return; }
-      if (!v.startsWith('github_pat_')) { alert('올바른 토큰이 아니에요'); return; }
-      localStorage.setItem(TOKEN_KEY, v);
-      document.getElementById('token-input').value = '';
-      updateTokenStatus();
-      alert('GitHub 토큰이 저장됐어요!');
-    });
-    document.getElementById('clear-token-btn').addEventListener('click', function() {
-      if (!confirm('저장된 토큰을 지울까요?')) return;
-      localStorage.removeItem(TOKEN_KEY);
-      updateTokenStatus();
-      alert('토큰이 지워졌어요');
-    });
-    document.getElementById('save-cronjob-btn').addEventListener('click', function() {
-      var v = document.getElementById('cronjob-input').value.trim();
-      if (!v) { alert('API 키를 입력해주세요'); return; }
-      localStorage.setItem(CRONJOB_KEY, v);
-      document.getElementById('cronjob-input').value = '';
-      updateCronjobStatus();
-      alert('cron-job.org API 키가 저장됐어요!');
-    });
-    document.getElementById('clear-cronjob-btn').addEventListener('click', function() {
-      if (!confirm('저장된 API 키를 지울까요?')) return;
-      localStorage.removeItem(CRONJOB_KEY);
-      updateCronjobStatus();
-      alert('API 키가 지워졌어요');
-    });
-    document.getElementById('save-gemini-btn').addEventListener('click', function() {
-      var v = document.getElementById('gemini-input').value.trim();
-      if (!v) { alert('API 키를 입력해주세요'); return; }
-      localStorage.setItem(GEMINI_KEY_K, v);
-      document.getElementById('gemini-input').value = '';
-      updateGeminiStatus();
-      alert('Gemini API 키가 저장됐어요!');
-    });
-    document.getElementById('clear-gemini-btn').addEventListener('click', function() {
-      if (!confirm('저장된 Gemini API 키를 지울까요?')) return;
-      localStorage.removeItem(GEMINI_KEY_K);
-      updateGeminiStatus();
-      alert('키가 지워졌어요');
-    });
-  });
-  </script>
-</body>
-</html>
+if __name__ == "__main__":
+    main()
