@@ -27,7 +27,7 @@
   table.berth td.vessel { font-weight:600; white-space:nowrap; }
   table.berth input.cell { width:100%; border:none; background:transparent; text-align:center; font-size:12px; font-family:inherit; }
   table.berth input.cell:focus { outline:2px solid #f39c12; background:#fff8e1; }
-  table.berth td.ok-cell { cursor:pointer; font-weight:700; color:#1e8449; user-select:none; min-width:42px; }
+  table.berth td.ok-cell { cursor:pointer; font-weight:700; color:#1e8449; user-select:none; }
   .empty { color:#aaa; font-size:13px; text-align:center; padding:16px; }
   .note-area { margin-top:10px; }
   @media print {
@@ -233,9 +233,9 @@ function renderDoc() {
     h += '<td>' + esc(r.cargo) + '</td><td>' + esc(r.insp) + '</td>';
     h += '<td>' + esc(r.dest) + '</td><td>' + esc(r.plant) + '</td>';
     h += '<td><input class="cell" style="min-width:65px;" value="' + esc(r.remark) + '" onchange="setField(' + i + ',\'remark\',this.value)" placeholder=""></td>';
-    h += '<td><input class="cell" style="min-width:28px;" value="' + esc(r.tank1||'') + '" onchange="setField(' + i + ',\'tank1\',this.value)" placeholder=""></td>';
-    h += '<td><input class="cell" style="min-width:28px;" value="' + esc(r.tank2||'') + '" onchange="setField(' + i + ',\'tank2\',this.value)" placeholder=""></td>';
-    h += '<td><input class="cell" style="min-width:28px;" value="' + esc(r.tank3||'') + '" onchange="setField(' + i + ',\'tank3\',this.value)" placeholder=""></td>';
+    h += '<td><input class="cell" style="min-width:44px;" value="' + esc(r.tank1||'') + '" onchange="setField(' + i + ',\'tank1\',this.value)" placeholder=""></td>';
+    h += '<td><input class="cell" style="min-width:44px;" value="' + esc(r.tank2||'') + '" onchange="setField(' + i + ',\'tank2\',this.value)" placeholder=""></td>';
+    h += '<td><input class="cell" style="min-width:44px;" value="' + esc(r.tank3||'') + '" onchange="setField(' + i + ',\'tank3\',this.value)" placeholder=""></td>';
     h += '<td class="ok-cell" onclick="toggleOk(' + i + ',\'anal\')">' + (r.anal||'') + '</td>';
     h += '<td class="ok-cell" onclick="toggleOk(' + i + ',\'cert\')">' + (r.cert||'') + '</td>';
     h += '</tr>';
