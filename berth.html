@@ -4,45 +4,224 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>출하 선석표</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   body { font-family:-apple-system,BlinkMacSystemFont,'Malgun Gothic',sans-serif; background:#f4f6f9; color:#222; }
-  .wrap { max-width:640px; margin:0 auto; padding:14px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:14px; }
   .header { background:linear-gradient(135deg,#9a6700,#f39c12); color:#fff; border-radius:14px; padding:18px; margin-bottom:12px; }
   .header h1 { font-size:19px; margin-bottom:4px; }
   .header .sub { font-size:13px; opacity:.9; }
   .home-link { display:block; text-align:center; margin:4px 0 14px; font-size:12px; color:#2980b9; text-decoration:none; }
   .card { background:#fff; border-radius:12px; padding:16px; margin-bottom:12px; box-shadow:0 1px 4px rgba(0,0,0,.06); }
   .card h2 { font-size:14px; margin-bottom:10px; color:#9a6700; }
-  textarea { width:100%; border:1px solid #ccd6e0; border-radius:8px; padding:10px; font-size:13px; min-height:200px; resize:vertical; font-family:inherit; }
-  .btn { border:none; border-radius:8px; padding:11px 16px; font-size:14px; font-weight:600; cursor:pointer; background:#f39c12; color:#fff; margin-top:10px; }
-  .notice { background:#fff8e1; border:1px solid #ffe082; color:#7a5c00; border-radius:8px; padding:12px; font-size:13px; line-height:1.6; }
+  textarea { width:100%; border:1px solid #ccd6e0; border-radius:8px; padding:10px; font-size:12px; min-height:100px; resize:vertical; font-family:inherit; }
+  .btn { border:none; border-radius:8px; padding:11px 16px; font-size:14px; font-weight:600; cursor:pointer; margin-top:8px; margin-right:6px; }
+  .btn-orange { background:#f39c12; color:#fff; }
+  .btn-blue { background:#2980b9; color:#fff; }
+  .btn-gray { background:#e3e8ee; color:#444; }
+  .file-drop { border:2px dashed #ccd6e0; border-radius:10px; padding:24px; text-align:center; color:#888; font-size:13px; cursor:pointer; }
+  .file-drop.drag { border-color:#f39c12; background:#fff8e1; }
+  .title-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
+  .title-input { font-size:18px; font-weight:700; border:1px solid #ccd6e0; border-radius:8px; padding:8px 12px; width:240px; }
+  table.berth { width:100%; border-collapse:collapse; font-size:12px; }
+  table.berth th, table.berth td { border:1px solid #999; padding:6px 4px; text-align:center; }
+  table.berth th { background:#eaf0f6; font-size:11px; white-space:nowrap; }
+  table.berth td.comp { background:#1a2c47; color:#fff; font-weight:700; font-size:10px; }
+  table.berth td.vessel { font-weight:600; white-space:nowrap; }
+  table.berth input.cell { width:100%; border:none; background:transparent; text-align:center; font-size:12px; font-family:inherit; }
+  table.berth input.cell:focus { outline:2px solid #f39c12; background:#fff8e1; }
+  table.berth td.ok-cell { cursor:pointer; font-weight:700; color:#1e8449; user-select:none; min-width:42px; }
+  .empty { color:#aaa; font-size:13px; text-align:center; padding:16px; }
+  .note-area { margin-top:10px; }
+  @media print {
+    body { background:#fff; }
+    .no-print { display:none !important; }
+    .card { box-shadow:none; padding:0; }
+    table.berth { font-size:11px; }
+    .title-input { border:none; }
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="header"><h1>🚢 출하 선석표</h1><div class="sub">메일 선석표에서 필요한 정보만 추출</div></div>
-  <a class="home-link" href="index.html">🏠 홈으로</a>
-  <div class="card">
-    <div class="notice">
-      ⚙️ <b>준비 중인 기능이에요.</b><br>
-      메일로 받는 선석표 양식(샘플)을 전달해주시면,<br>
-      필요한 정보만 골라 새 선석표로 만드는 기능을 구현할 예정이에요.
+  <div class="header no-print"><h1>🚢 출하 선석표</h1><div class="sub">메일 선석표에서 YNCC 항차만 자동 추출</div></div>
+  <a class="home-link no-print" href="index.html">🏠 홈으로</a>
+
+  <div class="card no-print">
+    <h2>1️⃣ 선석표 가져오기</h2>
+    <div class="file-drop" id="fileDrop" onclick="document.getElementById('fileInput').click()">
+      📎 엑셀 파일(.xlsx)을 여기로 끌어다 놓거나 클릭해서 선택
+    </div>
+    <input type="file" id="fileInput" accept=".xlsx,.xls" style="display:none" onchange="handleFile(this.files[0])">
+    <div style="margin:10px 0 4px; font-size:12px; color:#888;">또는 엑셀에서 전체 선택(Ctrl+A) → 복사(Ctrl+C) 후 아래에 붙여넣기:</div>
+    <textarea id="pasteArea" placeholder="엑셀 내용을 붙여넣으세요"></textarea>
+    <button class="btn btn-orange" onclick="parsePaste()">📋 붙여넣은 내용에서 추출</button>
+  </div>
+
+  <div class="card" id="resultCard" style="display:none;">
+    <div class="title-row">
+      <input class="title-input" id="docTitle" value="">
+      <button class="btn btn-blue no-print" onclick="window.print()">🖨️ 인쇄</button>
+      <button class="btn btn-gray no-print" onclick="clearDoc()">초기화</button>
+    </div>
+    <div id="tableWrap"></div>
+    <div class="note-area">
+      <div style="font-size:13px; font-weight:700; margin-bottom:4px;">*특이사항</div>
+      <textarea id="noteArea" style="min-height:60px;" onchange="saveDoc()"></textarea>
     </div>
   </div>
-  <div class="card">
-    <h2>📋 선석표 붙여넣기 (임시 메모장)</h2>
-    <textarea id="berthText" placeholder="메일로 받은 선석표 내용을 붙여넣어 보관할 수 있어요"></textarea>
-    <button class="btn" onclick="saveBerth()">저장</button>
-  </div>
 </div>
+
 <script>
-var saved = localStorage.getItem('berth_memo');
-if (saved) document.getElementById('berthText').value = saved;
-function saveBerth(){
-  localStorage.setItem('berth_memo', document.getElementById('berthText').value);
-  alert('저장됐어요');
+var DOC = null;
+
+function todayTitle() {
+  var d = new Date();
+  return (d.getMonth()+1) + '월 ' + d.getDate() + '일 선석표';
 }
+
+function loadDoc() {
+  try { var d = JSON.parse(localStorage.getItem('berth_doc')); if (d) return d; } catch(e){}
+  return null;
+}
+function saveDoc() {
+  if (!DOC) return;
+  DOC.title = document.getElementById('docTitle').value;
+  DOC.note = document.getElementById('noteArea').value;
+  localStorage.setItem('berth_doc', JSON.stringify(DOC));
+}
+function clearDoc() {
+  if (!confirm('현재 선석표를 지울까요?')) return;
+  localStorage.removeItem('berth_doc');
+  DOC = null;
+  document.getElementById('resultCard').style.display = 'none';
+}
+
+// ── 파싱 공통: 2차원 배열 → YNCC 행 추출 ──
+function extractFromGrid(grid) {
+  // 헤더 행 찾기 (VESSEL 포함)
+  var headerIdx = -1, colMap = {};
+  for (var i = 0; i < Math.min(grid.length, 10); i++) {
+    var row = grid[i].map(function(c){ return String(c||'').toUpperCase(); });
+    if (row.some(function(c){ return c.indexOf('VESSEL') !== -1; })) { headerIdx = i; break; }
+  }
+  if (headerIdx === -1) return null;
+  var hdr = grid[headerIdx].map(function(c){ return String(c||''); });
+  function findCol(kw) {
+    for (var j = 0; j < hdr.length; j++) {
+      if (hdr[j].toUpperCase().indexOf(kw.toUpperCase()) !== -1) return j;
+    }
+    return -1;
+  }
+  colMap = {
+    comp: findCol('회사'), vessel: findCol('VESSEL'),
+    eta: findCol('입항'), berth: findCol('접안'), etd: findCol('이안'),
+    cargo: findCol('CARGO'), agent: findCol('AGENT'),
+    insp: findCol('검정'), dest: findCol('행선'), trader: findCol('상사'), plant: findCol('공장')
+  };
+  if (colMap.comp === -1 || colMap.vessel === -1) return null;
+
+  var rows = [];
+  for (var r = headerIdx + 1; r < grid.length; r++) {
+    var row = grid[r];
+    var comp = String(row[colMap.comp]||'').trim().toUpperCase();
+    if (comp.indexOf('YNCC') === 0) {
+      function g(k){ return colMap[k] !== -1 ? String(row[colMap[k]]||'').trim() : ''; }
+      rows.push({
+        comp: String(row[colMap.comp]||'').trim(),
+        vessel: g('vessel'), eta: g('eta'), berth: g('berth'), etd: g('etd'),
+        cargo: g('cargo'), agent: g('agent'), insp: g('insp'),
+        dest: g('dest'), trader: g('trader'), plant: g('plant'),
+        remark: '', anal: '', cert: ''
+      });
+    }
+  }
+  return rows;
+}
+
+function applyRows(rows) {
+  if (!rows || rows.length === 0) { alert('YNCC 항차를 찾지 못했어요. 양식을 확인해주세요.'); return; }
+  // 기존 문서의 수기 입력(REMARK 등)을 선박명 기준으로 보존
+  var old = DOC && DOC.rows ? DOC.rows : [];
+  rows.forEach(function(nr){
+    var prev = old.find(function(o){ return o.vessel === nr.vessel; });
+    if (prev) { nr.remark = prev.remark; nr.anal = prev.anal; nr.cert = prev.cert; }
+  });
+  DOC = { title: todayTitle(), rows: rows, note: (DOC && DOC.note) || '' };
+  localStorage.setItem('berth_doc', JSON.stringify(DOC));
+  renderDoc();
+  alert('✓ YNCC 항차 ' + rows.length + '건을 추출했어요');
+}
+
+// ── 엑셀 파일 ──
+function handleFile(file) {
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var wb = XLSX.read(e.target.result, {type:'array'});
+      var ws = wb.Sheets[wb.SheetNames[0]];
+      var grid = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+      var rows = extractFromGrid(grid);
+      applyRows(rows);
+    } catch(err) { alert('엑셀 읽기 실패: ' + err.message); }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// 드래그앤드롭
+var drop = document.getElementById('fileDrop');
+drop.addEventListener('dragover', function(e){ e.preventDefault(); drop.classList.add('drag'); });
+drop.addEventListener('dragleave', function(){ drop.classList.remove('drag'); });
+drop.addEventListener('drop', function(e){
+  e.preventDefault(); drop.classList.remove('drag');
+  if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+});
+
+// ── 붙여넣기 ──
+function parsePaste() {
+  var txt = document.getElementById('pasteArea').value;
+  if (!txt.trim()) { alert('내용을 붙여넣어 주세요'); return; }
+  var grid = txt.split(/\r?\n/).map(function(line){ return line.split('\t'); });
+  var rows = extractFromGrid(grid);
+  applyRows(rows);
+}
+
+// ── 렌더 ──
+function renderDoc() {
+  if (!DOC) return;
+  document.getElementById('resultCard').style.display = 'block';
+  document.getElementById('docTitle').value = DOC.title;
+  document.getElementById('noteArea').value = DOC.note || '';
+  var h = '<table class="berth"><thead><tr>';
+  h += '<th>순번</th><th>회사명</th><th>VESSEL NAME</th><th>입항예정</th><th>접안예정</th><th>이안예정</th>';
+  h += '<th>CARGO</th><th>AGENT</th><th>검정</th><th>행선지</th><th>상사</th><th>공장</th>';
+  h += '<th style="min-width:130px;">REMARK</th><th>분석<br>완료</th><th>성적서<br>발행</th>';
+  h += '</tr></thead><tbody>';
+  DOC.rows.forEach(function(r, i){
+    h += '<tr>';
+    h += '<td>' + (i+1) + '</td>';
+    h += '<td class="comp">' + esc(r.comp) + '</td>';
+    h += '<td class="vessel">' + esc(r.vessel) + '</td>';
+    h += '<td>' + esc(r.eta) + '</td><td>' + esc(r.berth) + '</td><td>' + esc(r.etd) + '</td>';
+    h += '<td>' + esc(r.cargo) + '</td><td>' + esc(r.agent) + '</td><td>' + esc(r.insp) + '</td>';
+    h += '<td>' + esc(r.dest) + '</td><td>' + esc(r.trader) + '</td><td>' + esc(r.plant) + '</td>';
+    h += '<td><input class="cell" value="' + esc(r.remark) + '" onchange="setField(' + i + ',\'remark\',this.value)" placeholder=""></td>';
+    h += '<td class="ok-cell" onclick="toggleOk(' + i + ',\'anal\')">' + (r.anal||'') + '</td>';
+    h += '<td class="ok-cell" onclick="toggleOk(' + i + ',\'cert\')">' + (r.cert||'') + '</td>';
+    h += '</tr>';
+  });
+  h += '</tbody></table>';
+  document.getElementById('tableWrap').innerHTML = h;
+}
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function setField(i, k, v) { DOC.rows[i][k] = v; saveDoc(); }
+function toggleOk(i, k) { DOC.rows[i][k] = DOC.rows[i][k] === 'OK' ? '' : 'OK'; saveDoc(); renderDoc(); }
+
+// 초기 로드
+DOC = loadDoc();
+if (DOC) renderDoc();
 </script>
 </body>
 </html>
