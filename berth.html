@@ -48,23 +48,25 @@
     table.berth td.comp { background:#1a2c47 !important; color:#fff !important; font-size:8px; }
     table.berth input.cell { font-size:9px; border:none; background:transparent; width:100%; padding:0; word-break:break-all; }
     table.berth td.ok-cell { font-size:9px; }
-    /* 열 너비 */
-    table.berth th:nth-child(1)  { width:3%; }
-    table.berth th:nth-child(2)  { width:5%; }
-    table.berth th:nth-child(3)  { width:13%; }
-    table.berth th:nth-child(4)  { width:6%; }
-    table.berth th:nth-child(5)  { width:6%; }
-    table.berth th:nth-child(6)  { width:6%; }
-    table.berth th:nth-child(7)  { width:11%; }
-    table.berth th:nth-child(8)  { width:4%; }
-    table.berth th:nth-child(9)  { width:6%; }
-    table.berth th:nth-child(10) { width:4%; }
-    table.berth th:nth-child(11) { width:8%; }
-    table.berth th:nth-child(12) { width:7%; }
-    table.berth th:nth-child(13) { width:7%; }
-    table.berth th:nth-child(14) { width:7%; }
-    table.berth th:nth-child(15) { width:4%; }
-    table.berth th:nth-child(16) { width:4%; }
+    /* 열 너비 - 줄바꿈 우선, 글자축소는 최후 수단 */
+    table.berth { font-size:10px; }
+    table.berth th, table.berth td { white-space:normal !important; word-break:keep-all; overflow-wrap:break-word; }
+    table.berth th:nth-child(1)  { width:2.5%; }  /* 순번 */
+    table.berth th:nth-child(2)  { width:4.5%; }  /* 회사명 */
+    table.berth th:nth-child(3)  { width:16%; }   /* VESSEL NAME - 넓게 */
+    table.berth th:nth-child(4)  { width:5.5%; }  /* 입항 */
+    table.berth th:nth-child(5)  { width:5.5%; }  /* 접안 */
+    table.berth th:nth-child(6)  { width:5.5%; }  /* 이안 */
+    table.berth th:nth-child(7)  { width:10%; }   /* CARGO */
+    table.berth th:nth-child(8)  { width:3.5%; }  /* 검정 */
+    table.berth th:nth-child(9)  { width:5%; }    /* 행선지 */
+    table.berth th:nth-child(10) { width:3.5%; }  /* 공장 */
+    table.berth th:nth-child(11) { width:7%; }    /* REMARK */
+    table.berth th:nth-child(12) { width:9%; }    /* TANK1 - 한글3자 */
+    table.berth th:nth-child(13) { width:9%; }    /* TANK2 */
+    table.berth th:nth-child(14) { width:9%; }    /* TANK3 */
+    table.berth th:nth-child(15) { width:3%; }    /* 분석완료 */
+    table.berth th:nth-child(16) { width:3%; }    /* 성적서 */
     .note-area { margin-top:6px; }
     .note-area textarea { border:none; min-height:24px; font-size:9px; resize:none; width:100%; }
   }
