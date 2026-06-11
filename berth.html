@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>출하 선석표</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,BlinkMacSystemFont,'Malgun Gothic',sans-serif; background:#f4f6f9; color:#222; }
+  .wrap { max-width:640px; margin:0 auto; padding:14px; }
+  .header { background:linear-gradient(135deg,#9a6700,#f39c12); color:#fff; border-radius:14px; padding:18px; margin-bottom:12px; }
+  .header h1 { font-size:19px; margin-bottom:4px; }
+  .header .sub { font-size:13px; opacity:.9; }
+  .home-link { display:block; text-align:center; margin:4px 0 14px; font-size:12px; color:#2980b9; text-decoration:none; }
+  .card { background:#fff; border-radius:12px; padding:16px; margin-bottom:12px; box-shadow:0 1px 4px rgba(0,0,0,.06); }
+  .card h2 { font-size:14px; margin-bottom:10px; color:#9a6700; }
+  textarea { width:100%; border:1px solid #ccd6e0; border-radius:8px; padding:10px; font-size:13px; min-height:200px; resize:vertical; font-family:inherit; }
+  .btn { border:none; border-radius:8px; padding:11px 16px; font-size:14px; font-weight:600; cursor:pointer; background:#f39c12; color:#fff; margin-top:10px; }
+  .notice { background:#fff8e1; border:1px solid #ffe082; color:#7a5c00; border-radius:8px; padding:12px; font-size:13px; line-height:1.6; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header"><h1>🚢 출하 선석표</h1><div class="sub">메일 선석표에서 필요한 정보만 추출</div></div>
+  <a class="home-link" href="index.html">🏠 홈으로</a>
+  <div class="card">
+    <div class="notice">
+      ⚙️ <b>준비 중인 기능이에요.</b><br>
+      메일로 받는 선석표 양식(샘플)을 전달해주시면,<br>
+      필요한 정보만 골라 새 선석표로 만드는 기능을 구현할 예정이에요.
+    </div>
+  </div>
+  <div class="card">
+    <h2>📋 선석표 붙여넣기 (임시 메모장)</h2>
+    <textarea id="berthText" placeholder="메일로 받은 선석표 내용을 붙여넣어 보관할 수 있어요"></textarea>
+    <button class="btn" onclick="saveBerth()">저장</button>
+  </div>
+</div>
+<script>
+var saved = localStorage.getItem('berth_memo');
+if (saved) document.getElementById('berthText').value = saved;
+function saveBerth(){
+  localStorage.setItem('berth_memo', document.getElementById('berthText').value);
+  alert('저장됐어요');
+}
+</script>
+</body>
+</html>
