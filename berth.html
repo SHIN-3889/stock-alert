@@ -65,8 +65,10 @@
     table.berth th:nth-child(12) { width:8%; }    /* TANK1 */
     table.berth th:nth-child(13) { width:8%; }    /* TANK2 */
     table.berth th:nth-child(14) { width:8%; }    /* TANK3 */
-    table.berth th:nth-child(15) { width:5%; }    /* 분석완료 - 한글3자 */
-    table.berth th:nth-child(16) { width:5%; }    /* 성적서발행 - 한글3자 */
+    table.berth th:nth-child(15) { width:3.5%; }  /* 분석완료 - "분석
+완료" */
+    table.berth th:nth-child(16) { width:3.5%; }  /* 성적서발행 - "성적서
+발행" */
     .note-area { margin-top:6px; }
     .note-area textarea { border:none; min-height:24px; font-size:9px; resize:none; width:100%; }
   }
@@ -205,12 +207,13 @@ function renderDoc() {
   h += '<th>CARGO</th><th>검정</th><th>행선지</th><th>공장</th>';
   h += '<th style="min-width:70px;">REMARK</th>';
   h += '<th colspan="3" style="min-width:90px;">TANK</th>';
-  h += '<th>분석<br>완료</th><th>성적서<br>발행</th>';
+  h += '<th style="white-space:normal;word-break:keep-all;">분석<br>완료</th><th style="white-space:normal;word-break:keep-all;">성적서<br>발행</th>';
   h += '</tr></thead><tbody>';
   DOC.rows.forEach(function(r, i){
     h += '<tr>';
     h += '<td>' + (i+1) + '</td>';
-    h += '<td class="comp">' + esc(r.comp) + '</td>';
+    var compDisp = esc(r.comp).replace(/\(/, '<br>(');
+    h += '<td class="comp">' + compDisp + '</td>';
     h += '<td class="vessel">' + esc(r.vessel) + '</td>';
     h += '<td>' + esc(r.eta) + '</td><td>' + esc(r.berth) + '</td><td>' + esc(r.etd) + '</td>';
     h += '<td>' + esc(r.cargo) + '</td><td>' + esc(r.insp) + '</td>';
