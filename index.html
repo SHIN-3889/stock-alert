@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SHIN 워크스페이스</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,BlinkMacSystemFont,'Malgun Gothic',sans-serif;
+         background:linear-gradient(160deg,#1a2c47,#2c3e50); min-height:100vh;
+         display:flex; align-items:center; justify-content:center; padding:20px; }
+  .box { width:100%; max-width:440px; }
+  h1 { color:#fff; font-size:24px; text-align:center; margin-bottom:6px; }
+  .sub { color:rgba(255,255,255,.6); font-size:13px; text-align:center; margin-bottom:28px; }
+  a.menu { display:flex; align-items:center; gap:16px; background:#fff; border-radius:16px;
+           padding:22px 20px; margin-bottom:14px; text-decoration:none; color:#222;
+           box-shadow:0 4px 14px rgba(0,0,0,.25); transition:transform .15s; }
+  a.menu:active { transform:scale(.98); }
+  .icon { font-size:34px; width:54px; height:54px; display:flex; align-items:center;
+          justify-content:center; border-radius:12px; flex-shrink:0; }
+  .i-stock { background:#eaf2fb; }
+  .i-lab { background:#e8f8f0; }
+  .i-ship { background:#fdf2e3; }
+  .m-title { font-size:17px; font-weight:700; margin-bottom:3px; }
+  .m-desc { font-size:12px; color:#888; }
+</style>
+</head>
+<body>
+<div class="box">
+  <h1>워크스페이스</h1>
+  <div class="sub">이동할 페이지를 선택하세요</div>
+  <a class="menu" href="stock.html">
+    <div class="icon i-stock">📈</div>
+    <div><div class="m-title">주식 대시보드</div>
+    <div class="m-desc">시세 · 포트폴리오 · AI 종목 평가 · SOTP</div></div>
+  </a>
+  <a class="menu" href="https://shin-3889.github.io/lab-daily/">
+    <div class="icon i-lab">🧪</div>
+    <div><div class="m-title">분석 Schedule</div>
+    <div class="m-desc">실험1담당 교대2 · 일일 분석 체크리스트</div></div>
+  </a>
+  <a class="menu" href="berth.html">
+    <div class="icon i-ship">🚢</div>
+    <div><div class="m-title">출하 선석표</div>
+    <div class="m-desc">메일 선석표에서 필요 정보 추출</div></div>
+  </a>
+</div>
+</body>
+</html>
