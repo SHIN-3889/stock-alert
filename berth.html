@@ -26,46 +26,47 @@
   table.berth th { background:#eaf0f6; font-size:11px; white-space:nowrap; }
   table.berth td.comp { background:#1a2c47; color:#fff; font-weight:700; font-size:10px; }
   table.berth td.vessel { font-weight:600; white-space:nowrap; }
-  table.berth input.cell { width:100%; border:none; background:transparent; text-align:center; font-size:12px; font-family:inherit; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  table.berth input.cell { width:100%; border:none; background:transparent; text-align:center; font-size:12px; font-family:inherit; }
   table.berth input.cell:focus { outline:2px solid #f39c12; background:#fff8e1; }
   table.berth td.ok-cell { cursor:pointer; font-weight:700; color:#1e8449; user-select:none; min-width:42px; }
   .empty { color:#aaa; font-size:13px; text-align:center; padding:16px; }
   .note-area { margin-top:10px; }
   @media print {
-    @page { size:A4 landscape; margin:10mm; }
-    body { background:#fff; }
+    @page { size:A4 landscape; margin:8mm; }
+    body { background:#fff; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
     .no-print { display:none !important; }
     .wrap { max-width:100%; padding:0; }
     .card { box-shadow:none; padding:0; margin:0; }
     .home-link { display:none; }
     #resultCard { display:block !important; }
-    .title-input { border:none; font-size:18px; font-weight:700; width:auto; }
-    .title-row { justify-content:center; margin-bottom:8px; }
-    table.berth { width:100%; font-size:10px; table-layout:fixed; }
-    table.berth th, table.berth td { padding:4px 3px; }
-    table.berth input.cell { font-size:10px; }
-    /* 열 너비 비율 고정 (A4 가로 맞춤) */
-    table.berth th:nth-child(1)  { width:3%; }   /* 순번 */
-    table.berth th:nth-child(2)  { width:5%; }   /* 회사명 */
-    table.berth th:nth-child(3)  { width:12%; }  /* VESSEL NAME */
-    table.berth th:nth-child(4)  { width:6%; }   /* 입항 */
-    table.berth th:nth-child(5)  { width:6%; }   /* 접안 */
-    table.berth th:nth-child(6)  { width:6%; }   /* 이안 */
-    table.berth th:nth-child(7)  { width:11%; }  /* CARGO */
-    table.berth th:nth-child(8)  { width:4%; }   /* 검정 */
-    table.berth th:nth-child(9)  { width:6%; }   /* 행선지 */
-    table.berth th:nth-child(10) { width:4%; }   /* 공장 */
-    table.berth th:nth-child(11) { width:8%; }   /* REMARK */
-    table.berth th:nth-child(12) { width:7%; }   /* TANK1 */
-    table.berth th:nth-child(13) { width:7%; }   /* TANK2 */
-    table.berth th:nth-child(14) { width:7%; }   /* TANK3 */
-    table.berth th:nth-child(15) { width:4%; }   /* 분석완료 */
-    table.berth th:nth-child(16) { width:4%; }   /* 성적서 */
-    /* 글자 삐져나옴 방지 */
-    table.berth td, table.berth th { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    table.berth input.cell { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .title-input { border:none; font-size:16px; font-weight:700; width:auto; text-align:center; display:block; }
+    .title-row { justify-content:center; margin-bottom:6px; }
+    /* 표 전체를 가로 A4에 꽉 맞춤 - 글자 크기 자동 축소 */
+    table.berth { width:100%; table-layout:fixed; border-collapse:collapse; font-size:9px; }
+    table.berth th, table.berth td { border:1px solid #666; padding:3px 2px; word-break:break-all; word-wrap:break-word; white-space:normal; vertical-align:middle; }
+    table.berth th { font-size:8px; background:#eaf0f6 !important; }
+    table.berth td.comp { background:#1a2c47 !important; color:#fff !important; font-size:8px; }
+    table.berth input.cell { font-size:9px; border:none; background:transparent; width:100%; padding:0; word-break:break-all; }
+    table.berth td.ok-cell { font-size:9px; }
+    /* 열 너비 */
+    table.berth th:nth-child(1)  { width:3%; }
+    table.berth th:nth-child(2)  { width:5%; }
+    table.berth th:nth-child(3)  { width:13%; }
+    table.berth th:nth-child(4)  { width:6%; }
+    table.berth th:nth-child(5)  { width:6%; }
+    table.berth th:nth-child(6)  { width:6%; }
+    table.berth th:nth-child(7)  { width:11%; }
+    table.berth th:nth-child(8)  { width:4%; }
+    table.berth th:nth-child(9)  { width:6%; }
+    table.berth th:nth-child(10) { width:4%; }
+    table.berth th:nth-child(11) { width:8%; }
+    table.berth th:nth-child(12) { width:7%; }
+    table.berth th:nth-child(13) { width:7%; }
+    table.berth th:nth-child(14) { width:7%; }
+    table.berth th:nth-child(15) { width:4%; }
+    table.berth th:nth-child(16) { width:4%; }
     .note-area { margin-top:6px; }
-    .note-area textarea { border:none; min-height:30px; font-size:11px; resize:none; }
+    .note-area textarea { border:none; min-height:24px; font-size:9px; resize:none; width:100%; }
   }
 </style>
 </head>
