@@ -216,7 +216,10 @@ function renderDoc() {
   document.getElementById('resultCard').style.display = 'block';
   document.getElementById('docTitle').value = DOC.title;
   document.getElementById('noteArea').value = DOC.note || '';
-  var h = '<table class="berth"><thead><tr>';
+  var cols = [2,6,15,6.5,6.5,6.5,10,3.5,5,3.5,7,9.5,9.5,9.5,2,2];
+  var h = '<table class="berth"><colgroup>';
+  cols.forEach(function(w){ h += '<col style="width:'+w+'%">'; });
+  h += '</colgroup><thead><tr>';
   h += '<th>순번</th><th>회사명</th><th>VESSEL NAME</th><th>입항예정</th><th>접안예정</th><th>이안예정</th>';
   h += '<th>CARGO</th><th>검정</th><th>행선지</th><th>공장</th>';
   h += '<th>REMARK</th>';
