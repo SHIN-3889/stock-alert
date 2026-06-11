@@ -143,7 +143,8 @@ function applyRows(rows) {
   var old = DOC && DOC.rows ? DOC.rows : [];
   rows.forEach(function(nr){
     var prev = old.find(function(o){ return o.vessel === nr.vessel; });
-    if (prev) { nr.remark = prev.remark; nr.anal = prev.anal; nr.cert = prev.cert; }
+    if (prev) { nr.remark = prev.remark; nr.anal = prev.anal; nr.cert = prev.cert;
+                  nr.tank1 = prev.tank1||''; nr.tank2 = prev.tank2||''; nr.tank3 = prev.tank3||''; }
   });
   DOC = { title: todayTitle(), rows: rows, note: (DOC && DOC.note) || '' };
   localStorage.setItem('berth_doc', JSON.stringify(DOC));
@@ -168,8 +169,10 @@ function renderDoc() {
   document.getElementById('noteArea').value = DOC.note || '';
   var h = '<table class="berth"><thead><tr>';
   h += '<th>순번</th><th>회사명</th><th>VESSEL NAME</th><th>입항예정</th><th>접안예정</th><th>이안예정</th>';
-  h += '<th>CARGO</th><th>AGENT</th><th>검정</th><th>행선지</th><th>상사</th><th>공장</th>';
-  h += '<th style="min-width:130px;">REMARK</th><th>분석<br>완료</th><th>성적서<br>발행</th>';
+  h += '<th>CARGO</th><th>검정</th><th>행선지</th><th>공장</th>';
+  h += '<th style="min-width:70px;">REMARK</th>';
+  h += '<th colspan="3" style="min-width:90px;">TANK</th>';
+  h += '<th>분석<br>완료</th><th>성적서<br>발행</th>';
   h += '</tr></thead><tbody>';
   DOC.rows.forEach(function(r, i){
     h += '<tr>';
@@ -177,9 +180,12 @@ function renderDoc() {
     h += '<td class="comp">' + esc(r.comp) + '</td>';
     h += '<td class="vessel">' + esc(r.vessel) + '</td>';
     h += '<td>' + esc(r.eta) + '</td><td>' + esc(r.berth) + '</td><td>' + esc(r.etd) + '</td>';
-    h += '<td>' + esc(r.cargo) + '</td><td>' + esc(r.agent) + '</td><td>' + esc(r.insp) + '</td>';
-    h += '<td>' + esc(r.dest) + '</td><td>' + esc(r.trader) + '</td><td>' + esc(r.plant) + '</td>';
-    h += '<td><input class="cell" value="' + esc(r.remark) + '" onchange="setField(' + i + ',\'remark\',this.value)" placeholder=""></td>';
+    h += '<td>' + esc(r.cargo) + '</td><td>' + esc(r.insp) + '</td>';
+    h += '<td>' + esc(r.dest) + '</td><td>' + esc(r.plant) + '</td>';
+    h += '<td><input class="cell" style="min-width:65px;" value="' + esc(r.remark) + '" onchange="setField(' + i + ',\'remark\',this.value)" placeholder=""></td>';
+    h += '<td><input class="cell" style="min-width:28px;" value="' + esc(r.tank1||'') + '" onchange="setField(' + i + ',\'tank1\',this.value)" placeholder=""></td>';
+    h += '<td><input class="cell" style="min-width:28px;" value="' + esc(r.tank2||'') + '" onchange="setField(' + i + ',\'tank2\',this.value)" placeholder=""></td>';
+    h += '<td><input class="cell" style="min-width:28px;" value="' + esc(r.tank3||'') + '" onchange="setField(' + i + ',\'tank3\',this.value)" placeholder=""></td>';
     h += '<td class="ok-cell" onclick="toggleOk(' + i + ',\'anal\')">' + (r.anal||'') + '</td>';
     h += '<td class="ok-cell" onclick="toggleOk(' + i + ',\'cert\')">' + (r.cert||'') + '</td>';
     h += '</tr>';
