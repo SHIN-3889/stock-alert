@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>출하 선석표</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   body { font-family:-apple-system,BlinkMacSystemFont,'Malgun Gothic',sans-serif; background:#f4f6f9; color:#222; }
@@ -20,8 +19,6 @@
   .btn-orange { background:#f39c12; color:#fff; }
   .btn-blue { background:#2980b9; color:#fff; }
   .btn-gray { background:#e3e8ee; color:#444; }
-  .file-drop { border:2px dashed #ccd6e0; border-radius:10px; padding:24px; text-align:center; color:#888; font-size:13px; cursor:pointer; }
-  .file-drop.drag { border-color:#f39c12; background:#fff8e1; }
   .title-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
   .title-input { font-size:18px; font-weight:700; border:1px solid #ccd6e0; border-radius:8px; padding:8px 12px; width:240px; }
   table.berth { width:100%; border-collapse:collapse; font-size:12px; }
@@ -49,14 +46,14 @@
   <a class="home-link no-print" href="index.html">🏠 홈으로</a>
 
   <div class="card no-print">
-    <h2>1️⃣ 선석표 가져오기</h2>
-    <div class="file-drop" id="fileDrop" onclick="document.getElementById('fileInput').click()">
-      📎 엑셀 파일(.xlsx)을 여기로 끌어다 놓거나 클릭해서 선택
+    <h2>📋 선석표 붙여넣기</h2>
+    <div style="font-size:13px; color:#666; margin-bottom:8px; line-height:1.6;">
+      ① 메일 첨부 엑셀을 열어요<br>
+      ② 전체 선택 <b>Ctrl+A</b> → 복사 <b>Ctrl+C</b><br>
+      ③ 아래 칸에 붙여넣기 <b>Ctrl+V</b> → 추출 버튼
     </div>
-    <input type="file" id="fileInput" accept=".xlsx,.xls" style="display:none" onchange="handleFile(this.files[0])">
-    <div style="margin:10px 0 4px; font-size:12px; color:#888;">또는 엑셀에서 전체 선택(Ctrl+A) → 복사(Ctrl+C) 후 아래에 붙여넣기:</div>
-    <textarea id="pasteArea" placeholder="엑셀 내용을 붙여넣으세요"></textarea>
-    <button class="btn btn-orange" onclick="parsePaste()">📋 붙여넣은 내용에서 추출</button>
+    <textarea id="pasteArea" placeholder="엑셀 내용을 붙여넣으세요 (Ctrl+V)"></textarea>
+    <button class="btn btn-orange" onclick="parsePaste()">🚢 YNCC 항차 추출</button>
   </div>
 
   <div class="card" id="resultCard" style="display:none;">
@@ -153,31 +150,6 @@ function applyRows(rows) {
   renderDoc();
   alert('✓ YNCC 항차 ' + rows.length + '건을 추출했어요');
 }
-
-// ── 엑셀 파일 ──
-function handleFile(file) {
-  if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      var wb = XLSX.read(e.target.result, {type:'array'});
-      var ws = wb.Sheets[wb.SheetNames[0]];
-      var grid = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
-      var rows = extractFromGrid(grid);
-      applyRows(rows);
-    } catch(err) { alert('엑셀 읽기 실패: ' + err.message); }
-  };
-  reader.readAsArrayBuffer(file);
-}
-
-// 드래그앤드롭
-var drop = document.getElementById('fileDrop');
-drop.addEventListener('dragover', function(e){ e.preventDefault(); drop.classList.add('drag'); });
-drop.addEventListener('dragleave', function(){ drop.classList.remove('drag'); });
-drop.addEventListener('drop', function(e){
-  e.preventDefault(); drop.classList.remove('drag');
-  if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
-});
 
 // ── 붙여넣기 ──
 function parsePaste() {
