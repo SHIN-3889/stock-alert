@@ -346,8 +346,8 @@
   const PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
-  const DASHBOARD_DATE    = '2026-06-11 11:40';
-  const DASHBOARD_VERSION = 'v68.0';
+  const DASHBOARD_DATE    = '2026-06-02 07:27';
+  const DASHBOARD_VERSION = 'v3.0';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -924,6 +924,13 @@
               '발행주식수: ' + (dartInfo.shares_outstanding || 0).toLocaleString() + '주.' +
               subStr + excessStr;
             // DART 실제 부문별 재무정보 주입
+            // 과거 3개년 영업이익 이력 주입 (정상화 수준 판단 근거)
+            var h3 = dartInfo.history_3yr;
+            if (h3 && h3.op && h3.op.length === 3) {
+              function jo(v){ return (v/1000000000000).toFixed(2) + '조원'; }
+              dartStr += ' [과거 3개년 연간 영업이익 - DART 실측] 전전기 ' + jo(h3.op[0]) + ', 전기 ' + jo(h3.op[1]) + ', 당기 ' + jo(h3.op[2]) + '.' +
+                ' ⚠️ 정상화비중% 판단 시 이 실제 이력을 사용하세요. 정상화 영업이익은 과거 흑자 피크 수준(또는 그 이상)을 기준으로: 정상화비중 = (과거 최대 영업이익 ÷ 현재 전사 영업이익 절대값) × 100.';
+            }
             var segInfo = dartInfo.segment_info;
             if (segInfo && segInfo.indexOf('SINGLE_SEGMENT') !== -1) {
               dartStr += ' [부문 정보 - 전사 계산 모드] 이 회사는 부문 분할이 부적절합니다(단일부문이거나 부문 데이터 불명확). segments_calc에는 "전사" 부문 하나만 작성하세요.' +
@@ -1185,6 +1192,12 @@
             }
           }
 
+          // 과거 3개년 최대 영업이익 (정상화 게으른 복사 교정용, 억원)
+          var histMaxEok = 0;
+          if (dartCode.history_3yr && dartCode.history_3yr.op && dartCode.history_3yr.op.length === 3) {
+            histMaxEok = Math.max.apply(null, dartCode.history_3yr.op) / 100000000;
+          }
+
           // ── 퀄리티 등급 먼저 계산 (배수 밴드 내 위치 결정에 사용) ──
           var mcap = currentPrice * dartShares;
           var quality = calcQualityGrade(dartCode, mcap);
@@ -1237,6 +1250,15 @@
             // AI가 정상화비중을 음수로 복사해도 양수로 교정
             if (expectSign === -1) {
               rows.forEach(function(s){ s.normPct = Math.abs(s.normPct); });
+              // AI가 정상화를 현재 손실 크기로 게으르게 복사한 경우(±10% 이내),
+              // 과거 3개년 최대 영업이익(DART 실측) 기준으로 자동 스케일업
+              if (histMaxEok > dartOpEok) {
+                rows.forEach(function(s){
+                  if (Math.abs(s.normPct) <= Math.abs(s.curPct) * 1.1) {
+                    s.normPct = Math.abs(s.curPct) * histMaxEok / dartOpEok;
+                  }
+                });
+              }
             }
             rows.forEach(function(s){
               var opCur = dartOpEok * s.curPct / 100;    // 억원
