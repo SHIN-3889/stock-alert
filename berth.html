@@ -49,8 +49,8 @@
     table.berth input.cell { font-size:9px; border:none; background:transparent; width:100%; padding:0; word-break:break-all; }
     table.berth td.ok-cell { font-size:9px; }
     /* 열 너비 - 줄바꿈 우선, 모든 행 동일 높이 */
-    table.berth { font-size:11px; }
-    table.berth th, table.berth td { white-space:normal !important; word-break:keep-all; overflow-wrap:break-word; height:28px; vertical-align:middle; }
+    table.berth { font-size:13px; }
+    table.berth th, table.berth td { white-space:normal !important; word-break:keep-all; overflow-wrap:break-word; height:36px; vertical-align:middle; }
     table.berth th:nth-child(1)  { width:2%; }    /* 순번 */
     table.berth th:nth-child(2)  { width:6%; }    /* 회사명 - 한글3자 */
     table.berth th:nth-child(3)  { width:15%; }   /* VESSEL NAME */
@@ -180,6 +180,23 @@ function applyRows(rows) {
     var prev = old.find(function(o){ return o.vessel === nr.vessel; });
     if (prev) { nr.remark = prev.remark; nr.anal = prev.anal; nr.cert = prev.cert;
                   nr.tank1 = prev.tank1||''; nr.tank2 = prev.tank2||''; nr.tank3 = prev.tank3||''; }
+  });
+  // 접안예정 기준 정렬: 값 있는 것 먼저(오름차순), 없는 것 뒤로
+  function parseBerth(s) {
+    if (!s || !s.trim()) return null;
+    // "11/0500" → 11일 05시 → 숫자화: 일*10000 + 시분
+    var m = String(s).replace(/[^0-9/]/g,'').match(/^(\d+)\/(\d+)$/);
+    if (!m) return null;
+    var day = parseInt(m[1]), hm = parseInt(m[2]);
+    var hour = Math.floor(hm / 100), min = hm % 100;
+    return day * 10000 + hour * 100 + min;
+  }
+  rows.sort(function(a, b){
+    var va = parseBerth(a.berth), vb = parseBerth(b.berth);
+    if (va !== null && vb !== null) return va - vb;  // 둘 다 있으면 오름차순
+    if (va !== null) return -1;  // a만 있으면 a 앞
+    if (vb !== null) return 1;   // b만 있으면 b 뒤
+    return 0;  // 둘 다 없으면 순서 유지
   });
   DOC = { title: todayTitle(), rows: rows, note: (DOC && DOC.note) || '' };
   localStorage.setItem('berth_doc', JSON.stringify(DOC));
