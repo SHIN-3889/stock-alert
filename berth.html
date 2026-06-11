@@ -26,7 +26,7 @@
   table.berth th { background:#eaf0f6; font-size:11px; white-space:nowrap; }
   table.berth td.comp { background:#1a2c47; color:#fff; font-weight:700; font-size:10px; }
   table.berth td.vessel { font-weight:600; white-space:nowrap; }
-  table.berth input.cell { width:100%; border:none; background:transparent; text-align:center; font-size:12px; font-family:inherit; }
+  table.berth input.cell { width:100%; border:none; background:transparent; text-align:center; font-size:12px; font-family:inherit; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   table.berth input.cell:focus { outline:2px solid #f39c12; background:#fff8e1; }
   table.berth td.ok-cell { cursor:pointer; font-weight:700; color:#1e8449; user-select:none; min-width:42px; }
   .empty { color:#aaa; font-size:13px; text-align:center; padding:16px; }
@@ -45,22 +45,25 @@
     table.berth th, table.berth td { padding:4px 3px; }
     table.berth input.cell { font-size:10px; }
     /* 열 너비 비율 고정 (A4 가로 맞춤) */
-    table.berth th:nth-child(1)  { width:4%; }   /* 순번 */
-    table.berth th:nth-child(2)  { width:6%; }   /* 회사명 */
-    table.berth th:nth-child(3)  { width:14%; }  /* VESSEL NAME */
-    table.berth th:nth-child(4)  { width:7%; }   /* 입항 */
-    table.berth th:nth-child(5)  { width:7%; }   /* 접안 */
-    table.berth th:nth-child(6)  { width:7%; }   /* 이안 */
-    table.berth th:nth-child(7)  { width:10%; }  /* CARGO */
-    table.berth th:nth-child(8)  { width:5%; }   /* 검정 */
+    table.berth th:nth-child(1)  { width:3%; }   /* 순번 */
+    table.berth th:nth-child(2)  { width:5%; }   /* 회사명 */
+    table.berth th:nth-child(3)  { width:12%; }  /* VESSEL NAME */
+    table.berth th:nth-child(4)  { width:6%; }   /* 입항 */
+    table.berth th:nth-child(5)  { width:6%; }   /* 접안 */
+    table.berth th:nth-child(6)  { width:6%; }   /* 이안 */
+    table.berth th:nth-child(7)  { width:11%; }  /* CARGO */
+    table.berth th:nth-child(8)  { width:4%; }   /* 검정 */
     table.berth th:nth-child(9)  { width:6%; }   /* 행선지 */
-    table.berth th:nth-child(10) { width:5%; }   /* 공장 */
-    table.berth th:nth-child(11) { width:10%; }  /* REMARK */
-    table.berth th:nth-child(12) { width:4%; }   /* TANK1 */
-    table.berth th:nth-child(13) { width:4%; }   /* TANK2 */
-    table.berth th:nth-child(14) { width:4%; }   /* TANK3 */
+    table.berth th:nth-child(10) { width:4%; }   /* 공장 */
+    table.berth th:nth-child(11) { width:8%; }   /* REMARK */
+    table.berth th:nth-child(12) { width:7%; }   /* TANK1 */
+    table.berth th:nth-child(13) { width:7%; }   /* TANK2 */
+    table.berth th:nth-child(14) { width:7%; }   /* TANK3 */
     table.berth th:nth-child(15) { width:4%; }   /* 분석완료 */
     table.berth th:nth-child(16) { width:4%; }   /* 성적서 */
+    /* 글자 삐져나옴 방지 */
+    table.berth td, table.berth th { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    table.berth input.cell { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .note-area { margin-top:6px; }
     .note-area textarea { border:none; min-height:30px; font-size:11px; resize:none; }
   }
@@ -141,7 +144,8 @@ function extractFromGrid(grid) {
     comp: findCol('회사'), vessel: findCol('VESSEL'),
     eta: findCol('입항'), berth: findCol('접안'), etd: findCol('이안'),
     cargo: findCol('CARGO'), agent: findCol('AGENT'),
-    insp: findCol('검정'), dest: findCol('행선'), trader: findCol('상사'), plant: findCol('공장')
+    insp: findCol('검정'), dest: findCol('행선'), trader: findCol('상사'),
+    plant: findCol('공장'), remark: findCol('REMARK')
   };
   if (colMap.comp === -1 || colMap.vessel === -1) return null;
 
@@ -156,7 +160,7 @@ function extractFromGrid(grid) {
         vessel: g('vessel'), eta: g('eta'), berth: g('berth'), etd: g('etd'),
         cargo: g('cargo'), agent: g('agent'), insp: g('insp'),
         dest: g('dest'), trader: g('trader'), plant: g('plant'),
-        remark: '', anal: '', cert: ''
+        remark: g('remark'), anal: '', cert: '', tank1:'', tank2:'', tank3:''
       });
     }
   }
