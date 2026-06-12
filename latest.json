@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-12 19:55:46",
+  "updated_at": "2026-06-12 20:01:14",
   "portfolio": {
     "rows": [
       {
@@ -11,7 +11,7 @@
         "value_krw": 24860000.0,
         "pl_krw": 4466000.0,
         "pl_pct": 21.898597626752967,
-        "session": "nxt"
+        "session": "market_closed"
       },
       {
         "name": "TIGER 미국30년국채커버드콜액티브(H)",
@@ -22,7 +22,7 @@
         "value_krw": 3641720.0,
         "pl_krw": 42252.0,
         "pl_pct": 1.1738401341531581,
-        "session": "nxt"
+        "session": "market_closed"
       },
       {
         "name": "삼성전자",
@@ -33,17 +33,17 @@
         "value_krw": 31282500.0,
         "pl_krw": 1201248.0,
         "pl_pct": 3.9933444259567388,
-        "session": "nxt"
+        "session": "market_closed"
       },
       {
         "name": "엔비디아",
         "currency": "USD",
-        "price": 205.55,
-        "day_change_pct": -0.20875813185745143,
+        "price": 205.9087,
+        "day_change_pct": -0.03461501116612268,
         "shares": 189,
-        "value_krw": 59071383.950537115,
-        "pl_krw": -787426.8646288961,
-        "pl_pct": -1.3154736185126414,
+        "value_krw": 59187698.26100716,
+        "pl_krw": -684495.9240135849,
+        "pl_pct": -1.1432617984540698,
         "session": "pre"
       },
       {
@@ -55,7 +55,7 @@
         "value_krw": 64342000.0,
         "pl_krw": 1632400.0,
         "pl_pct": 2.603110209601082,
-        "session": "nxt"
+        "session": "market_closed"
       },
       {
         "name": "삼성SDI",
@@ -66,16 +66,16 @@
         "value_krw": 20482000.0,
         "pl_krw": 798000.0,
         "pl_pct": 4.054054054054054,
-        "session": "nxt"
+        "session": "market_closed"
       }
     ],
     "summary": {
-      "total_value_krw": 203679603.95053712,
-      "day_change_krw": 9152650.711025387,
-      "day_change_pct": 4.70508099705657,
-      "total_pl_krw": 7352473.135371119,
-      "total_pl_pct": 3.745011249766174,
-      "usdkrw": 1520.5400390625
+      "total_value_krw": 203795918.26100716,
+      "day_change_krw": 9255730.077318192,
+      "day_change_pct": 4.757747056653782,
+      "total_pl_krw": 7455404.075986415,
+      "total_pl_pct": 3.7971806822105205,
+      "usdkrw": 1520.8800048828125
     },
     "watchlist": [
       {
@@ -85,15 +85,15 @@
         "currency": "KRW",
         "price": 2150000.0,
         "day_change_pct": 2.3322227510709186,
-        "session": "nxt"
+        "session": "market_closed"
       },
       {
         "code": "GOOG",
         "name": "구글",
         "market": "US",
         "currency": "USD",
-        "price": 360.46,
-        "day_change_pct": 0.4913891207463348,
+        "price": 360.0,
+        "day_change_pct": 0.36314732139122946,
         "session": "pre"
       },
       {
@@ -101,8 +101,8 @@
         "name": "마이크론",
         "market": "US",
         "currency": "USD",
-        "price": 980.58,
-        "day_change_pct": -1.8143586662661464,
+        "price": 984.8,
+        "day_change_pct": -1.391809352157814,
         "session": "pre"
       }
     ]
