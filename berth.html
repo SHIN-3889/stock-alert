@@ -22,7 +22,7 @@
   .title-input { font-size:18px; font-weight:700; border:1px solid #ccd6e0; border-radius:8px; padding:8px 12px; width:240px; }
   /* ── 화면용 테이블 ── */
   table.berth { width:100%; border-collapse:collapse; font-size:13px; table-layout:fixed; }
-  table.berth th, table.berth td { border:1px solid #999; padding:6px 4px; text-align:center; word-break:keep-all; overflow-wrap:break-word; white-space:normal; vertical-align:middle; height:36px; }
+  table.berth th, table.berth td { border:1px solid #999; padding:6px 3px; text-align:center; word-break:keep-all; overflow-wrap:break-word; white-space:normal; vertical-align:middle; height:36px; overflow:hidden; }
   table.berth th { background:#eaf0f6; font-size:12px; }
   table.berth td.comp { background:#1a2c47; color:#fff; font-weight:700; font-size:11px; }
   table.berth td.vessel { font-weight:600; }
@@ -31,18 +31,18 @@
   table.berth th.tight, table.berth td.ok-cell { padding-left:1px; padding-right:1px; }
   table.berth td.ok-cell { cursor:pointer; font-weight:700; color:#1e8449; user-select:none; }
   /* 화면 열 너비 */
-  table.berth col.c-no     { width:3%; }
+  table.berth col.c-no     { width:28px; }
   table.berth col.c-comp   { width:6%; }
-  table.berth col.c-vessel { width:14%; }
-  table.berth col.c-eta    { width:7%; }
-  table.berth col.c-berth  { width:7%; }
-  table.berth col.c-etd    { width:7%; }
-  table.berth col.c-cargo  { width:12%; }
-  table.berth col.c-insp   { width:3%; }
-  table.berth col.c-dest   { width:4%; }
-  table.berth col.c-plant  { width:3%; }
+  table.berth col.c-vessel { width:13%; }
+  table.berth col.c-eta    { width:6.5%; }
+  table.berth col.c-berth  { width:6.5%; }
+  table.berth col.c-etd    { width:6.5%; }
+  table.berth col.c-cargo  { width:11%; }
+  table.berth col.c-insp   { width:5.5%; }
+  table.berth col.c-dest   { width:5.5%; }
+  table.berth col.c-plant  { width:4%; }
   table.berth col.c-remark { width:7%; }
-  table.berth col.c-tank   { width:7.3%; }
+  table.berth col.c-tank   { width:7%; }
   table.berth col.c-anal   { width:34px; }
   table.berth col.c-cert   { width:40px; }
   .note-area { margin-top:10px; }
@@ -63,18 +63,18 @@
     table.berth td.comp { background:#1a2c47 !important; color:#fff !important; }
     table.berth input.cell { border:none; background:transparent; width:100%; padding:0; font-size:13px; font-family:inherit; }
     /* 인쇄 열 너비 - col 클래스로 지정 */
-    table.berth col.c-no     { width:3% !important; }
+    table.berth col.c-no     { width:26px !important; }
     table.berth col.c-comp   { width:6% !important; }
-    table.berth col.c-vessel { width:14% !important; }
-    table.berth col.c-eta    { width:7% !important; }
-    table.berth col.c-berth  { width:7% !important; }
-    table.berth col.c-etd    { width:7% !important; }
-    table.berth col.c-cargo  { width:12% !important; }
-    table.berth col.c-insp   { width:3% !important; }
-    table.berth col.c-dest   { width:4% !important; }
-    table.berth col.c-plant  { width:3% !important; }
+    table.berth col.c-vessel { width:13% !important; }
+    table.berth col.c-eta    { width:6.5% !important; }
+    table.berth col.c-berth  { width:6.5% !important; }
+    table.berth col.c-etd    { width:6.5% !important; }
+    table.berth col.c-cargo  { width:11% !important; }
+    table.berth col.c-insp   { width:5.5% !important; }
+    table.berth col.c-dest   { width:5.5% !important; }
+    table.berth col.c-plant  { width:4% !important; }
     table.berth col.c-remark { width:7% !important; }
-    table.berth col.c-tank   { width:7.3% !important; }
+    table.berth col.c-tank   { width:7% !important; }
     table.berth col.c-anal   { width:30px !important; }
     table.berth col.c-cert   { width:36px !important; }
     table.berth td.nowrap, table.berth th.nowrap { white-space:nowrap !important; }
@@ -255,6 +255,22 @@ function renderDoc(){
   });
   h+='</tbody></table>';
   document.getElementById('tableWrap').innerHTML=h;
+  fitCells();
+}
+
+// 칸을 벗어나는 셀의 글자 크기를 자동으로 줄임 (nowrap 셀 대상)
+function fitCells(){
+  var cells = document.querySelectorAll('table.berth td.nowrap, table.berth td.vessel, table.berth td.comp');
+  cells.forEach(function(td){
+    var size = 13;
+    td.style.fontSize = size + 'px';
+    var guard = 0;
+    while (td.scrollWidth > td.clientWidth && size > 8 && guard < 12) {
+      size -= 0.5;
+      td.style.fontSize = size + 'px';
+      guard++;
+    }
+  });
 }
 
 function setField(i,k,v){DOC.rows[i][k]=v;saveDoc();}
