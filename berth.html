@@ -27,22 +27,24 @@
   table.berth td.comp { background:#1a2c47; color:#fff; font-weight:700; font-size:11px; }
   table.berth td.vessel { font-weight:600; }
   table.berth input.cell { width:100%; border:none; background:transparent; text-align:center; font-size:13px; font-family:inherit; }
+  table.berth td.nowrap, table.berth th.nowrap { white-space:nowrap !important; word-break:keep-all; }
+  table.berth th.tight, table.berth td.ok-cell { padding-left:1px; padding-right:1px; }
   table.berth td.ok-cell { cursor:pointer; font-weight:700; color:#1e8449; user-select:none; }
   /* 화면 열 너비 */
-  table.berth col.c-no     { width:2%; }
+  table.berth col.c-no     { width:3%; }
   table.berth col.c-comp   { width:6%; }
-  table.berth col.c-vessel { width:15%; }
-  table.berth col.c-eta    { width:6.5%; }
-  table.berth col.c-berth  { width:6.5%; }
-  table.berth col.c-etd    { width:6.5%; }
-  table.berth col.c-cargo  { width:10%; }
-  table.berth col.c-insp   { width:3.5%; }
-  table.berth col.c-dest   { width:5%; }
-  table.berth col.c-plant  { width:3.5%; }
+  table.berth col.c-vessel { width:14%; }
+  table.berth col.c-eta    { width:7%; }
+  table.berth col.c-berth  { width:7%; }
+  table.berth col.c-etd    { width:7%; }
+  table.berth col.c-cargo  { width:12%; }
+  table.berth col.c-insp   { width:3%; }
+  table.berth col.c-dest   { width:4%; }
+  table.berth col.c-plant  { width:3%; }
   table.berth col.c-remark { width:7%; }
-  table.berth col.c-tank   { width:9.5%; }
-  table.berth col.c-anal   { width:4%; }
-  table.berth col.c-cert   { width:4%; }
+  table.berth col.c-tank   { width:7.3%; }
+  table.berth col.c-anal   { width:34px; }
+  table.berth col.c-cert   { width:40px; }
   .note-area { margin-top:10px; }
   .empty { color:#aaa; font-size:13px; text-align:center; padding:16px; }
   /* ── 인쇄 ── */
@@ -61,20 +63,21 @@
     table.berth td.comp { background:#1a2c47 !important; color:#fff !important; }
     table.berth input.cell { border:none; background:transparent; width:100%; padding:0; font-size:13px; font-family:inherit; }
     /* 인쇄 열 너비 - col 클래스로 지정 */
-    table.berth col.c-no     { width:2% !important; }
+    table.berth col.c-no     { width:3% !important; }
     table.berth col.c-comp   { width:6% !important; }
-    table.berth col.c-vessel { width:15% !important; }
-    table.berth col.c-eta    { width:6.5% !important; }
-    table.berth col.c-berth  { width:6.5% !important; }
-    table.berth col.c-etd    { width:6.5% !important; }
-    table.berth col.c-cargo  { width:10% !important; }
-    table.berth col.c-insp   { width:3.5% !important; }
-    table.berth col.c-dest   { width:5% !important; }
-    table.berth col.c-plant  { width:3.5% !important; }
+    table.berth col.c-vessel { width:14% !important; }
+    table.berth col.c-eta    { width:7% !important; }
+    table.berth col.c-berth  { width:7% !important; }
+    table.berth col.c-etd    { width:7% !important; }
+    table.berth col.c-cargo  { width:12% !important; }
+    table.berth col.c-insp   { width:3% !important; }
+    table.berth col.c-dest   { width:4% !important; }
+    table.berth col.c-plant  { width:3% !important; }
     table.berth col.c-remark { width:7% !important; }
-    table.berth col.c-tank   { width:9.5% !important; }
-    table.berth col.c-anal   { width:4% !important; }
-    table.berth col.c-cert   { width:4% !important; }
+    table.berth col.c-tank   { width:7.3% !important; }
+    table.berth col.c-anal   { width:30px !important; }
+    table.berth col.c-cert   { width:36px !important; }
+    table.berth td.nowrap, table.berth th.nowrap { white-space:nowrap !important; }
     .note-area { margin-top:6px; }
     .note-area textarea { border:none; min-height:24px; font-size:11px; resize:none; width:100%; }
   }
@@ -225,12 +228,12 @@ function renderDoc(){
   h+='</colgroup>';
   h+='<thead><tr>';
   h+='<th>순번</th><th>회사명</th><th>VESSEL NAME</th>';
-  h+='<th>입항예정</th><th>접안예정</th><th>이안예정</th>';
-  h+='<th>CARGO</th><th>검정</th><th>행선지</th><th>공장</th>';
+  h+='<th class="nowrap">입항예정</th><th class="nowrap">접안예정</th><th class="nowrap">이안예정</th>';
+  h+='<th>CARGO</th><th class="nowrap">검정</th><th class="nowrap">행선지</th><th class="nowrap">공장</th>';
   h+='<th>REMARK</th>';
   h+='<th colspan="3">TANK</th>';
-  h+='<th style="white-space:normal;">분석<br>완료</th>';
-  h+='<th style="white-space:normal;">성적서<br>발행</th>';
+  h+='<th class="tight" style="white-space:normal;">분석<br>완료</th>';
+  h+='<th class="tight" style="white-space:normal;">성적서<br>발행</th>';
   h+='</tr></thead><tbody>';
 
   DOC.rows.forEach(function(r,i){
@@ -239,9 +242,9 @@ function renderDoc(){
     h+='<td>'+(i+1)+'</td>';
     h+='<td class="comp">'+compDisp+'</td>';
     h+='<td class="vessel">'+esc(r.vessel)+'</td>';
-    h+='<td>'+esc(r.eta)+'</td><td>'+esc(r.berth)+'</td><td>'+esc(r.etd)+'</td>';
-    h+='<td>'+esc(r.cargo)+'</td><td>'+esc(r.insp)+'</td>';
-    h+='<td>'+esc(r.dest)+'</td><td>'+esc(r.plant)+'</td>';
+    h+='<td class="nowrap">'+esc(r.eta)+'</td><td class="nowrap">'+esc(r.berth)+'</td><td class="nowrap">'+esc(r.etd)+'</td>';
+    h+='<td>'+esc(r.cargo)+'</td><td class="nowrap">'+esc(r.insp)+'</td>';
+    h+='<td class="nowrap">'+esc(r.dest)+'</td><td class="nowrap">'+esc(r.plant)+'</td>';
     h+='<td><input class="cell" value="'+esc(r.remark)+'" onchange="setField('+i+',\'remark\',this.value)"></td>';
     h+='<td><input class="cell" value="'+esc(r.tank1||'')+'" onchange="setField('+i+',\'tank1\',this.value)"></td>';
     h+='<td><input class="cell" value="'+esc(r.tank2||'')+'" onchange="setField('+i+',\'tank2\',this.value)"></td>';
