@@ -20,16 +20,32 @@
   .btn-gray { background:#e3e8ee; color:#444; }
   .title-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
   .title-input { font-size:18px; font-weight:700; border:1px solid #ccd6e0; border-radius:8px; padding:8px 12px; width:240px; }
-  table.berth { width:100%; border-collapse:collapse; font-size:12px; }
-  table.berth th, table.berth td { border:1px solid #999; padding:6px 4px; text-align:center; }
-  table.berth th { background:#eaf0f6; font-size:11px; white-space:nowrap; }
-  table.berth td.comp { background:#1a2c47; color:#fff; font-weight:700; font-size:10px; }
-  table.berth td.vessel { font-weight:600; white-space:nowrap; }
-  table.berth input.cell { width:100%; border:none; background:transparent; text-align:center; font-size:12px; font-family:inherit; }
-  table.berth input.cell:focus { outline:2px solid #f39c12; background:#fff8e1; }
+  /* ── 화면용 테이블 ── */
+  table.berth { width:100%; border-collapse:collapse; font-size:13px; table-layout:fixed; }
+  table.berth th, table.berth td { border:1px solid #999; padding:6px 4px; text-align:center; word-break:keep-all; overflow-wrap:break-word; white-space:normal; vertical-align:middle; height:36px; }
+  table.berth th { background:#eaf0f6; font-size:12px; }
+  table.berth td.comp { background:#1a2c47; color:#fff; font-weight:700; font-size:11px; }
+  table.berth td.vessel { font-weight:600; }
+  table.berth input.cell { width:100%; border:none; background:transparent; text-align:center; font-size:13px; font-family:inherit; }
   table.berth td.ok-cell { cursor:pointer; font-weight:700; color:#1e8449; user-select:none; }
-  .empty { color:#aaa; font-size:13px; text-align:center; padding:16px; }
+  /* 화면 열 너비 */
+  table.berth col.c-no     { width:2%; }
+  table.berth col.c-comp   { width:6%; }
+  table.berth col.c-vessel { width:15%; }
+  table.berth col.c-eta    { width:6.5%; }
+  table.berth col.c-berth  { width:6.5%; }
+  table.berth col.c-etd    { width:6.5%; }
+  table.berth col.c-cargo  { width:10%; }
+  table.berth col.c-insp   { width:3.5%; }
+  table.berth col.c-dest   { width:5%; }
+  table.berth col.c-plant  { width:3.5%; }
+  table.berth col.c-remark { width:7%; }
+  table.berth col.c-tank   { width:9.5%; }
+  table.berth col.c-anal   { width:4%; }
+  table.berth col.c-cert   { width:4%; }
   .note-area { margin-top:10px; }
+  .empty { color:#aaa; font-size:13px; text-align:center; padding:16px; }
+  /* ── 인쇄 ── */
   @media print {
     @page { size:A4 landscape; margin:8mm; }
     body { background:#fff; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
@@ -39,36 +55,28 @@
     #resultCard { display:block !important; }
     .title-input { border:none; font-size:16px; font-weight:700; width:auto; text-align:center; display:block; }
     .title-row { justify-content:center; margin-bottom:6px; }
-    /* 표 전체를 가로 A4에 꽉 맞춤 - 글자 크기 자동 축소 */
-    table.berth { width:100%; table-layout:fixed; border-collapse:collapse; font-size:9px; }
-    table.berth th, table.berth td { border:1px solid #666; padding:3px 2px; word-break:break-all; word-wrap:break-word; white-space:normal; vertical-align:middle; }
-    table.berth th { font-size:8px; background:#eaf0f6 !important; }
-    table.berth td.comp { background:#1a2c47 !important; color:#fff !important; font-size:8px; }
-    table.berth input.cell { font-size:9px; border:none; background:transparent; width:100%; padding:0; word-break:break-all; }
-    table.berth td.ok-cell { min-width:0 !important; }
-    /* 열 너비 - 줄바꿈 우선, 모든 행 동일 높이 */
-    table.berth { font-size:13px; }
-    table.berth th, table.berth td { white-space:normal !important; word-break:keep-all; overflow-wrap:break-word; height:36px; vertical-align:middle; }
-    table.berth th:nth-child(1)  { width:2%; }    /* 순번 */
-    table.berth th:nth-child(2)  { width:6%; }    /* 회사명 - 한글3자 */
-    table.berth th:nth-child(3)  { width:15%; }   /* VESSEL NAME */
-    table.berth th:nth-child(4)  { width:6.5%; }  /* 입항 - 한글4자 */
-    table.berth th:nth-child(5)  { width:6.5%; }  /* 접안 */
-    table.berth th:nth-child(6)  { width:6.5%; }  /* 이안 */
-    table.berth th:nth-child(7)  { width:10%; }   /* CARGO */
-    table.berth th:nth-child(8)  { width:3.5%; }  /* 검정 */
-    table.berth th:nth-child(9)  { width:5%; }    /* 행선지 */
-    table.berth th:nth-child(10) { width:3.5%; }  /* 공장 */
-    table.berth th:nth-child(11) { width:7%; }    /* REMARK */
-    table.berth th:nth-child(12) { width:9.5%; }  /* TANK1 */
-    table.berth th:nth-child(13) { width:9.5%; }  /* TANK2 */
-    table.berth th:nth-child(14) { width:9.5%; }  /* TANK3 */
-    table.berth th:nth-child(15) { width:2%; }    /* 분석완료 - "분석
-완료" */
-    table.berth th:nth-child(16) { width:2%; }    /* 성적서발행 - "성적서
-발행" */
+    table.berth { width:100%; table-layout:fixed; border-collapse:collapse; font-size:13px; }
+    table.berth th, table.berth td { border:1px solid #666; padding:3px 2px; white-space:normal !important; word-break:keep-all; overflow-wrap:break-word; height:36px; vertical-align:middle; }
+    table.berth th { background:#eaf0f6 !important; }
+    table.berth td.comp { background:#1a2c47 !important; color:#fff !important; }
+    table.berth input.cell { border:none; background:transparent; width:100%; padding:0; font-size:13px; font-family:inherit; }
+    /* 인쇄 열 너비 - col 클래스로 지정 */
+    table.berth col.c-no     { width:2% !important; }
+    table.berth col.c-comp   { width:6% !important; }
+    table.berth col.c-vessel { width:15% !important; }
+    table.berth col.c-eta    { width:6.5% !important; }
+    table.berth col.c-berth  { width:6.5% !important; }
+    table.berth col.c-etd    { width:6.5% !important; }
+    table.berth col.c-cargo  { width:10% !important; }
+    table.berth col.c-insp   { width:3.5% !important; }
+    table.berth col.c-dest   { width:5% !important; }
+    table.berth col.c-plant  { width:3.5% !important; }
+    table.berth col.c-remark { width:7% !important; }
+    table.berth col.c-tank   { width:9.5% !important; }
+    table.berth col.c-anal   { width:4% !important; }
+    table.berth col.c-cert   { width:4% !important; }
     .note-area { margin-top:6px; }
-    .note-area textarea { border:none; min-height:24px; font-size:9px; resize:none; width:100%; }
+    .note-area textarea { border:none; min-height:24px; font-size:11px; resize:none; width:100%; }
   }
 </style>
 </head>
@@ -78,7 +86,7 @@
 
   <div class="card no-print">
     <h2>📋 선석표 붙여넣기</h2>
-    <div style="font-size:13px; color:#666; margin-bottom:8px; line-height:1.6;">
+    <div style="font-size:13px;color:#666;margin-bottom:8px;line-height:1.8;">
       ① 메일 첨부 엑셀을 열어요<br>
       ② 전체 선택 <b>Ctrl+A</b> → 복사 <b>Ctrl+C</b><br>
       ③ 아래 칸에 붙여넣기 <b>Ctrl+V</b> → 추출 버튼
@@ -95,8 +103,8 @@
     </div>
     <div id="tableWrap"></div>
     <div class="note-area">
-      <div style="font-size:13px; font-weight:700; margin-bottom:4px;">*특이사항</div>
-      <textarea id="noteArea" style="min-height:60px;" onchange="saveDoc()"></textarea>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;">*특이사항</div>
+      <textarea id="noteArea" style="min-height:50px;" onchange="saveDoc()"></textarea>
     </div>
   </div>
 </div>
@@ -104,155 +112,153 @@
 <script>
 var DOC = null;
 
-function todayTitle() {
-  var d = new Date();
-  return (d.getMonth()+1) + '월 ' + d.getDate() + '일 선석표';
+function todayTitle(){
+  var d=new Date();
+  return (d.getMonth()+1)+'월 '+d.getDate()+'일 선석표';
 }
-
-function loadDoc() {
-  try { var d = JSON.parse(localStorage.getItem('berth_doc')); if (d) return d; } catch(e){}
+function loadDoc(){
+  try { var d=JSON.parse(localStorage.getItem('berth_doc')); if(d) return d; } catch(e){}
   return null;
 }
-function saveDoc() {
+function saveDoc(){
   if (!DOC) return;
   DOC.title = document.getElementById('docTitle').value;
-  DOC.note = document.getElementById('noteArea').value;
+  DOC.note  = document.getElementById('noteArea').value;
   localStorage.setItem('berth_doc', JSON.stringify(DOC));
 }
-function clearDoc() {
+function clearDoc(){
   if (!confirm('현재 선석표를 지울까요?')) return;
   localStorage.removeItem('berth_doc');
   DOC = null;
-  document.getElementById('resultCard').style.display = 'none';
+  document.getElementById('resultCard').style.display='none';
+}
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function parseBerth(s){
+  if (!s||!s.trim()) return null;
+  var m=String(s).replace(/[^0-9\/]/g,'').match(/^(\d+)\/(\d+)$/);
+  if (!m) return null;
+  var day=parseInt(m[1]), hm=parseInt(m[2]);
+  return day*10000 + Math.floor(hm/100)*100 + hm%100;
 }
 
-// ── 파싱 공통: 2차원 배열 → YNCC 행 추출 ──
-function extractFromGrid(grid) {
-  // 헤더 행 찾기 (VESSEL 포함)
-  var headerIdx = -1, colMap = {};
-  for (var i = 0; i < Math.min(grid.length, 10); i++) {
-    var row = grid[i].map(function(c){ return String(c||'').toUpperCase(); });
-    if (row.some(function(c){ return c.indexOf('VESSEL') !== -1; })) { headerIdx = i; break; }
+function extractFromGrid(grid){
+  var headerIdx=-1;
+  for (var i=0;i<Math.min(grid.length,10);i++){
+    var row=grid[i].map(function(c){return String(c||'').toUpperCase();});
+    if (row.some(function(c){return c.indexOf('VESSEL')!==-1;})){headerIdx=i;break;}
   }
-  if (headerIdx === -1) return null;
-  var hdr = grid[headerIdx].map(function(c){ return String(c||''); });
-  function findCol(kw) {
-    for (var j = 0; j < hdr.length; j++) {
-      if (hdr[j].toUpperCase().indexOf(kw.toUpperCase()) !== -1) return j;
-    }
+  if (headerIdx===-1) return null;
+  var hdr=grid[headerIdx].map(function(c){return String(c||'');});
+  function fc(kw){
+    for(var j=0;j<hdr.length;j++) if(hdr[j].toUpperCase().indexOf(kw.toUpperCase())!==-1) return j;
     return -1;
   }
-  colMap = {
-    comp: findCol('회사'), vessel: findCol('VESSEL'),
-    eta: findCol('입항'), berth: findCol('접안'), etd: findCol('이안'),
-    cargo: findCol('CARGO'), agent: findCol('AGENT'),
-    insp: findCol('검정'), dest: findCol('행선'), trader: findCol('상사'),
-    plant: findCol('공장'), remark: findCol('REMARK')
+  var cm={
+    comp:fc('회사'), vessel:fc('VESSEL'),
+    eta:fc('입항'), berth:fc('접안'), etd:fc('이안'),
+    cargo:fc('CARGO'), agent:fc('AGENT'),
+    insp:fc('검정'), dest:fc('행선'), trader:fc('상사'),
+    plant:fc('공장'), remark:fc('REMARK')
   };
-  if (colMap.comp === -1 || colMap.vessel === -1) return null;
-
-  var rows = [];
-  for (var r = headerIdx + 1; r < grid.length; r++) {
-    var row = grid[r];
-    var comp = String(row[colMap.comp]||'').trim().toUpperCase();
-    if (comp.indexOf('YNCC') === 0) {
-      function g(k){ return colMap[k] !== -1 ? String(row[colMap[k]]||'').trim() : ''; }
+  if (cm.comp===-1||cm.vessel===-1) return null;
+  var rows=[];
+  for(var r=headerIdx+1;r<grid.length;r++){
+    var row=grid[r];
+    var comp=String(row[cm.comp]||'').trim();
+    if (comp.toUpperCase().indexOf('YNCC')===0){
+      function g(k){return cm[k]!==-1?String(row[cm[k]]||'').trim():'';}
       rows.push({
-        comp: String(row[colMap.comp]||'').trim(),
-        vessel: g('vessel'), eta: g('eta'), berth: g('berth'), etd: g('etd'),
-        cargo: g('cargo'), agent: g('agent'), insp: g('insp'),
-        dest: g('dest'), trader: g('trader'), plant: g('plant'),
-        remark: g('remark'), anal: '', cert: '', tank1:'', tank2:'', tank3:''
+        comp:comp, vessel:g('vessel'),
+        eta:g('eta'), berth:g('berth'), etd:g('etd'),
+        cargo:g('cargo'), insp:g('insp'), dest:g('dest'), plant:g('plant'),
+        remark:g('remark'), anal:'', cert:'', tank1:'', tank2:'', tank3:''
       });
     }
   }
   return rows;
 }
 
-function applyRows(rows) {
-  if (!rows || rows.length === 0) { alert('YNCC 항차를 찾지 못했어요. 양식을 확인해주세요.'); return; }
-  // 기존 문서의 수기 입력(REMARK 등)을 선박명 기준으로 보존
-  var old = DOC && DOC.rows ? DOC.rows : [];
+function applyRows(rows){
+  if (!rows||rows.length===0){alert('YNCC 항차를 찾지 못했어요.');return;}
+  var old=DOC&&DOC.rows?DOC.rows:[];
   rows.forEach(function(nr){
-    var prev = old.find(function(o){ return o.vessel === nr.vessel; });
-    if (prev) { nr.remark = prev.remark; nr.anal = prev.anal; nr.cert = prev.cert;
-                  nr.tank1 = prev.tank1||''; nr.tank2 = prev.tank2||''; nr.tank3 = prev.tank3||''; }
+    var prev=old.find(function(o){return o.vessel===nr.vessel;});
+    if(prev){nr.remark=prev.remark;nr.anal=prev.anal;nr.cert=prev.cert;
+             nr.tank1=prev.tank1||'';nr.tank2=prev.tank2||'';nr.tank3=prev.tank3||'';}
   });
-  // 접안예정 기준 정렬: 값 있는 것 먼저(오름차순), 없는 것 뒤로
-  function parseBerth(s) {
-    if (!s || !s.trim()) return null;
-    // "11/0500" → 11일 05시 → 숫자화: 일*10000 + 시분
-    var m = String(s).replace(/[^0-9/]/g,'').match(/^(\d+)\/(\d+)$/);
-    if (!m) return null;
-    var day = parseInt(m[1]), hm = parseInt(m[2]);
-    var hour = Math.floor(hm / 100), min = hm % 100;
-    return day * 10000 + hour * 100 + min;
-  }
-  rows.sort(function(a, b){
-    var va = parseBerth(a.berth), vb = parseBerth(b.berth);
-    if (va !== null && vb !== null) return va - vb;  // 둘 다 있으면 오름차순
-    if (va !== null) return -1;  // a만 있으면 a 앞
-    if (vb !== null) return 1;   // b만 있으면 b 뒤
-    return 0;  // 둘 다 없으면 순서 유지
+  rows.sort(function(a,b){
+    var va=parseBerth(a.berth),vb=parseBerth(b.berth);
+    if(va!==null&&vb!==null) return va-vb;
+    if(va!==null) return -1;
+    if(vb!==null) return 1;
+    return 0;
   });
-  DOC = { title: todayTitle(), rows: rows, note: (DOC && DOC.note) || '' };
-  localStorage.setItem('berth_doc', JSON.stringify(DOC));
+  DOC={title:todayTitle(),rows:rows,note:(DOC&&DOC.note)||''};
+  localStorage.setItem('berth_doc',JSON.stringify(DOC));
   renderDoc();
-  alert('✓ YNCC 항차 ' + rows.length + '건을 추출했어요');
+  alert('✓ YNCC 항차 '+rows.length+'건을 추출했어요');
 }
 
-// ── 붙여넣기 ──
-function parsePaste() {
-  var txt = document.getElementById('pasteArea').value;
-  if (!txt.trim()) { alert('내용을 붙여넣어 주세요'); return; }
-  var grid = txt.split(/\r?\n/).map(function(line){ return line.split('\t'); });
-  var rows = extractFromGrid(grid);
-  applyRows(rows);
+function parsePaste(){
+  var txt=document.getElementById('pasteArea').value;
+  if(!txt.trim()){alert('내용을 붙여넣어 주세요');return;}
+  var grid=txt.split(/\r?\n/).map(function(line){return line.split('\t');});
+  applyRows(extractFromGrid(grid));
 }
 
-// ── 렌더 ──
-function renderDoc() {
+function renderDoc(){
   if (!DOC) return;
-  document.getElementById('resultCard').style.display = 'block';
-  document.getElementById('docTitle').value = DOC.title;
-  document.getElementById('noteArea').value = DOC.note || '';
-  var cols = [2,6,15,6.5,6.5,6.5,10,3.5,5,3.5,7,9.5,9.5,9.5,2,2];
-  var h = '<table class="berth"><colgroup>';
-  cols.forEach(function(w){ h += '<col style="width:'+w+'%">'; });
-  h += '</colgroup><thead><tr>';
-  h += '<th>순번</th><th>회사명</th><th>VESSEL NAME</th><th>입항예정</th><th>접안예정</th><th>이안예정</th>';
-  h += '<th>CARGO</th><th>검정</th><th>행선지</th><th>공장</th>';
-  h += '<th>REMARK</th>';
-  h += '<th colspan="3">TANK</th>';
-  h += '<th style="white-space:normal;word-break:keep-all;">분석<br>완료</th><th style="white-space:normal;word-break:keep-all;">성적서<br>발행</th>';
-  h += '</tr></thead><tbody>';
-  DOC.rows.forEach(function(r, i){
-    h += '<tr>';
-    h += '<td>' + (i+1) + '</td>';
-    var compDisp = esc(r.comp).replace(/\(/, '<br>(');
-    h += '<td class="comp">' + compDisp + '</td>';
-    h += '<td class="vessel">' + esc(r.vessel) + '</td>';
-    h += '<td>' + esc(r.eta) + '</td><td>' + esc(r.berth) + '</td><td>' + esc(r.etd) + '</td>';
-    h += '<td>' + esc(r.cargo) + '</td><td>' + esc(r.insp) + '</td>';
-    h += '<td>' + esc(r.dest) + '</td><td>' + esc(r.plant) + '</td>';
-    h += '<td><input class="cell" value="' + esc(r.remark) + '" onchange="setField(' + i + ',\'remark\',this.value)" placeholder=""></td>';
-    h += '<td><input class="cell" value="' + esc(r.tank1||'') + '" onchange="setField(' + i + ',\'tank1\',this.value)" placeholder=""></td>';
-    h += '<td><input class="cell" value="' + esc(r.tank2||'') + '" onchange="setField(' + i + ',\'tank2\',this.value)" placeholder=""></td>';
-    h += '<td><input class="cell" value="' + esc(r.tank3||'') + '" onchange="setField(' + i + ',\'tank3\',this.value)" placeholder=""></td>';
-    h += '<td class="ok-cell" onclick="toggleOk(' + i + ',\'anal\')">' + (r.anal||'') + '</td>';
-    h += '<td class="ok-cell" onclick="toggleOk(' + i + ',\'cert\')">' + (r.cert||'') + '</td>';
-    h += '</tr>';
-  });
-  h += '</tbody></table>';
-  document.getElementById('tableWrap').innerHTML = h;
-}
-function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function setField(i, k, v) { DOC.rows[i][k] = v; saveDoc(); }
-function toggleOk(i, k) { DOC.rows[i][k] = DOC.rows[i][k] === 'OK' ? '' : 'OK'; saveDoc(); renderDoc(); }
+  document.getElementById('resultCard').style.display='block';
+  document.getElementById('docTitle').value=DOC.title;
+  document.getElementById('noteArea').value=DOC.note||'';
 
-// 초기 로드
-DOC = loadDoc();
-if (DOC) renderDoc();
+  var h='<table class="berth">';
+  // colgroup으로 열 너비 지정 (화면+인쇄 공통)
+  h+='<colgroup>';
+  h+='<col class="c-no"><col class="c-comp"><col class="c-vessel">';
+  h+='<col class="c-eta"><col class="c-berth"><col class="c-etd">';
+  h+='<col class="c-cargo"><col class="c-insp"><col class="c-dest"><col class="c-plant">';
+  h+='<col class="c-remark">';
+  h+='<col class="c-tank"><col class="c-tank"><col class="c-tank">';
+  h+='<col class="c-anal"><col class="c-cert">';
+  h+='</colgroup>';
+  h+='<thead><tr>';
+  h+='<th>순번</th><th>회사명</th><th>VESSEL NAME</th>';
+  h+='<th>입항예정</th><th>접안예정</th><th>이안예정</th>';
+  h+='<th>CARGO</th><th>검정</th><th>행선지</th><th>공장</th>';
+  h+='<th>REMARK</th>';
+  h+='<th colspan="3">TANK</th>';
+  h+='<th style="white-space:normal;">분석<br>완료</th>';
+  h+='<th style="white-space:normal;">성적서<br>발행</th>';
+  h+='</tr></thead><tbody>';
+
+  DOC.rows.forEach(function(r,i){
+    var compDisp=esc(r.comp).replace(/\(/,'<br>(');
+    h+='<tr>';
+    h+='<td>'+(i+1)+'</td>';
+    h+='<td class="comp">'+compDisp+'</td>';
+    h+='<td class="vessel">'+esc(r.vessel)+'</td>';
+    h+='<td>'+esc(r.eta)+'</td><td>'+esc(r.berth)+'</td><td>'+esc(r.etd)+'</td>';
+    h+='<td>'+esc(r.cargo)+'</td><td>'+esc(r.insp)+'</td>';
+    h+='<td>'+esc(r.dest)+'</td><td>'+esc(r.plant)+'</td>';
+    h+='<td><input class="cell" value="'+esc(r.remark)+'" onchange="setField('+i+',\'remark\',this.value)"></td>';
+    h+='<td><input class="cell" value="'+esc(r.tank1||'')+'" onchange="setField('+i+',\'tank1\',this.value)"></td>';
+    h+='<td><input class="cell" value="'+esc(r.tank2||'')+'" onchange="setField('+i+',\'tank2\',this.value)"></td>';
+    h+='<td><input class="cell" value="'+esc(r.tank3||'')+'" onchange="setField('+i+',\'tank3\',this.value)"></td>';
+    h+='<td class="ok-cell" onclick="toggleOk('+i+',\'anal\')">'+(r.anal||'')+'</td>';
+    h+='<td class="ok-cell" onclick="toggleOk('+i+',\'cert\')">'+(r.cert||'')+'</td>';
+    h+='</tr>';
+  });
+  h+='</tbody></table>';
+  document.getElementById('tableWrap').innerHTML=h;
+}
+
+function setField(i,k,v){DOC.rows[i][k]=v;saveDoc();}
+function toggleOk(i,k){DOC.rows[i][k]=DOC.rows[i][k]==='OK'?'':'OK';saveDoc();renderDoc();}
+
+DOC=loadDoc();
+if(DOC) renderDoc();
 </script>
 </body>
 </html>
