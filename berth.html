@@ -20,43 +20,24 @@
   .btn-gray { background:#e3e8ee; color:#444; }
   .title-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
   .title-input { font-size:18px; font-weight:700; border:1px solid #ccd6e0; border-radius:8px; padding:8px 12px; width:260px; }
+  /* 화면용 표 */
   table.berth { width:100%; border-collapse:collapse; font-size:13px; table-layout:fixed; }
   table.berth th, table.berth td { border:1px solid #999; padding:6px 3px; text-align:center; word-break:keep-all; overflow-wrap:break-word; white-space:normal; vertical-align:middle; height:36px; overflow:hidden; }
   table.berth th { background:#eaf0f6; font-size:12px; }
   table.berth td.comp { background:#1a2c47; color:#fff; font-weight:700; font-size:11px; }
   table.berth input.cell { width:100%; border:none; background:transparent; text-align:center; font-size:13px; font-family:inherit; }
-  table.berth td.ok-cell { cursor:pointer; font-weight:700; color:#1e8449; user-select:none; min-width:0; max-width:38px; overflow:hidden; }
+  table.berth td.ok-cell { cursor:pointer; font-weight:700; color:#1e8449; user-select:none; }
   table.berth td.nowrap, table.berth th.nowrap { white-space:nowrap !important; }
   table.berth td.cargo-cell { word-break:normal; overflow-wrap:normal; }
-  table.berth th.tight, table.berth td.ok-cell { padding-left:0; padding-right:0; }
   .note-area { margin-top:10px; }
   .empty { color:#aaa; font-size:13px; text-align:center; padding:16px; }
+  /* 인쇄 전용 영역은 평소 숨김 */
+  #printArea { display:none; }
   @media print {
     @page { size:A4 landscape; margin:8mm; }
     body { background:#fff; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-    .no-print { display:none !important; }
-    .wrap { max-width:100%; padding:0; }
-    .card { box-shadow:none; padding:0; margin:0; }
-    #resultCard { display:block !important; }
-    .title-input { border:none; font-size:16px; font-weight:700; text-align:center; display:block; }
-    .title-row { justify-content:center; margin-bottom:6px; }
-    table.berth { width:100%; table-layout:fixed; border-collapse:collapse; font-size:13px; }
-    table.berth th, table.berth td { border:1px solid #666; padding:3px 2px; white-space:normal !important; word-break:keep-all; overflow-wrap:break-word; height:36px; vertical-align:middle; }
-    table.berth th { background:#eaf0f6 !important; }
-    table.berth td.comp { background:#1a2c47 !important; color:#fff !important; }
-    table.berth input.cell { border:none; background:transparent; width:100%; padding:0; font-size:13px; font-family:inherit; }
-    table.berth td.nowrap, table.berth th.nowrap { white-space:nowrap !important; }
-    table.berth td.ok-cell { min-width:0 !important; max-width:38px !important; overflow:hidden !important; }
-    /* 인쇄 시 분석완료/성적서 칸 강제 고정 */
-    table.berth tr td:nth-child(15) { width:28px !important; max-width:28px !important; min-width:0 !important; }
-    table.berth tr td:nth-child(16) { width:38px !important; max-width:38px !important; min-width:0 !important; }
-    table.berth tr th:nth-child(15) { width:28px !important; max-width:28px !important; }
-    table.berth tr th:nth-child(16) { width:38px !important; max-width:38px !important; }
-    /* TANK 칸 강제 */
-    table.berth tr td:nth-child(12),
-    table.berth tr td:nth-child(13),
-    table.berth tr td:nth-child(14) { width:7% !important; }
-    .note-area textarea { border:none; font-size:11px; resize:none; width:100%; }
+    body > .wrap { display:none !important; }
+    #printArea { display:block !important; }
   }
 </style>
 </head>
@@ -78,7 +59,7 @@
   <div class="card" id="resultCard" style="display:none;">
     <div class="title-row">
       <input class="title-input" id="docTitle" value="">
-      <button class="btn btn-blue no-print" onclick="window.print()">🖨️ 인쇄</button>
+      <button class="btn btn-blue no-print" onclick="doPrint()">🖨️ 인쇄</button>
       <button class="btn btn-gray no-print" onclick="clearDoc()">초기화</button>
     </div>
     <div id="tableWrap"></div>
@@ -89,10 +70,11 @@
   </div>
 </div>
 
+<!-- 인쇄 전용 영역 -->
+<div id="printArea"></div>
+
 <script>
 var DOC = null;
-// 열 너비 (순번, 회사, VESSEL, 입항, 접안, 이안, CARGO, 검정, 행선지, 공장, REMARK, TANK×3, 분석완료, 성적서)
-var COL_W = ['26px','6%','13%','6.5%','6.5%','6.5%','11%','5.5%','5.5%','4%','7%','7%','7%','7%','28px','38px'];
 
 function todayTitle(){ var d=new Date(); return (d.getMonth()+1)+'월 '+d.getDate()+'일 선석표'; }
 function loadDoc(){ try{var d=JSON.parse(localStorage.getItem('berth_doc')); if(d)return d;}catch(e){} return null; }
@@ -125,8 +107,7 @@ function extractFromGrid(grid){
   var hdr=grid[headerIdx].map(function(c){return String(c||'');});
   function fc(kw){for(var j=0;j<hdr.length;j++)if(hdr[j].toUpperCase().indexOf(kw.toUpperCase())!==-1)return j; return -1;}
   var cm={comp:fc('회사'),vessel:fc('VESSEL'),eta:fc('입항'),berth:fc('접안'),etd:fc('이안'),
-    cargo:fc('CARGO'),agent:fc('AGENT'),insp:fc('검정'),dest:fc('행선'),trader:fc('상사'),
-    plant:fc('공장'),remark:fc('REMARK')};
+    cargo:fc('CARGO'),insp:fc('검정'),dest:fc('행선'),plant:fc('공장'),remark:fc('REMARK')};
   if(cm.comp===-1||cm.vessel===-1)return null;
   var rows=[];
   for(var r=headerIdx+1;r<grid.length;r++){
@@ -167,68 +148,104 @@ function parsePaste(){
   applyRows(extractFromGrid(txt.split(/\r?\n/).map(function(l){return l.split('\t');})));
 }
 
+// ── 화면용 표 ──
 function renderDoc(){
   if(!DOC)return;
   document.getElementById('resultCard').style.display='block';
   document.getElementById('docTitle').value=DOC.title;
   document.getElementById('noteArea').value=DOC.note||'';
 
-  function ws(i){ return 'style="width:'+COL_W[i]+'"'; }
-
-  var h='<table class="berth"><thead><tr>';
-  h+='<th '+ws(0)+'>순번</th>';
-  h+='<th '+ws(1)+'>회사명</th>';
-  h+='<th '+ws(2)+'>VESSEL NAME</th>';
-  h+='<th class="nowrap" '+ws(3)+'>입항예정</th>';
-  h+='<th class="nowrap" '+ws(4)+'>접안예정</th>';
-  h+='<th class="nowrap" '+ws(5)+'>이안예정</th>';
-  h+='<th '+ws(6)+'>CARGO</th>';
-  h+='<th class="nowrap" '+ws(7)+'>검정</th>';
-  h+='<th class="nowrap" '+ws(8)+'>행선지</th>';
-  h+='<th class="nowrap" '+ws(9)+'>공장</th>';
-  h+='<th '+ws(10)+'>REMARK</th>';
-  h+='<th '+ws(11)+'>TANK</th><th '+ws(12)+'>TANK</th><th '+ws(13)+'>TANK</th>';
-  h+='<th class="tight" style="width:'+COL_W[14]+';white-space:normal;">분석<br>완료</th>';
-  h+='<th class="tight" style="width:'+COL_W[15]+';white-space:normal;">성적서<br>발행</th>';
+  var h='<table class="berth"><colgroup>';
+  var W=['3%','6%','13%','7%','7%','7%','11%','4%','5%','4%','7%','6%','6%','6%','5%','5%'];
+  W.forEach(function(w){ h+='<col style="width:'+w+'">'; });
+  h+='</colgroup><thead><tr>';
+  h+='<th>순번</th><th>회사명</th><th>VESSEL NAME</th>';
+  h+='<th class="nowrap">입항예정</th><th class="nowrap">접안예정</th><th class="nowrap">이안예정</th>';
+  h+='<th>CARGO</th><th class="nowrap">검정</th><th class="nowrap">행선지</th><th class="nowrap">공장</th>';
+  h+='<th>REMARK</th><th>TANK</th><th>TANK</th><th>TANK</th>';
+  h+='<th>분석<br>완료</th><th>성적서<br>발행</th>';
   h+='</tr></thead><tbody>';
-
   DOC.rows.forEach(function(r,i){
     var compDisp=esc(r.comp).replace(/\(/,'<br>(');
     var cargoDisp=esc(r.cargo).replace(/\(/g,'<wbr>(');
     h+='<tr>';
-    h+='<td style="width:'+COL_W[0]+'">'+(i+1)+'</td>';
-    h+='<td class="comp" style="width:'+COL_W[1]+'">'+compDisp+'</td>';
-    h+='<td style="width:'+COL_W[2]+'">'+esc(r.vessel)+'</td>';
-    h+='<td class="nowrap" style="width:'+COL_W[3]+'">'+esc(r.eta)+'</td>';
-    h+='<td class="nowrap" style="width:'+COL_W[4]+'">'+esc(r.berth)+'</td>';
-    h+='<td class="nowrap" style="width:'+COL_W[5]+'">'+esc(r.etd)+'</td>';
-    h+='<td class="cargo-cell" style="width:'+COL_W[6]+'">'+cargoDisp+'</td>';
-    h+='<td class="nowrap" style="width:'+COL_W[7]+'">'+esc(r.insp)+'</td>';
-    h+='<td class="nowrap" style="width:'+COL_W[8]+'">'+esc(r.dest)+'</td>';
-    h+='<td class="nowrap" style="width:'+COL_W[9]+'">'+esc(r.plant)+'</td>';
-    h+='<td style="width:'+COL_W[10]+'"><input class="cell" value="'+esc(r.remark)+'" onchange="setField('+i+',\'remark\',this.value)"></td>';
-    h+='<td style="width:'+COL_W[11]+'"><input class="cell" value="'+esc(r.tank1||'')+'" onchange="setField('+i+',\'tank1\',this.value)"></td>';
-    h+='<td style="width:'+COL_W[12]+'"><input class="cell" value="'+esc(r.tank2||'')+'" onchange="setField('+i+',\'tank2\',this.value)"></td>';
-    h+='<td style="width:'+COL_W[13]+'"><input class="cell" value="'+esc(r.tank3||'')+'" onchange="setField('+i+',\'tank3\',this.value)"></td>';
-    h+='<td class="ok-cell" style="width:'+COL_W[14]+'" onclick="toggleOk('+i+',\'anal\')">'+(r.anal||'')+'</td>';
-    h+='<td class="ok-cell" style="width:'+COL_W[15]+'" onclick="toggleOk('+i+',\'cert\')">'+(r.cert||'')+'</td>';
+    h+='<td>'+(i+1)+'</td>';
+    h+='<td class="comp">'+compDisp+'</td>';
+    h+='<td>'+esc(r.vessel)+'</td>';
+    h+='<td class="nowrap">'+esc(r.eta)+'</td><td class="nowrap">'+esc(r.berth)+'</td><td class="nowrap">'+esc(r.etd)+'</td>';
+    h+='<td class="cargo-cell">'+cargoDisp+'</td><td class="nowrap">'+esc(r.insp)+'</td>';
+    h+='<td class="nowrap">'+esc(r.dest)+'</td><td class="nowrap">'+esc(r.plant)+'</td>';
+    h+='<td><input class="cell" value="'+esc(r.remark)+'" onchange="setField('+i+',\'remark\',this.value)"></td>';
+    h+='<td><input class="cell" value="'+esc(r.tank1||'')+'" onchange="setField('+i+',\'tank1\',this.value)"></td>';
+    h+='<td><input class="cell" value="'+esc(r.tank2||'')+'" onchange="setField('+i+',\'tank2\',this.value)"></td>';
+    h+='<td><input class="cell" value="'+esc(r.tank3||'')+'" onchange="setField('+i+',\'tank3\',this.value)"></td>';
+    h+='<td class="ok-cell" onclick="toggleOk('+i+',\'anal\')">'+(r.anal||'')+'</td>';
+    h+='<td class="ok-cell" onclick="toggleOk('+i+',\'cert\')">'+(r.cert||'')+'</td>';
     h+='</tr>';
   });
   h+='</tbody></table>';
   document.getElementById('tableWrap').innerHTML=h;
-  fitCells();
-}
-
-function fitCells(){
-  document.querySelectorAll('table.berth td.nowrap, table.berth td.comp').forEach(function(td){
-    var size=13; td.style.fontSize=size+'px';
-    var g=0;
-    while(td.scrollWidth>td.clientWidth&&size>8&&g<12){size-=0.5;td.style.fontSize=size+'px';g++;}
-  });
 }
 
 function setField(i,k,v){DOC.rows[i][k]=v;saveDoc();}
 function toggleOk(i,k){DOC.rows[i][k]=DOC.rows[i][k]==='OK'?'':'OK';saveDoc();renderDoc();}
+
+// ── 인쇄 전용 표 생성 (px 고정) ──
+function doPrint(){
+  if(!DOC)return;
+  saveDoc();
+  // A4 가로 인쇄영역 약 277mm ≈ 1047px (96dpi, 8mm 여백)
+  // 픽셀 고정 너비 (합계 약 1040px)
+  var PW=[32,58,150,68,68,68,120,42,52,42,80,58,58,58,40,46];
+  var HD=['순번','회사명','VESSEL NAME','입항예정','접안예정','이안예정','CARGO','검정','행선지','공장','REMARK','TANK','TANK','TANK','분석<br>완료','성적서<br>발행'];
+  var nowrapCols=[3,4,5,7,8,9]; // 입항,접안,이안,검정,행선지,공장
+
+  var h='<div style="text-align:center;font-size:16px;font-weight:700;margin-bottom:8px;">'+esc(DOC.title)+'</div>';
+  h+='<table style="border-collapse:collapse;table-layout:fixed;font-family:inherit;">';
+  // colgroup px 고정
+  h+='<colgroup>';
+  PW.forEach(function(w){ h+='<col style="width:'+w+'px">'; });
+  h+='</colgroup>';
+  // 헤더
+  h+='<thead><tr>';
+  HD.forEach(function(t,idx){
+    h+='<th style="border:1px solid #444;padding:3px 2px;font-size:11px;background:#eaf0f6;'+
+       'width:'+PW[idx]+'px;max-width:'+PW[idx]+'px;height:34px;vertical-align:middle;'+
+       (nowrapCols.indexOf(idx)!==-1?'white-space:nowrap;':'white-space:normal;word-break:keep-all;')+'">'+t+'</th>';
+  });
+  h+='</tr></thead><tbody>';
+  // 데이터
+  DOC.rows.forEach(function(r,i){
+    var cells=[
+      String(i+1),
+      esc(r.comp).replace(/\(/,'<br>('),
+      esc(r.vessel),
+      esc(r.eta), esc(r.berth), esc(r.etd),
+      esc(r.cargo).replace(/\(/g,'<wbr>('),
+      esc(r.insp), esc(r.dest), esc(r.plant),
+      esc(r.remark),
+      esc(r.tank1||''), esc(r.tank2||''), esc(r.tank3||''),
+      esc(r.anal||''), esc(r.cert||'')
+    ];
+    h+='<tr>';
+    cells.forEach(function(c,idx){
+      var isComp=(idx===1);
+      var isOk=(idx===14||idx===15);
+      h+='<td style="border:1px solid #444;padding:3px 2px;font-size:12px;text-align:center;'+
+         'width:'+PW[idx]+'px;max-width:'+PW[idx]+'px;height:34px;vertical-align:middle;overflow:hidden;'+
+         (nowrapCols.indexOf(idx)!==-1?'white-space:nowrap;':'white-space:normal;word-break:keep-all;')+
+         (isComp?'background:#1a2c47;color:#fff;font-weight:700;font-size:10px;':'')+
+         (isOk?'color:#1e8449;font-weight:700;':'')+'">'+c+'</td>';
+    });
+    h+='</tr>';
+  });
+  h+='</tbody></table>';
+  h+='<div style="font-size:12px;font-weight:700;margin-top:8px;">*특이사항</div>';
+  h+='<div style="font-size:11px;white-space:pre-wrap;min-height:24px;">'+esc(DOC.note||'')+'</div>';
+
+  document.getElementById('printArea').innerHTML=h;
+  window.print();
+}
 
 DOC=loadDoc();
 if(DOC)renderDoc();
