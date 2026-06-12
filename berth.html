@@ -47,6 +47,15 @@
     table.berth input.cell { border:none; background:transparent; width:100%; padding:0; font-size:13px; font-family:inherit; }
     table.berth td.nowrap, table.berth th.nowrap { white-space:nowrap !important; }
     table.berth td.ok-cell { min-width:0 !important; max-width:38px !important; overflow:hidden !important; }
+    /* 인쇄 시 분석완료/성적서 칸 강제 고정 */
+    table.berth tr td:nth-child(15) { width:28px !important; max-width:28px !important; min-width:0 !important; }
+    table.berth tr td:nth-child(16) { width:38px !important; max-width:38px !important; min-width:0 !important; }
+    table.berth tr th:nth-child(15) { width:28px !important; max-width:28px !important; }
+    table.berth tr th:nth-child(16) { width:38px !important; max-width:38px !important; }
+    /* TANK 칸 강제 */
+    table.berth tr td:nth-child(12),
+    table.berth tr td:nth-child(13),
+    table.berth tr td:nth-child(14) { width:7% !important; }
     .note-area textarea { border:none; font-size:11px; resize:none; width:100%; }
   }
 </style>
@@ -178,7 +187,7 @@ function renderDoc(){
   h+='<th class="nowrap" '+ws(8)+'>행선지</th>';
   h+='<th class="nowrap" '+ws(9)+'>공장</th>';
   h+='<th '+ws(10)+'>REMARK</th>';
-  h+='<th '+ws(11)+'></th><th '+ws(12)+'>TANK</th><th '+ws(13)+'></th>';
+  h+='<th '+ws(11)+'>TANK</th><th '+ws(12)+'>TANK</th><th '+ws(13)+'>TANK</th>';
   h+='<th class="tight" style="width:'+COL_W[14]+';white-space:normal;">분석<br>완료</th>';
   h+='<th class="tight" style="width:'+COL_W[15]+';white-space:normal;">성적서<br>발행</th>';
   h+='</tr></thead><tbody>';
