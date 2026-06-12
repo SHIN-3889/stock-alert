@@ -19,36 +19,18 @@
   .btn-blue { background:#2980b9; color:#fff; }
   .btn-gray { background:#e3e8ee; color:#444; }
   .title-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
-  .title-input { font-size:18px; font-weight:700; border:1px solid #ccd6e0; border-radius:8px; padding:8px 12px; width:240px; }
-  /* ── 화면용 테이블 ── */
+  .title-input { font-size:18px; font-weight:700; border:1px solid #ccd6e0; border-radius:8px; padding:8px 12px; width:260px; }
   table.berth { width:100%; border-collapse:collapse; font-size:13px; table-layout:fixed; }
   table.berth th, table.berth td { border:1px solid #999; padding:6px 3px; text-align:center; word-break:keep-all; overflow-wrap:break-word; white-space:normal; vertical-align:middle; height:36px; overflow:hidden; }
-  table.berth td.cargo-cell { word-break:normal; overflow-wrap:normal; white-space:normal; }
   table.berth th { background:#eaf0f6; font-size:12px; }
   table.berth td.comp { background:#1a2c47; color:#fff; font-weight:700; font-size:11px; }
-  table.berth td.vessel { font-weight:600; }
   table.berth input.cell { width:100%; border:none; background:transparent; text-align:center; font-size:13px; font-family:inherit; }
-  table.berth td.nowrap, table.berth th.nowrap { white-space:nowrap !important; word-break:keep-all; }
-  table.berth th.tight, table.berth td.ok-cell { padding-left:0; padding-right:0; }
   table.berth td.ok-cell { cursor:pointer; font-weight:700; color:#1e8449; user-select:none; min-width:0; max-width:38px; overflow:hidden; }
-  /* 화면 열 너비 */
-  table.berth col.c-no     { width:28px; }
-  table.berth col.c-comp   { width:6%; }
-  table.berth col.c-vessel { width:13%; }
-  table.berth col.c-eta    { width:6.5%; }
-  table.berth col.c-berth  { width:6.5%; }
-  table.berth col.c-etd    { width:6.5%; }
-  table.berth col.c-cargo  { width:11%; }
-  table.berth col.c-insp   { width:5.5%; }
-  table.berth col.c-dest   { width:5.5%; }
-  table.berth col.c-plant  { width:4%; }
-  table.berth col.c-remark { width:7%; }
-  table.berth col.c-tank   { width:7%; }
-  table.berth col.c-anal   { width:28px; }
-  table.berth col.c-cert   { width:38px; }
+  table.berth td.nowrap, table.berth th.nowrap { white-space:nowrap !important; }
+  table.berth td.cargo-cell { word-break:normal; overflow-wrap:normal; }
+  table.berth th.tight, table.berth td.ok-cell { padding-left:0; padding-right:0; }
   .note-area { margin-top:10px; }
   .empty { color:#aaa; font-size:13px; text-align:center; padding:16px; }
-  /* ── 인쇄 ── */
   @media print {
     @page { size:A4 landscape; margin:8mm; }
     body { background:#fff; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
@@ -56,34 +38,16 @@
     .wrap { max-width:100%; padding:0; }
     .card { box-shadow:none; padding:0; margin:0; }
     #resultCard { display:block !important; }
-    .title-input { border:none; font-size:16px; font-weight:700; width:auto; text-align:center; display:block; }
+    .title-input { border:none; font-size:16px; font-weight:700; text-align:center; display:block; }
     .title-row { justify-content:center; margin-bottom:6px; }
     table.berth { width:100%; table-layout:fixed; border-collapse:collapse; font-size:13px; }
     table.berth th, table.berth td { border:1px solid #666; padding:3px 2px; white-space:normal !important; word-break:keep-all; overflow-wrap:break-word; height:36px; vertical-align:middle; }
     table.berth th { background:#eaf0f6 !important; }
     table.berth td.comp { background:#1a2c47 !important; color:#fff !important; }
     table.berth input.cell { border:none; background:transparent; width:100%; padding:0; font-size:13px; font-family:inherit; }
-    /* 인쇄 열 너비 - col 클래스로 지정 */
-    /* colgroup + nth-child 이중 지정으로 인쇄 강제 적용 */
-    table.berth col.c-no,     table.berth th:nth-child(1),  table.berth td:nth-child(1)  { width:26px !important; max-width:26px !important; }
-    table.berth col.c-comp,   table.berth th:nth-child(2),  table.berth td:nth-child(2)  { width:6% !important; }
-    table.berth col.c-vessel, table.berth th:nth-child(3),  table.berth td:nth-child(3)  { width:13% !important; }
-    table.berth col.c-eta,    table.berth th:nth-child(4),  table.berth td:nth-child(4)  { width:6.5% !important; }
-    table.berth col.c-berth,  table.berth th:nth-child(5),  table.berth td:nth-child(5)  { width:6.5% !important; }
-    table.berth col.c-etd,    table.berth th:nth-child(6),  table.berth td:nth-child(6)  { width:6.5% !important; }
-    table.berth col.c-cargo,  table.berth th:nth-child(7),  table.berth td:nth-child(7)  { width:11% !important; }
-    table.berth col.c-insp,   table.berth th:nth-child(8),  table.berth td:nth-child(8)  { width:5.5% !important; }
-    table.berth col.c-dest,   table.berth th:nth-child(9),  table.berth td:nth-child(9)  { width:5.5% !important; }
-    table.berth col.c-plant,  table.berth th:nth-child(10), table.berth td:nth-child(10) { width:4% !important; }
-    table.berth col.c-remark, table.berth th:nth-child(11), table.berth td:nth-child(11) { width:7% !important; }
-    table.berth col.c-tank,   table.berth th:nth-child(12), table.berth td:nth-child(12),
-    table.berth               th:nth-child(13), table.berth td:nth-child(13),
-    table.berth               th:nth-child(14), table.berth td:nth-child(14) { width:7% !important; }
-    table.berth col.c-anal,   table.berth th:nth-child(15), table.berth td:nth-child(15) { width:28px !important; max-width:28px !important; min-width:0 !important; }
-    table.berth col.c-cert,   table.berth th:nth-child(16), table.berth td:nth-child(16) { width:38px !important; max-width:38px !important; min-width:0 !important; }
     table.berth td.nowrap, table.berth th.nowrap { white-space:nowrap !important; }
-    .note-area { margin-top:6px; }
-    .note-area textarea { border:none; min-height:24px; font-size:11px; resize:none; width:100%; }
+    table.berth td.ok-cell { min-width:0 !important; max-width:38px !important; overflow:hidden !important; }
+    .note-area textarea { border:none; font-size:11px; resize:none; width:100%; }
   }
 </style>
 </head>
@@ -118,76 +82,59 @@
 
 <script>
 var DOC = null;
+// 열 너비 (순번, 회사, VESSEL, 입항, 접안, 이안, CARGO, 검정, 행선지, 공장, REMARK, TANK×3, 분석완료, 성적서)
+var COL_W = ['26px','6%','13%','6.5%','6.5%','6.5%','11%','5.5%','5.5%','4%','7%','7%','7%','7%','28px','38px'];
 
-function todayTitle(){
-  var d=new Date();
-  return (d.getMonth()+1)+'월 '+d.getDate()+'일 선석표';
-}
-function loadDoc(){
-  try { var d=JSON.parse(localStorage.getItem('berth_doc')); if(d) return d; } catch(e){}
-  return null;
-}
+function todayTitle(){ var d=new Date(); return (d.getMonth()+1)+'월 '+d.getDate()+'일 선석표'; }
+function loadDoc(){ try{var d=JSON.parse(localStorage.getItem('berth_doc')); if(d)return d;}catch(e){} return null; }
 function saveDoc(){
-  if (!DOC) return;
-  DOC.title = document.getElementById('docTitle').value;
-  DOC.note  = document.getElementById('noteArea').value;
-  localStorage.setItem('berth_doc', JSON.stringify(DOC));
+  if(!DOC)return;
+  DOC.title=document.getElementById('docTitle').value;
+  DOC.note=document.getElementById('noteArea').value;
+  localStorage.setItem('berth_doc',JSON.stringify(DOC));
 }
 function clearDoc(){
-  if (!confirm('현재 선석표를 지울까요?')) return;
-  localStorage.removeItem('berth_doc');
-  DOC = null;
+  if(!confirm('현재 선석표를 지울까요?'))return;
+  localStorage.removeItem('berth_doc'); DOC=null;
   document.getElementById('resultCard').style.display='none';
 }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 function parseBerth(s){
-  if (!s||!s.trim()) return null;
+  if(!s||!s.trim())return null;
   var m=String(s).replace(/[^0-9\/]/g,'').match(/^(\d+)\/(\d+)$/);
-  if (!m) return null;
-  var day=parseInt(m[1]), hm=parseInt(m[2]);
-  return day*10000 + Math.floor(hm/100)*100 + hm%100;
+  if(!m)return null;
+  return parseInt(m[1])*10000+Math.floor(parseInt(m[2])/100)*100+parseInt(m[2])%100;
 }
 
 function extractFromGrid(grid){
   var headerIdx=-1;
-  for (var i=0;i<Math.min(grid.length,10);i++){
-    var row=grid[i].map(function(c){return String(c||'').toUpperCase();});
-    if (row.some(function(c){return c.indexOf('VESSEL')!==-1;})){headerIdx=i;break;}
+  for(var i=0;i<Math.min(grid.length,10);i++){
+    if(grid[i].map(function(c){return String(c||'').toUpperCase();}).some(function(c){return c.indexOf('VESSEL')!==-1;})){headerIdx=i;break;}
   }
-  if (headerIdx===-1) return null;
+  if(headerIdx===-1)return null;
   var hdr=grid[headerIdx].map(function(c){return String(c||'');});
-  function fc(kw){
-    for(var j=0;j<hdr.length;j++) if(hdr[j].toUpperCase().indexOf(kw.toUpperCase())!==-1) return j;
-    return -1;
-  }
-  var cm={
-    comp:fc('회사'), vessel:fc('VESSEL'),
-    eta:fc('입항'), berth:fc('접안'), etd:fc('이안'),
-    cargo:fc('CARGO'), agent:fc('AGENT'),
-    insp:fc('검정'), dest:fc('행선'), trader:fc('상사'),
-    plant:fc('공장'), remark:fc('REMARK')
-  };
-  if (cm.comp===-1||cm.vessel===-1) return null;
+  function fc(kw){for(var j=0;j<hdr.length;j++)if(hdr[j].toUpperCase().indexOf(kw.toUpperCase())!==-1)return j; return -1;}
+  var cm={comp:fc('회사'),vessel:fc('VESSEL'),eta:fc('입항'),berth:fc('접안'),etd:fc('이안'),
+    cargo:fc('CARGO'),agent:fc('AGENT'),insp:fc('검정'),dest:fc('행선'),trader:fc('상사'),
+    plant:fc('공장'),remark:fc('REMARK')};
+  if(cm.comp===-1||cm.vessel===-1)return null;
   var rows=[];
   for(var r=headerIdx+1;r<grid.length;r++){
     var row=grid[r];
     var comp=String(row[cm.comp]||'').trim();
-    if (comp.toUpperCase().indexOf('YNCC')===0){
+    if(comp.toUpperCase().indexOf('YNCC')===0){
       function g(k){return cm[k]!==-1?String(row[cm[k]]||'').trim():'';}
-      rows.push({
-        comp:comp, vessel:g('vessel'),
-        eta:g('eta'), berth:g('berth'), etd:g('etd'),
-        cargo:g('cargo'), insp:g('insp'), dest:g('dest'), plant:g('plant'),
-        remark:g('remark'), anal:'', cert:'', tank1:'', tank2:'', tank3:''
-      });
+      rows.push({comp:comp,vessel:g('vessel'),eta:g('eta'),berth:g('berth'),etd:g('etd'),
+        cargo:g('cargo'),insp:g('insp'),dest:g('dest'),plant:g('plant'),
+        remark:g('remark'),anal:'',cert:'',tank1:'',tank2:'',tank3:''});
     }
   }
   return rows;
 }
 
 function applyRows(rows){
-  if (!rows||rows.length===0){alert('YNCC 항차를 찾지 못했어요.');return;}
+  if(!rows||rows.length===0){alert('YNCC 항차를 찾지 못했어요.');return;}
   var old=DOC&&DOC.rows?DOC.rows:[];
   rows.forEach(function(nr){
     var prev=old.find(function(o){return o.vessel===nr.vessel;});
@@ -196,10 +143,8 @@ function applyRows(rows){
   });
   rows.sort(function(a,b){
     var va=parseBerth(a.berth),vb=parseBerth(b.berth);
-    if(va!==null&&vb!==null) return va-vb;
-    if(va!==null) return -1;
-    if(vb!==null) return 1;
-    return 0;
+    if(va!==null&&vb!==null)return va-vb;
+    if(va!==null)return -1; if(vb!==null)return 1; return 0;
   });
   DOC={title:todayTitle(),rows:rows,note:(DOC&&DOC.note)||''};
   localStorage.setItem('berth_doc',JSON.stringify(DOC));
@@ -210,52 +155,54 @@ function applyRows(rows){
 function parsePaste(){
   var txt=document.getElementById('pasteArea').value;
   if(!txt.trim()){alert('내용을 붙여넣어 주세요');return;}
-  var grid=txt.split(/\r?\n/).map(function(line){return line.split('\t');});
-  applyRows(extractFromGrid(grid));
+  applyRows(extractFromGrid(txt.split(/\r?\n/).map(function(l){return l.split('\t');})));
 }
 
 function renderDoc(){
-  if (!DOC) return;
+  if(!DOC)return;
   document.getElementById('resultCard').style.display='block';
   document.getElementById('docTitle').value=DOC.title;
   document.getElementById('noteArea').value=DOC.note||'';
 
-  var h='<table class="berth">';
-  // colgroup으로 열 너비 지정 (화면+인쇄 공통)
-  h+='<colgroup>';
-  h+='<col class="c-no"><col class="c-comp"><col class="c-vessel">';
-  h+='<col class="c-eta"><col class="c-berth"><col class="c-etd">';
-  h+='<col class="c-cargo"><col class="c-insp"><col class="c-dest"><col class="c-plant">';
-  h+='<col class="c-remark">';
-  h+='<col class="c-tank"><col class="c-tank"><col class="c-tank">';
-  h+='<col class="c-anal"><col class="c-cert">';
-  h+='</colgroup>';
-  h+='<thead><tr>';
-  h+='<th>순번</th><th>회사명</th><th>VESSEL NAME</th>';
-  h+='<th class="nowrap">입항예정</th><th class="nowrap">접안예정</th><th class="nowrap">이안예정</th>';
-  h+='<th>CARGO</th><th class="nowrap">검정</th><th class="nowrap">행선지</th><th class="nowrap">공장</th>';
-  h+='<th>REMARK</th>';
-  h+='<th colspan="3">TANK</th>';
-  h+='<th class="tight" style="white-space:normal;word-break:keep-all;">분석<br>완료</th>';
-  h+='<th class="tight" style="white-space:normal;word-break:keep-all;">성적서<br>발행</th>';
+  function ws(i){ return 'style="width:'+COL_W[i]+'"'; }
+
+  var h='<table class="berth"><thead><tr>';
+  h+='<th '+ws(0)+'>순번</th>';
+  h+='<th '+ws(1)+'>회사명</th>';
+  h+='<th '+ws(2)+'>VESSEL NAME</th>';
+  h+='<th class="nowrap" '+ws(3)+'>입항예정</th>';
+  h+='<th class="nowrap" '+ws(4)+'>접안예정</th>';
+  h+='<th class="nowrap" '+ws(5)+'>이안예정</th>';
+  h+='<th '+ws(6)+'>CARGO</th>';
+  h+='<th class="nowrap" '+ws(7)+'>검정</th>';
+  h+='<th class="nowrap" '+ws(8)+'>행선지</th>';
+  h+='<th class="nowrap" '+ws(9)+'>공장</th>';
+  h+='<th '+ws(10)+'>REMARK</th>';
+  h+='<th '+ws(11)+'></th><th '+ws(12)+'>TANK</th><th '+ws(13)+'></th>';
+  h+='<th class="tight" style="width:'+COL_W[14]+';white-space:normal;">분석<br>완료</th>';
+  h+='<th class="tight" style="width:'+COL_W[15]+';white-space:normal;">성적서<br>발행</th>';
   h+='</tr></thead><tbody>';
 
   DOC.rows.forEach(function(r,i){
     var compDisp=esc(r.comp).replace(/\(/,'<br>(');
+    var cargoDisp=esc(r.cargo).replace(/\(/g,'<wbr>(');
     h+='<tr>';
-    h+='<td>'+(i+1)+'</td>';
-    h+='<td class="comp">'+compDisp+'</td>';
-    h+='<td class="vessel">'+esc(r.vessel)+'</td>';
-    h+='<td class="nowrap">'+esc(r.eta)+'</td><td class="nowrap">'+esc(r.berth)+'</td><td class="nowrap">'+esc(r.etd)+'</td>';
-    var cargoDisp = esc(r.cargo).replace(/\(/g, '<wbr>(');
-    h+='<td class="cargo-cell">'+cargoDisp+'</td><td class="nowrap">'+esc(r.insp)+'</td>';
-    h+='<td class="nowrap">'+esc(r.dest)+'</td><td class="nowrap">'+esc(r.plant)+'</td>';
-    h+='<td><input class="cell" value="'+esc(r.remark)+'" onchange="setField('+i+',\'remark\',this.value)"></td>';
-    h+='<td><input class="cell" value="'+esc(r.tank1||'')+'" onchange="setField('+i+',\'tank1\',this.value)"></td>';
-    h+='<td><input class="cell" value="'+esc(r.tank2||'')+'" onchange="setField('+i+',\'tank2\',this.value)"></td>';
-    h+='<td><input class="cell" value="'+esc(r.tank3||'')+'" onchange="setField('+i+',\'tank3\',this.value)"></td>';
-    h+='<td class="ok-cell" onclick="toggleOk('+i+',\'anal\')">'+(r.anal||'')+'</td>';
-    h+='<td class="ok-cell" onclick="toggleOk('+i+',\'cert\')">'+(r.cert||'')+'</td>';
+    h+='<td style="width:'+COL_W[0]+'">'+(i+1)+'</td>';
+    h+='<td class="comp" style="width:'+COL_W[1]+'">'+compDisp+'</td>';
+    h+='<td style="width:'+COL_W[2]+'">'+esc(r.vessel)+'</td>';
+    h+='<td class="nowrap" style="width:'+COL_W[3]+'">'+esc(r.eta)+'</td>';
+    h+='<td class="nowrap" style="width:'+COL_W[4]+'">'+esc(r.berth)+'</td>';
+    h+='<td class="nowrap" style="width:'+COL_W[5]+'">'+esc(r.etd)+'</td>';
+    h+='<td class="cargo-cell" style="width:'+COL_W[6]+'">'+cargoDisp+'</td>';
+    h+='<td class="nowrap" style="width:'+COL_W[7]+'">'+esc(r.insp)+'</td>';
+    h+='<td class="nowrap" style="width:'+COL_W[8]+'">'+esc(r.dest)+'</td>';
+    h+='<td class="nowrap" style="width:'+COL_W[9]+'">'+esc(r.plant)+'</td>';
+    h+='<td style="width:'+COL_W[10]+'"><input class="cell" value="'+esc(r.remark)+'" onchange="setField('+i+',\'remark\',this.value)"></td>';
+    h+='<td style="width:'+COL_W[11]+'"><input class="cell" value="'+esc(r.tank1||'')+'" onchange="setField('+i+',\'tank1\',this.value)"></td>';
+    h+='<td style="width:'+COL_W[12]+'"><input class="cell" value="'+esc(r.tank2||'')+'" onchange="setField('+i+',\'tank2\',this.value)"></td>';
+    h+='<td style="width:'+COL_W[13]+'"><input class="cell" value="'+esc(r.tank3||'')+'" onchange="setField('+i+',\'tank3\',this.value)"></td>';
+    h+='<td class="ok-cell" style="width:'+COL_W[14]+'" onclick="toggleOk('+i+',\'anal\')">'+(r.anal||'')+'</td>';
+    h+='<td class="ok-cell" style="width:'+COL_W[15]+'" onclick="toggleOk('+i+',\'cert\')">'+(r.cert||'')+'</td>';
     h+='</tr>';
   });
   h+='</tbody></table>';
@@ -263,18 +210,11 @@ function renderDoc(){
   fitCells();
 }
 
-// 칸을 벗어나는 셀의 글자 크기를 자동으로 줄임 (nowrap 셀 대상)
 function fitCells(){
-  var cells = document.querySelectorAll('table.berth td.nowrap, table.berth td.vessel, table.berth td.comp');
-  cells.forEach(function(td){
-    var size = 13;
-    td.style.fontSize = size + 'px';
-    var guard = 0;
-    while (td.scrollWidth > td.clientWidth && size > 8 && guard < 12) {
-      size -= 0.5;
-      td.style.fontSize = size + 'px';
-      guard++;
-    }
+  document.querySelectorAll('table.berth td.nowrap, table.berth td.comp').forEach(function(td){
+    var size=13; td.style.fontSize=size+'px';
+    var g=0;
+    while(td.scrollWidth>td.clientWidth&&size>8&&g<12){size-=0.5;td.style.fontSize=size+'px';g++;}
   });
 }
 
@@ -282,7 +222,7 @@ function setField(i,k,v){DOC.rows[i][k]=v;saveDoc();}
 function toggleOk(i,k){DOC.rows[i][k]=DOC.rows[i][k]==='OK'?'':'OK';saveDoc();renderDoc();}
 
 DOC=loadDoc();
-if(DOC) renderDoc();
+if(DOC)renderDoc();
 </script>
 </body>
 </html>
