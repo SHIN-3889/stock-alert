@@ -30,7 +30,7 @@
   table.berth input.cell { width:100%; border:none; background:transparent; text-align:center; font-size:13px; font-family:inherit; }
   table.berth td.nowrap, table.berth th.nowrap { white-space:nowrap !important; word-break:keep-all; }
   table.berth th.tight, table.berth td.ok-cell { padding-left:0; padding-right:0; }
-  table.berth td.ok-cell { cursor:pointer; font-weight:700; color:#1e8449; user-select:none; }
+  table.berth td.ok-cell { cursor:pointer; font-weight:700; color:#1e8449; user-select:none; min-width:0; max-width:38px; overflow:hidden; }
   /* 화면 열 너비 */
   table.berth col.c-no     { width:28px; }
   table.berth col.c-comp   { width:6%; }
@@ -43,7 +43,7 @@
   table.berth col.c-dest   { width:5.5%; }
   table.berth col.c-plant  { width:4%; }
   table.berth col.c-remark { width:7%; }
-  table.berth col.c-tank   { width:5.5%; }
+  table.berth col.c-tank   { width:7%; }
   table.berth col.c-anal   { width:28px; }
   table.berth col.c-cert   { width:38px; }
   .note-area { margin-top:10px; }
@@ -75,7 +75,7 @@
     table.berth col.c-dest   { width:5.5% !important; }
     table.berth col.c-plant  { width:4% !important; }
     table.berth col.c-remark { width:7% !important; }
-    table.berth col.c-tank   { width:5.5% !important; }
+    table.berth col.c-tank   { width:7% !important; }
     table.berth col.c-anal   { width:28px !important; }
     table.berth col.c-cert   { width:38px !important; }
     table.berth td.nowrap, table.berth th.nowrap { white-space:nowrap !important; }
