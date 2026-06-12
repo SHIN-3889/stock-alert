@@ -64,20 +64,23 @@
     table.berth td.comp { background:#1a2c47 !important; color:#fff !important; }
     table.berth input.cell { border:none; background:transparent; width:100%; padding:0; font-size:13px; font-family:inherit; }
     /* 인쇄 열 너비 - col 클래스로 지정 */
-    table.berth col.c-no     { width:26px !important; }
-    table.berth col.c-comp   { width:6% !important; }
-    table.berth col.c-vessel { width:13% !important; }
-    table.berth col.c-eta    { width:6.5% !important; }
-    table.berth col.c-berth  { width:6.5% !important; }
-    table.berth col.c-etd    { width:6.5% !important; }
-    table.berth col.c-cargo  { width:11% !important; }
-    table.berth col.c-insp   { width:5.5% !important; }
-    table.berth col.c-dest   { width:5.5% !important; }
-    table.berth col.c-plant  { width:4% !important; }
-    table.berth col.c-remark { width:7% !important; }
-    table.berth col.c-tank   { width:7% !important; }
-    table.berth col.c-anal   { width:28px !important; }
-    table.berth col.c-cert   { width:38px !important; }
+    /* colgroup + nth-child 이중 지정으로 인쇄 강제 적용 */
+    table.berth col.c-no,     table.berth th:nth-child(1),  table.berth td:nth-child(1)  { width:26px !important; max-width:26px !important; }
+    table.berth col.c-comp,   table.berth th:nth-child(2),  table.berth td:nth-child(2)  { width:6% !important; }
+    table.berth col.c-vessel, table.berth th:nth-child(3),  table.berth td:nth-child(3)  { width:13% !important; }
+    table.berth col.c-eta,    table.berth th:nth-child(4),  table.berth td:nth-child(4)  { width:6.5% !important; }
+    table.berth col.c-berth,  table.berth th:nth-child(5),  table.berth td:nth-child(5)  { width:6.5% !important; }
+    table.berth col.c-etd,    table.berth th:nth-child(6),  table.berth td:nth-child(6)  { width:6.5% !important; }
+    table.berth col.c-cargo,  table.berth th:nth-child(7),  table.berth td:nth-child(7)  { width:11% !important; }
+    table.berth col.c-insp,   table.berth th:nth-child(8),  table.berth td:nth-child(8)  { width:5.5% !important; }
+    table.berth col.c-dest,   table.berth th:nth-child(9),  table.berth td:nth-child(9)  { width:5.5% !important; }
+    table.berth col.c-plant,  table.berth th:nth-child(10), table.berth td:nth-child(10) { width:4% !important; }
+    table.berth col.c-remark, table.berth th:nth-child(11), table.berth td:nth-child(11) { width:7% !important; }
+    table.berth col.c-tank,   table.berth th:nth-child(12), table.berth td:nth-child(12),
+    table.berth               th:nth-child(13), table.berth td:nth-child(13),
+    table.berth               th:nth-child(14), table.berth td:nth-child(14) { width:7% !important; }
+    table.berth col.c-anal,   table.berth th:nth-child(15), table.berth td:nth-child(15) { width:28px !important; max-width:28px !important; min-width:0 !important; }
+    table.berth col.c-cert,   table.berth th:nth-child(16), table.berth td:nth-child(16) { width:38px !important; max-width:38px !important; min-width:0 !important; }
     table.berth td.nowrap, table.berth th.nowrap { white-space:nowrap !important; }
     .note-area { margin-top:6px; }
     .note-area textarea { border:none; min-height:24px; font-size:11px; resize:none; width:100%; }
