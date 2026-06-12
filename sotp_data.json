@@ -23,8 +23,8 @@
     "excess_cash": {
       "excess_cash": 1197955846923.85,
       "operating_cash_needed": 31095010242.149998,
-      "market_cap": 37180463232000.0,
-      "excess_cash_ratio": 3.2
+      "market_cap": 40671755520000.0,
+      "excess_cash_ratio": 2.9
     },
     "subsidiaries": [
       {
@@ -165,7 +165,7 @@
         959572657325
       ]
     },
-    "updated_at": "2026-06-11 21:38:41"
+    "updated_at": "2026-06-12 20:55:41"
   },
   "005930": {
     "stock_code": "005930",
@@ -191,8 +191,8 @@
     "excess_cash": {
       "excess_cash": 143338632680000.0,
       "operating_cash_needed": 4016203320000.0,
-      "market_cap": 1963402368694000.0,
-      "excess_cash_ratio": 7.3
+      "market_cap": 2117716601685000.0,
+      "excess_cash_ratio": 6.8
     },
     "subsidiaries": [
       {
@@ -354,7 +354,7 @@
         85315148000000
       ]
     },
-    "updated_at": "2026-06-11 21:40:00"
+    "updated_at": "2026-06-12 20:55:51"
   },
   "012330": {
     "stock_code": "012330",
@@ -380,8 +380,8 @@
     "excess_cash": {
       "excess_cash": 5176249610000.0,
       "operating_cash_needed": 466815390000.0,
-      "market_cap": 51368015808000.0,
-      "excess_cash_ratio": 10.1
+      "market_cap": 54132613881000.0,
+      "excess_cash_ratio": 9.6
     },
     "subsidiaries": [
       {
@@ -536,7 +536,7 @@
         4472515000000
       ]
     },
-    "updated_at": "2026-06-11 21:41:09"
+    "updated_at": "2026-06-12 20:56:00"
   },
   "006400": {
     "stock_code": "006400",
@@ -562,8 +562,8 @@
     "excess_cash": {
       "excess_cash": 1630431798806.34,
       "operating_cash_needed": 107290595502.65999,
-      "market_cap": 39228777047500.0,
-      "excess_cash_ratio": 4.2
+      "market_cap": 42415869265000.0,
+      "excess_cash_ratio": 3.8
     },
     "subsidiaries": [
       {
@@ -725,7 +725,7 @@
         792385760879
       ]
     },
-    "updated_at": "2026-06-11 21:42:12"
+    "updated_at": "2026-06-12 20:56:10"
   },
   "000660": {
     "stock_code": "000660",
@@ -751,7 +751,7 @@
     "excess_cash": {
       "excess_cash": 37809690390000.0,
       "operating_cash_needed": 1577288610000.0,
-      "market_cap": 1491405125991000.0,
+      "market_cap": 1526188015650000.0,
       "excess_cash_ratio": 2.5
     },
     "subsidiaries": [
@@ -914,6 +914,6 @@
         53373126000000
       ]
     },
-    "updated_at": "2026-06-11 21:43:21"
+    "updated_at": "2026-06-12 20:56:18"
   }
 }
