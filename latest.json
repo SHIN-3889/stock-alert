@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-14 05:55:49",
+  "updated_at": "2026-06-14 06:01:24",
   "portfolio": {
     "rows": [
       {
@@ -108,91 +108,113 @@
     ]
   },
   "news": {
+    "267260": {
+      "name": "HD현대일렉트릭",
+      "domestic": [
+        {
+          "title": "AI 데이터센터가 불러온 전력 대란…HD현대일렉트릭 수혜 본격화",
+          "link": "https://www.pinpointnews.co.kr/news/articleView.html?idxno=459795"
+        },
+        {
+          "title": "HD현대일렉트릭 주가, 6월 12일 1,130,000원 9.39% 상승 마감",
+          "link": "https://www.joongangenews.com/news/articleView.html?idxno=525652"
+        },
+        {
+          "title": "HD현대일렉트릭 주가, 6월 11일 1,033,000원 4.77% 상승 마감",
+          "link": "https://www.topstarnews.net/news/articleView.html?idxno=16088379"
+        }
+      ],
+      "overseas": []
+    },
     "476550": {
       "name": "TIGER 미국30년국채커버드콜액티브(H)",
       "domestic": [
         {
-          "title": "'불장'서 커버드콜 ETF 성적표도 갈렸다… 관건은 '기초자산'",
-          "link": "https://www.sidae.com/article/2026050813412451821"
+          "title": "美장기국채 ETF서 발 빼는 투자자들",
+          "link": "https://www.sedaily.com/article/20053225?ref=naver"
         },
         {
           "title": "PLUS 테슬라위클리커버드콜채권혼합 ETF 5월 분배금 187원",
           "link": "https://www.g-enews.com/view.php?ud=202605191744548000c5557f8da8_1"
         },
         {
-          "title": "\"배당금 쏠쏠\" … 이란전쟁에 '커버드콜' 재조명, 수익률은 '제각각' [마...",
-          "link": "https://biz.newdaily.co.kr/site/data/html/2026/04/16/2026041600068.html"
+          "title": "美 장기채 ETF 가격 추락…개미들 '눈물의 손절'",
+          "link": "http://www.fnnews.com/news/202605251800063358"
         }
       ],
       "overseas": []
     },
-    "GEV": {
-      "name": "GE버노바",
+    "005930": {
+      "name": "삼성전자",
       "domestic": [
         {
-          "title": "美 GE 버노바, 로보테크 오토메이션 인수 계약",
-          "link": "https://www.irobotnews.com/news/articleView.html?idxno=46566"
+          "title": "\"More HBM!\"의 의미…K반도체, 설계부터 참여 '슈퍼을' 도약[젠슨황 방한...",
+          "link": "https://www.newsis.com/view/NISX20260609_0003661756"
         },
         {
-          "title": "국민연금의 MOVE",
-          "link": "https://www.joongang.co.kr/article/25431168"
+          "title": "삼성 파운드리, 구글 차세대 AI칩 수주 유력",
+          "link": "https://www.hankyung.com/article/2026061237311"
         },
         {
-          "title": "GE 버노바, 캐나다 로봇 자동화기업 로보텍 인수",
-          "link": "https://www.junggi.co.kr/news/articleView.html?idxno=36538"
+          "title": "삼성전자, 16일부터 글로벌전략회의… 가전 수익성·HBM 주도권 점검",
+          "link": "https://biz.chosun.com/it-science/ict/2026/06/11/JAMCITLGK5BNRF3BUTG4I67FQU/?utm_source=naver&utm_medium=original&utm_campaign=biz"
         }
       ],
-      "overseas": [
+      "overseas": []
+    },
+    "NVDA": {
+      "name": "엔비디아",
+      "domestic": [
         {
-          "title": "초대형 유틸리티 합병이 버지니아를 통해 진행됩니다.",
-          "title_orig": "Super-sized utility merger runs through Virginia",
-          "link": "https://www.politico.com/news/2026/05/19/power-companies-merger-lower-bills-affordability-politics-00927494"
+          "title": "테슬라·엔비디아에 구글까지…TSMC 병목에 삼성 ‘대박’ 터지나",
+          "link": "https://www.joongang.co.kr/article/25436314"
         },
         {
-          "title": "가스와 원자력의 장점을 결합한 하이브리드 텍사스 발전소",
-          "title_orig": "Hybrid Texas power plant blends the best of gas and nuclear",
-          "link": "https://newatlas.com/energy/hybrid-nuclear-natural-gas-plant-texas/"
+          "title": "테슬라·엔비디아 이어 구글까지…'삼성 파운드리' AI칩 공급 기대감 확...",
+          "link": "https://www.newsis.com/view/NISX20260612_0003666851"
         },
         {
-          "title": "GE Vernova 주식이 화요일에 승리한 이유",
-          "title_orig": "Why GE Vernova Stock Triumphed on Tuesday",
-          "link": "https://consent.yahoo.com/v2/collectConsent?sessionId=1_cc-session_0897abdb-ea11-4d35-8e48-8a2a6324e8da"
+          "title": "엔비디아와 물꼬 튼 정부…전력 인프라 없이는 '그림의 떡'",
+          "link": "https://www.nocutnews.co.kr/news/6532495?utm_source=naver&utm_medium=article&utm_campaign=20260614050036"
         }
-      ]
+      ],
+      "overseas": []
+    },
+    "012330": {
+      "name": "현대모비스",
+      "domestic": [
+        {
+          "title": "최근 5거래일간 현대모비스 주가 반등",
+          "link": "https://www.topstarnews.net/news/articleView.html?idxno=16092113"
+        },
+        {
+          "title": "\"천재는 주식으로 움직인다\"...현대차의 '테슬라 전략'",
+          "link": "http://www.fnnews.com/news/202606121815463883"
+        },
+        {
+          "title": "[화보] 2026 KBL Y-리그(주말리그) U14 KCC와 현대모비스 경기 화보 (KCC 6...",
+          "link": "https://m.sports.naver.com/basketball/article/065/0000298724"
+        }
+      ],
+      "overseas": []
     },
     "006400": {
       "name": "삼성SDI",
       "domestic": [
         {
-          "title": "삼성SDI, 美 배터리 컨퍼런스서 ESS 기술 뽐낸다",
-          "link": "https://www.theguru.co.kr/news/article.html?no=102444"
+          "title": "'친환경 배터리' 뒤편에 독성물질…헝가리 삼성SDI 공장의 그림자",
+          "link": "https://www.pressian.com/pages/articles/2026061217251641093?utm_source=naver&utm_medium=search"
         },
         {
-          "title": "AI 데이터센터가 K-배터리 살린다…2분기 LG엔솔 흑자 확대·삼성SDI 적자...",
-          "link": "http://www.fnnews.com/news/202605310931400617"
+          "title": "6월 2주차 삼성SDI 주가, 50만원대 중반 회복",
+          "link": "https://www.topstarnews.net/news/articleView.html?idxno=16092089"
         },
         {
-          "title": "5월 4주차 삼성SDI 주가 68만원대 강세 마감",
-          "link": "https://www.topstarnews.net/news/articleView.html?idxno=16075606"
+          "title": "[르포] 삼성벨트 품은 '백석시그니처자이'…젊은 실수요자들로 북적",
+          "link": "https://www.news1.kr/realestate/general/6195985"
         }
       ],
-      "overseas": [
-        {
-          "title": "Tesla에 전력을 공급하는 중국 배터리 거대 기업이 방금 50억 달러를 모금했습니다.",
-          "title_orig": "The Chinese battery giant powering Tesla just raised $5 billion",
-          "link": "https://www.thestreet.com/automotive/the-chinese-battery-giant-powering-tesla-just-raised-5-billion"
-        },
-        {
-          "title": "삼성SDI, AI 데이터센터용 배터리 공급 가능성",
-          "title_orig": "Samsung SDI may supply batteries to Amazon for AI data centres",
-          "link": "https://www.sammobile.com/news/samsung-sdi-may-supply-batteries-amazon-ai-data-centres/"
-        },
-        {
-          "title": "삼성전자, GM과 35억 달러 규모 전기차 배터리 거래 중단",
-          "title_orig": "Samsung’s $3.5 billion EV battery deal with GM hits pause",
-          "link": "https://www.sammobile.com/news/samsungs-3-5-billion-ev-battery-deal-with-gm-hits-pause/"
-        }
-      ]
+      "overseas": []
     }
   }
 }
