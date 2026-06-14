@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-14 23:55:48",
+  "updated_at": "2026-06-15 00:01:25",
   "portfolio": {
     "rows": [
       {
@@ -11,7 +11,7 @@
         "value_krw": 24860000.0,
         "pl_krw": 4466000.0,
         "pl_pct": 21.898597626752967,
-        "session": "closed"
+        "session": "market_closed"
       },
       {
         "name": "TIGER 미국30년국채커버드콜액티브(H)",
@@ -22,7 +22,7 @@
         "value_krw": 3641720.0,
         "pl_krw": 42252.0,
         "pl_pct": 1.1738401341531581,
-        "session": "closed"
+        "session": "market_closed"
       },
       {
         "name": "삼성전자",
@@ -33,7 +33,7 @@
         "value_krw": 31282500.0,
         "pl_krw": 1201248.0,
         "pl_pct": 3.9933444259567388,
-        "session": "closed"
+        "session": "market_closed"
       },
       {
         "name": "엔비디아",
@@ -55,7 +55,7 @@
         "value_krw": 64342000.0,
         "pl_krw": 1632400.0,
         "pl_pct": 2.603110209601082,
-        "session": "closed"
+        "session": "market_closed"
       },
       {
         "name": "삼성SDI",
@@ -66,7 +66,7 @@
         "value_krw": 20482000.0,
         "pl_krw": 798000.0,
         "pl_pct": 4.054054054054054,
-        "session": "closed"
+        "session": "market_closed"
       }
     ],
     "summary": {
@@ -85,7 +85,7 @@
         "currency": "KRW",
         "price": 2150000.0,
         "day_change_pct": 2.3322227510709186,
-        "session": "closed"
+        "session": "market_closed"
       },
       {
         "code": "GOOG",
