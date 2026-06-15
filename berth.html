@@ -156,7 +156,7 @@ function renderDoc(){
   document.getElementById('noteArea').value=DOC.note||'';
 
   var h='<table class="berth"><colgroup>';
-  var W=['3%','6%','13%','7%','7%','7%','11%','4%','5%','4%','7%','6%','6%','6%','5%','5%'];
+  var W=['3%','6%','13%','7%','7%','7%','11%','4%','5%','4%','7%','7%','7%','7%','4%','4%'];
   W.forEach(function(w){ h+='<col style="width:'+w+'">'; });
   h+='</colgroup><thead><tr>';
   h+='<th>순번</th><th>회사명</th><th>VESSEL NAME</th>';
@@ -196,7 +196,7 @@ function doPrint(){
   saveDoc();
   // A4 가로 인쇄영역 약 277mm ≈ 1047px (96dpi, 8mm 여백)
   // 픽셀 고정 너비 (합계 약 1040px)
-  var PW=[32,58,150,68,68,68,120,42,52,42,80,58,58,58,40,46];
+  var PW=[30,56,140,66,66,66,114,42,52,42,72,68,68,68,40,40];
   var HD=['순번','회사명','VESSEL NAME','입항예정','접안예정','이안예정','CARGO','검정','행선지','공장','REMARK','TANK','TANK','TANK','분석<br>완료','성적서<br>발행'];
   var nowrapCols=[3,4,5,7,8,9]; // 입항,접안,이안,검정,행선지,공장
 
