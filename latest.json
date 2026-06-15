@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-15 08:55:45",
+  "updated_at": "2026-06-15 09:01:22",
   "portfolio": {
     "rows": [
       {
@@ -11,7 +11,7 @@
         "value_krw": 24860000.0,
         "pl_krw": 4466000.0,
         "pl_pct": 21.898597626752967,
-        "session": "market_closed"
+        "session": "open"
       },
       {
         "name": "TIGER 미국30년국채커버드콜액티브(H)",
@@ -22,7 +22,7 @@
         "value_krw": 3641720.0,
         "pl_krw": 42252.0,
         "pl_pct": 1.1738401341531581,
-        "session": "market_closed"
+        "session": "open"
       },
       {
         "name": "삼성전자",
@@ -33,7 +33,7 @@
         "value_krw": 31282500.0,
         "pl_krw": 1201248.0,
         "pl_pct": 3.9933444259567388,
-        "session": "market_closed"
+        "session": "open"
       },
       {
         "name": "엔비디아",
@@ -41,8 +41,8 @@
         "price": 205.19000244140625,
         "day_change_pct": -0.3835311965208951,
         "shares": 189,
-        "value_krw": 58891525.11644829,
-        "pl_krw": -889729.4308234379,
+        "value_krw": 58488595.62267219,
+        "pl_krw": -883641.9975560755,
         "pl_pct": -1.4883083962714208,
         "session": "closed"
       },
@@ -55,7 +55,7 @@
         "value_krw": 64342000.0,
         "pl_krw": 1632400.0,
         "pl_pct": 2.603110209601082,
-        "session": "market_closed"
+        "session": "open"
       },
       {
         "name": "삼성SDI",
@@ -66,16 +66,16 @@
         "value_krw": 20482000.0,
         "pl_krw": 798000.0,
         "pl_pct": 4.054054054054054,
-        "session": "market_closed"
+        "session": "open"
       }
     ],
     "summary": {
-      "total_value_krw": 203499745.11644828,
-      "day_change_krw": 9049488.022026896,
-      "day_change_pct": 4.653883289870188,
-      "total_pl_krw": 7250170.569176555,
-      "total_pl_pct": 3.6943624392062904,
-      "usdkrw": 1518.5699462890625
+      "total_value_krw": 203096815.6226722,
+      "day_change_krw": 9051039.332093596,
+      "day_change_pct": 4.664383582634592,
+      "total_pl_krw": 7256258.002443939,
+      "total_pl_pct": 3.7051865510489357,
+      "usdkrw": 1508.1800537109375
     },
     "watchlist": [
       {
@@ -85,7 +85,7 @@
         "currency": "KRW",
         "price": 2150000.0,
         "day_change_pct": 2.3322227510709186,
-        "session": "market_closed"
+        "session": "open"
       },
       {
         "code": "GOOG",
