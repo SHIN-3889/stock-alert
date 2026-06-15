@@ -198,7 +198,7 @@ function doPrint(){
   saveDoc();
   // A4 가로 인쇄영역 약 277mm ≈ 1047px (96dpi, 8mm 여백)
   // 픽셀 고정 너비 (합계 약 1040px)
-  var PW=[30,56,140,66,66,66,114,42,52,42,72,68,68,68,40,40];
+  var PW=[30,56,132,66,66,66,112,42,52,42,72,68,68,68,42,50];
   var HD=['순번','회사명','VESSEL NAME','입항예정','접안예정','이안예정','CARGO','검정','행선지','공장','REMARK','TANK','TANK','TANK','분석<br>완료','성적서<br>발행'];
   var nowrapCols=[3,4,5,7,8,9]; // 입항,접안,이안,검정,행선지,공장
 
@@ -209,12 +209,24 @@ function doPrint(){
   h+='<colgroup>';
   PW.forEach(function(w){ h+='<col style="width:'+w+'px">'; });
   h+='</colgroup>';
-  // 헤더
+  // 헤더 (TANK 3칸은 colspan으로 병합)
   h+='<thead><tr>';
+  function thStyle(w, nowrap){
+    return 'style="border:1px solid #444;padding:3px 2px;font-size:11px;background:#eaf0f6;'+
+      'width:'+w+'px;max-width:'+w+'px;height:34px;vertical-align:middle;'+
+      (nowrap?'white-space:nowrap;':'white-space:normal;word-break:keep-all;')+'"';
+  }
   HD.forEach(function(t,idx){
-    h+='<th style="border:1px solid #444;padding:3px 2px;font-size:11px;background:#eaf0f6;'+
-       'width:'+PW[idx]+'px;max-width:'+PW[idx]+'px;height:34px;vertical-align:middle;'+
-       (nowrapCols.indexOf(idx)!==-1?'white-space:nowrap;':'white-space:normal;word-break:keep-all;')+'">'+t+'</th>';
+    if (idx===11) {
+      // TANK 첫 칸에서 3칸 병합
+      var tankW = PW[11]+PW[12]+PW[13];
+      h+='<th colspan="3" style="border:1px solid #444;padding:3px 2px;font-size:11px;background:#eaf0f6;'+
+         'width:'+tankW+'px;height:34px;vertical-align:middle;white-space:normal;word-break:keep-all;">TANK</th>';
+    } else if (idx===12 || idx===13) {
+      // 병합됐으므로 건너뜀
+    } else {
+      h+='<th '+thStyle(PW[idx], nowrapCols.indexOf(idx)!==-1)+'>'+t+'</th>';
+    }
   });
   h+='</tr></thead><tbody>';
   // 데이터
