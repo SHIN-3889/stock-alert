@@ -38,6 +38,8 @@
     body { background:#fff; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
     body > .wrap { display:none !important; }
     #printArea { display:block !important; }
+    #printArea table { page-break-inside:auto; }
+    #printArea tr { page-break-inside:avoid; }
   }
 </style>
 </head>
@@ -201,7 +203,8 @@ function doPrint(){
   var nowrapCols=[3,4,5,7,8,9]; // 입항,접안,이안,검정,행선지,공장
 
   var h='<div style="text-align:center;font-size:16px;font-weight:700;margin-bottom:8px;">'+esc(DOC.title)+'</div>';
-  h+='<table style="border-collapse:collapse;table-layout:fixed;font-family:inherit;">';
+  var TOTAL_W = PW.reduce(function(a,b){return a+b;},0);
+  h+='<table style="border-collapse:collapse;table-layout:fixed;font-family:inherit;width:'+TOTAL_W+'px;">';
   // colgroup px 고정
   h+='<colgroup>';
   PW.forEach(function(w){ h+='<col style="width:'+w+'px">'; });
