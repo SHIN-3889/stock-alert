@@ -23,8 +23,8 @@
     "excess_cash": {
       "excess_cash": 1197955846923.85,
       "operating_cash_needed": 31095010242.149998,
-      "market_cap": 42975288576000.0,
-      "excess_cash_ratio": 2.8
+      "market_cap": 40239843072000.0,
+      "excess_cash_ratio": 3.0
     },
     "subsidiaries": [
       {
@@ -165,7 +165,7 @@
         959572657325
       ]
     },
-    "updated_at": "2026-06-16 02:39:22"
+    "updated_at": "2026-06-16 15:02:14"
   },
   "005930": {
     "stock_code": "005930",
@@ -191,8 +191,8 @@
     "excess_cash": {
       "excess_cash": 143338632680000.0,
       "operating_cash_needed": 4016203320000.0,
-      "market_cap": 2212931766722000.0,
-      "excess_cash_ratio": 6.5
+      "market_cap": 2234273096816500.0,
+      "excess_cash_ratio": 6.4
     },
     "subsidiaries": [
       {
@@ -354,7 +354,7 @@
         85315148000000
       ]
     },
-    "updated_at": "2026-06-16 02:40:39"
+    "updated_at": "2026-06-16 15:03:23"
   },
   "012330": {
     "stock_code": "012330",
@@ -380,8 +380,8 @@
     "excess_cash": {
       "excess_cash": 5176249610000.0,
       "operating_cash_needed": 466815390000.0,
-      "market_cap": 57075573120000.0,
-      "excess_cash_ratio": 9.1
+      "market_cap": 58680823614000.0,
+      "excess_cash_ratio": 8.8
     },
     "subsidiaries": [
       {
@@ -536,196 +536,7 @@
         4472515000000
       ]
     },
-    "updated_at": "2026-06-16 02:41:46"
-  },
-  "006400": {
-    "stock_code": "006400",
-    "name": "피엠그로우",
-    "bsns_year": "2026",
-    "reprt_name": "1분기보고서",
-    "operating_income": -155580771739,
-    "revenue": 3576353183422,
-    "shares_outstanding": 78693635,
-    "net_debt": {
-      "net_debt": 9916014469012,
-      "total_debt": 11653736863321,
-      "total_cash": 1737722394309,
-      "detail": {
-        "short_borrowings": 5914180681090,
-        "current_ltd": 0,
-        "long_borrowings": 5739556182231,
-        "bonds": 0,
-        "cash": 1737722394309,
-        "short_financial": 0
-      }
-    },
-    "excess_cash": {
-      "excess_cash": 1630431798806.34,
-      "operating_cash_needed": 107290595502.65999,
-      "market_cap": 43517580155000.0,
-      "excess_cash_ratio": 3.7
-    },
-    "subsidiaries": [
-      {
-        "name": "삼성E&A(구, 삼성엔지니어링)",
-        "ownership_ratio": 11.7,
-        "shares_held": 22918000,
-        "book_value": 551188000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "아이마켓코리아",
-        "ownership_ratio": 1.5,
-        "shares_held": 511000,
-        "book_value": 4027000000,
-        "investment_purpose": "일반투자"
-      },
-      {
-        "name": "Ganfeng Lithium Co., Ltd.",
-        "ownership_ratio": 0.8,
-        "shares_held": 16622000,
-        "book_value": 159240000000,
-        "investment_purpose": "일반투자"
-      },
-      {
-        "name": "Intellectual Keystone Technology LLC",
-        "ownership_ratio": 41.0,
-        "shares_held": 10250000,
-        "book_value": 8835000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "한국경제신문",
-        "ownership_ratio": 8.7,
-        "shares_held": 1631000,
-        "book_value": 24883000000,
-        "investment_purpose": "일반투자"
-      },
-      {
-        "name": "로지피아",
-        "ownership_ratio": 19.0,
-        "shares_held": 11000,
-        "book_value": 57000000,
-        "investment_purpose": "일반투자"
-      },
-      {
-        "name": "에코프로이엠",
-        "ownership_ratio": 40.0,
-        "shares_held": 12800000,
-        "book_value": 128000000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "필에너지",
-        "ownership_ratio": 14.0,
-        "shares_held": 3000000,
-        "book_value": 5000000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "이차전지성장펀드",
-        "ownership_ratio": 33.3,
-        "shares_held": 0,
-        "book_value": 4450000000,
-        "investment_purpose": "일반투자"
-      },
-      {
-        "name": "DS ASIA HOLDINGS",
-        "ownership_ratio": 0.5,
-        "shares_held": 898000,
-        "book_value": 0,
-        "investment_purpose": "일반투자"
-      },
-      {
-        "name": "Intellectual Discovery Co., Ltd.",
-        "ownership_ratio": 0.2,
-        "shares_held": 7000,
-        "book_value": 250000000,
-        "investment_purpose": "일반투자"
-      },
-      {
-        "name": "호텔신라",
-        "ownership_ratio": 0.1,
-        "shares_held": 29000,
-        "book_value": 1307000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "iMarketAsia Co., Limited",
-        "ownership_ratio": 8.7,
-        "shares_held": 348000,
-        "book_value": 6007000000,
-        "investment_purpose": "일반투자"
-      },
-      {
-        "name": "Polyplus(*1)",
-        "ownership_ratio": 8.3,
-        "shares_held": 226000,
-        "book_value": 345000000,
-        "investment_purpose": "일반투자"
-      },
-      {
-        "name": "신기술투자조합15호",
-        "ownership_ratio": 99.0,
-        "shares_held": 0,
-        "book_value": 9669000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "신기술투자조합24호",
-        "ownership_ratio": 99.0,
-        "shares_held": 0,
-        "book_value": 0,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "신기술투자조합49호",
-        "ownership_ratio": 99.0,
-        "shares_held": 0,
-        "book_value": 33908000000,
-        "investment_purpose": "경영참여"
-      },
-      {
-        "name": "신기술투자조합76호",
-        "ownership_ratio": 6.7,
-        "shares_held": 0,
-        "book_value": 100000000,
-        "investment_purpose": "일반투자"
-      },
-      {
-        "name": "성일하이텍",
-        "ownership_ratio": 8.6,
-        "shares_held": 1048000,
-        "book_value": 42877000000,
-        "investment_purpose": "일반투자"
-      },
-      {
-        "name": "피엠그로우",
-        "ownership_ratio": 4.9,
-        "shares_held": 516000,
-        "book_value": 1440000000,
-        "investment_purpose": "경영참여"
-      }
-    ],
-    "segment_info": "연결기준 사업부문별 재무정보 | (단위 : 백만원) | 구 분 | 사업부문 | 계 | 에너지솔루션 | 전자재료 | 금 액 | 비 중 | 금 액 | 비 중 | 제56기 | 매출액 | 12,384,169 | 93.3% | 882,562 | 6.7% | 13,266,731 | 기타영업수익 | 275,153 | 100.0% | - | - | 275,153 | 영업손익 | (1,851,876) | - | 129,515 | - | (1,722,361) | 총자산 | 41,048,648 | 97.1% | 1,206,691 | 2.9% | 42,255,339 | 제55기 | 매출액 | 15,691,243 | 94.6% | 901,006 | 5.4% | 16,592,249 | 기타영업수익 | 89,856 | 100.0% | - | - | 89,856 | 영업이익 | 217,676 | 59.9% | 145,628 | 40.1% | <TD VALIGN=\"MIDDLE\"",
-    "history_3yr": {
-      "op": [
-        1545488713572,
-        363304463263,
-        -1722360788760
-      ],
-      "rev": [
-        21436788407451,
-        16592248884388,
-        13266730679499
-      ],
-      "ocf": [
-        2103521513959,
-        -137613377776,
-        792385760879
-      ]
-    },
-    "updated_at": "2026-06-16 02:42:48"
+    "updated_at": "2026-06-16 15:04:28"
   },
   "000660": {
     "stock_code": "000660",
@@ -751,8 +562,8 @@
     "excess_cash": {
       "excess_cash": 37809690390000.0,
       "operating_cash_needed": 1577288610000.0,
-      "market_cap": 1624147990608000.0,
-      "excess_cash_ratio": 2.3
+      "market_cap": 1680936381888000.0,
+      "excess_cash_ratio": 2.2
     },
     "subsidiaries": [
       {
@@ -914,6 +725,160 @@
         53373126000000
       ]
     },
-    "updated_at": "2026-06-16 02:43:56"
+    "updated_at": "2026-06-16 15:05:31"
+  },
+  "010120": {
+    "stock_code": "010120",
+    "name": "Contextlogic(WISH)(*2,3)",
+    "bsns_year": "2026",
+    "reprt_name": "1분기보고서",
+    "operating_income": 126567079934,
+    "revenue": 1376552257987,
+    "shares_outstanding": 29738491,
+    "net_debt": {
+      "net_debt": 209780528577,
+      "total_debt": 1006083759044,
+      "total_cash": 796303230467,
+      "detail": {
+        "short_borrowings": 348012615208,
+        "current_ltd": 329035571918,
+        "long_borrowings": 329035571918,
+        "bonds": 0,
+        "cash": 796303230467,
+        "short_financial": 0
+      }
+    },
+    "excess_cash": {
+      "excess_cash": 755006662727.39,
+      "operating_cash_needed": 41296567739.61,
+      "market_cap": 38163442275000.0,
+      "excess_cash_ratio": 2.0
+    },
+    "subsidiaries": [
+      {
+        "name": "LS메탈㈜(*5)",
+        "ownership_ratio": 100.0,
+        "shares_held": 5500000,
+        "book_value": 215582000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "LS ELECTRIC Japan Co., Ltd.",
+        "ownership_ratio": 99.99,
+        "shares_held": 99990,
+        "book_value": 682000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "LS ELECTRIC Europe B.V.",
+        "ownership_ratio": 100.0,
+        "shares_held": 70000,
+        "book_value": 1068000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "LS ELECTRIC Americas Holdings(*5)",
+        "ownership_ratio": 100.0,
+        "shares_held": 5740001000,
+        "book_value": 45073000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "LS ELECTRIC Vietnam Co., Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 17429000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "락성전기투자(중국)유한공사(*5)",
+        "ownership_ratio": 100.0,
+        "shares_held": 1,
+        "book_value": 33730000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "LS ELECTRIC INDUSTRY TRADE Co., Ltd.",
+        "ownership_ratio": 100.0,
+        "shares_held": 1,
+        "book_value": 1220000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SAHAKO CO., LTD(*13)",
+        "ownership_ratio": 0.0,
+        "shares_held": 0,
+        "book_value": 0,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "LS ELECTRIC IBERIA, S.L.",
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 1378000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "LS Automation Solution Otomasyon Sistemleri(*14)",
+        "ownership_ratio": 60.67,
+        "shares_held": 34170,
+        "book_value": 1541000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "PT. LS ELECTRIC INDONESIA",
+        "ownership_ratio": 100.0,
+        "shares_held": 3698154,
+        "book_value": 32189000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "엘에스이모빌리티솔루션㈜(*5)",
+        "ownership_ratio": 100.0,
+        "shares_held": 40000000,
+        "book_value": 125838000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "씨엑스솔루션 주식회사(*7)",
+        "ownership_ratio": 51.0,
+        "shares_held": 17340,
+        "book_value": 1819000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "엘에스영종스카이솔라㈜",
+        "ownership_ratio": 100.0,
+        "shares_held": 209500,
+        "book_value": 2095000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SL에너지솔루션",
+        "ownership_ratio": 29.9,
+        "shares_held": 1218440,
+        "book_value": 609000000,
+        "investment_purpose": "경영참여"
+      }
+    ],
+    "segment_info": "SINGLE_SEGMENT: 부문별 영업이익 데이터가 명확하지 않습니다. 사업부문을 나누지 말고 전사(회사 전체) 영업이익으로 EBITDA를 계산하세요.",
+    "history_3yr": {
+      "op": [
+        324877723039,
+        389717122317,
+        426407143017
+      ],
+      "rev": [
+        4230482628448,
+        4551837252467,
+        4965798552980
+      ],
+      "ocf": [
+        214646330873,
+        230146922129,
+        299948385888
+      ]
+    },
+    "updated_at": "2026-06-16 15:06:42"
   }
 }
