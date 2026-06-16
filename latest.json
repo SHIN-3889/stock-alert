@@ -1,16 +1,16 @@
 {
-  "updated_at": "2026-06-16 11:55:45",
+  "updated_at": "2026-06-16 12:01:21",
   "portfolio": {
     "rows": [
       {
         "name": "HD현대일렉트릭",
         "currency": "KRW",
-        "price": 1151000.0,
-        "day_change_pct": -1.9591141396933562,
+        "price": 1153000.0,
+        "day_change_pct": -1.788756388415673,
         "shares": 22,
-        "value_krw": 25322000.0,
-        "pl_krw": 4928000.0,
-        "pl_pct": 24.163969795037758,
+        "value_krw": 25366000.0,
+        "pl_krw": 4972000.0,
+        "pl_pct": 24.379719525350595,
         "session": "open"
       },
       {
@@ -27,12 +27,12 @@
       {
         "name": "삼성전자",
         "currency": "KRW",
-        "price": 340750.0,
-        "day_change_pct": 1.564828614008942,
+        "price": 341000.0,
+        "day_change_pct": 1.639344262295082,
         "shares": 97,
-        "value_krw": 33052750.0,
-        "pl_krw": 2971498.0,
-        "pl_pct": 9.878239110526383,
+        "value_krw": 33077000.0,
+        "pl_krw": 2995748.0,
+        "pl_pct": 9.95885410620542,
         "session": "open"
       },
       {
@@ -41,20 +41,20 @@
         "price": 212.4499969482422,
         "day_change_pct": 3.4203422136296706,
         "shares": 189,
-        "value_krw": 60714621.207320824,
-        "pl_krw": 1188856.8725075945,
+        "value_krw": 60721047.06764722,
+        "pl_krw": 1188982.6976887286,
         "pl_pct": 1.997213955659031,
         "session": "market_closed"
       },
       {
         "name": "현대모비스",
         "currency": "KRW",
-        "price": 663000.0,
-        "day_change_pct": 3.918495297805643,
+        "price": 658000.0,
+        "day_change_pct": 3.1347962382445136,
         "shares": 106,
-        "value_krw": 70278000.0,
-        "pl_krw": 7568400.0,
-        "pl_pct": 12.068965517241379,
+        "value_krw": 69748000.0,
+        "pl_krw": 7038400.0,
+        "pl_pct": 11.223799864773495,
         "session": "open"
       },
       {
@@ -70,12 +70,12 @@
       }
     ],
     "summary": {
-      "total_value_krw": 214061091.2073208,
-      "day_change_krw": 4950128.427245885,
-      "day_change_pct": 2.367225687948273,
-      "total_pl_krw": 18067006.872507572,
-      "total_pl_pct": 9.21813887078552,
-      "usdkrw": 1512.0799560546875
+      "total_value_krw": 213605767.06764722,
+      "day_change_krw": 4488590.944830567,
+      "day_change_pct": 2.1464477610363155,
+      "total_pl_krw": 17605382.69768873,
+      "total_pl_pct": 8.982320496095493,
+      "usdkrw": 1512.239990234375
     },
     "watchlist": [
       {
