@@ -8,8 +8,8 @@
     "267260": {
       "name": "HD현대일렉트릭",
       "market": "KR",
-      "shares": 22,
-      "avg_price": 927000,
+      "shares": 40,
+      "avg_price": 1020000,
       "kr_query": "HD현대일렉트릭",
       "en_query": null
     },
@@ -44,14 +44,6 @@
       "avg_price": 591600,
       "kr_query": "현대모비스",
       "en_query": "아틀라스"
-    },
-    "006400": {
-      "name": "삼성SDI",
-      "market": "KR",
-      "shares": 38,
-      "avg_price": 518000,
-      "kr_query": "삼성SDI",
-      "en_query": null
     }
   },
   "watchlist": {
