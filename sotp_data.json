@@ -1,172 +1,4 @@
 {
-  "267260": {
-    "stock_code": "267260",
-    "name": "합계",
-    "bsns_year": "2026",
-    "reprt_name": "1분기보고서",
-    "operating_income": 258269322064,
-    "revenue": 1036500341405,
-    "shares_outstanding": 35992704,
-    "net_debt": {
-      "net_debt": -1221859107166,
-      "total_debt": 7191750000,
-      "total_cash": 1229050857166,
-      "detail": {
-        "short_borrowings": 7191750000,
-        "current_ltd": 0,
-        "long_borrowings": 0,
-        "bonds": 0,
-        "cash": 1222981242656,
-        "short_financial": 6069614510
-      }
-    },
-    "excess_cash": {
-      "excess_cash": 1197955846923.85,
-      "operating_cash_needed": 31095010242.149998,
-      "market_cap": 40239843072000.0,
-      "excess_cash_ratio": 3.0
-    },
-    "subsidiaries": [
-      {
-        "name": "HD Hyundai Electric\nHungary Kft.",
-        "ownership_ratio": 100.0,
-        "shares_held": 0,
-        "book_value": 7585000000,
-        "investment_purpose": "경영\n참여"
-      },
-      {
-        "name": "HD Hyundai Electric\nTexas LLC.",
-        "ownership_ratio": 100.0,
-        "shares_held": 0,
-        "book_value": 1439000000,
-        "investment_purpose": "경영\n참여"
-      },
-      {
-        "name": "건설공제조합",
-        "ownership_ratio": 0.01,
-        "shares_held": 450,
-        "book_value": 361000000,
-        "investment_purpose": "단순\n투자"
-      },
-      {
-        "name": "자본재공제조합",
-        "ownership_ratio": 0.73,
-        "shares_held": 10000,
-        "book_value": 2483000000,
-        "investment_purpose": "단순\n투자"
-      },
-      {
-        "name": "부산산업태양광㈜",
-        "ownership_ratio": 6.0,
-        "shares_held": 109000,
-        "book_value": 109000000,
-        "investment_purpose": "단순\n투자"
-      },
-      {
-        "name": "주식회사\n한국에너지파워",
-        "ownership_ratio": 10.0,
-        "shares_held": 13530,
-        "book_value": 135000000,
-        "investment_purpose": "단순\n투자"
-      },
-      {
-        "name": "주민산들바람발전\n주식회사",
-        "ownership_ratio": 19.9,
-        "shares_held": 55720,
-        "book_value": 557000000,
-        "investment_purpose": "단순\n투자"
-      },
-      {
-        "name": "신한-HD Global Green Way 펀드",
-        "ownership_ratio": 50.0,
-        "shares_held": 1999787883,
-        "book_value": 2000000000,
-        "investment_purpose": "단순\n투자"
-      },
-      {
-        "name": "HD Hyundai Electric\nSwitzerland Ltd.",
-        "ownership_ratio": 100.0,
-        "shares_held": 100,
-        "book_value": 123000000,
-        "investment_purpose": "경영\n참여"
-      },
-      {
-        "name": "HD Hyundai Electric\nChina Co.,Ltd.",
-        "ownership_ratio": 100.0,
-        "shares_held": 0,
-        "book_value": 38448000000,
-        "investment_purpose": "경영\n참여"
-      },
-      {
-        "name": "HD Hyundai Power \nTransformers USA, Inc.",
-        "ownership_ratio": 100.0,
-        "shares_held": 100,
-        "book_value": 79021000000,
-        "investment_purpose": "경영\n참여"
-      },
-      {
-        "name": "HD Hyundai Electric\nArabia L.L.C",
-        "ownership_ratio": 100.0,
-        "shares_held": 4000,
-        "book_value": 1185000000,
-        "investment_purpose": "경영\n참여"
-      },
-      {
-        "name": "HD Hyundai Electric\nAmerica Corporation",
-        "ownership_ratio": 100.0,
-        "shares_held": 100,
-        "book_value": 18063000000,
-        "investment_purpose": "경영\n참여"
-      },
-      {
-        "name": "HD현대플라스포㈜",
-        "ownership_ratio": 73.99,
-        "shares_held": 2030769,
-        "book_value": 11150000000,
-        "investment_purpose": "경영\n참여"
-      },
-      {
-        "name": "HD Hyundai Electric\nEurope GmbH",
-        "ownership_ratio": 100.0,
-        "shares_held": 300000,
-        "book_value": 3177000000,
-        "investment_purpose": "경영\n참여"
-      },
-      {
-        "name": "대불그린1호㈜",
-        "ownership_ratio": 100.0,
-        "shares_held": 100620,
-        "book_value": 4878000000,
-        "investment_purpose": "경영\n참여"
-      },
-      {
-        "name": "합계",
-        "ownership_ratio": 0.0,
-        "shares_held": 2002412272,
-        "book_value": 170714000000,
-        "investment_purpose": "-"
-      }
-    ],
-    "segment_info": "SINGLE_SEGMENT: 이 회사는 지배적 단일 사업부문(예: 반도체)으로, 부문 분할이 불필요합니다. 전사 영업이익을 그대로 사용하세요.",
-    "history_3yr": {
-      "op": [
-        315218290721,
-        668970713547,
-        995313437790
-      ],
-      "rev": [
-        2702799337370,
-        3322349007529,
-        4079497658529
-      ],
-      "ocf": [
-        -22438778035,
-        1033722426199,
-        959572657325
-      ]
-    },
-    "updated_at": "2026-06-16 15:02:14"
-  },
   "005930": {
     "stock_code": "005930",
     "name": "SSS",
@@ -191,7 +23,7 @@
     "excess_cash": {
       "excess_cash": 143338632680000.0,
       "operating_cash_needed": 4016203320000.0,
-      "market_cap": 2234273096816500.0,
+      "market_cap": 2252331145358000.0,
       "excess_cash_ratio": 6.4
     },
     "subsidiaries": [
@@ -354,7 +186,7 @@
         85315148000000
       ]
     },
-    "updated_at": "2026-06-16 15:03:23"
+    "updated_at": "2026-06-17 01:16:24"
   },
   "012330": {
     "stock_code": "012330",
@@ -380,7 +212,7 @@
     "excess_cash": {
       "excess_cash": 5176249610000.0,
       "operating_cash_needed": 466815390000.0,
-      "market_cap": 58680823614000.0,
+      "market_cap": 58859184780000.0,
       "excess_cash_ratio": 8.8
     },
     "subsidiaries": [
@@ -536,7 +368,182 @@
         4472515000000
       ]
     },
-    "updated_at": "2026-06-16 15:04:28"
+    "updated_at": "2026-06-17 01:17:32"
+  },
+  "005380": {
+    "stock_code": "005380",
+    "name": "전북현대모터스에프씨",
+    "bsns_year": "2026",
+    "reprt_name": "1분기보고서",
+    "operating_income": 2514686000000,
+    "revenue": 45938886000000,
+    "shares_outstanding": 262652272,
+    "net_debt": {
+      "net_debt": 157662555000000,
+      "total_debt": 183262802000000,
+      "total_cash": 25600247000000,
+      "detail": {
+        "short_borrowings": 11299803000000,
+        "current_ltd": 39337158000000,
+        "long_borrowings": 23455005000000,
+        "bonds": 109170836000000,
+        "cash": 18976745000000,
+        "short_financial": 6623502000000
+      }
+    },
+    "excess_cash": {
+      "excess_cash": 24222080420000.0,
+      "operating_cash_needed": 1378166580000.0,
+      "market_cap": 167573808640000.0,
+      "excess_cash_ratio": 14.5
+    },
+    "subsidiaries": [
+      {
+        "name": "현대제철",
+        "ownership_ratio": 6.87,
+        "shares_held": 9173595,
+        "book_value": 284840000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "GME",
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 336732000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "HMMI",
+        "ownership_ratio": 99.99,
+        "shares_held": 5729990,
+        "book_value": 677359000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "HHM",
+        "ownership_ratio": 100.0,
+        "shares_held": 10000,
+        "book_value": 29654000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "HTBC",
+        "ownership_ratio": 100.0,
+        "shares_held": 0,
+        "book_value": 37293000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "HMID",
+        "ownership_ratio": 99.99,
+        "shares_held": 1000000,
+        "book_value": 184934000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "SUPERNAL",
+        "ownership_ratio": 44.44,
+        "shares_held": 0,
+        "book_value": 1031752000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "HTV",
+        "ownership_ratio": 50.0,
+        "shares_held": 116000000,
+        "book_value": 285884000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "HMBSC",
+        "ownership_ratio": 100.0,
+        "shares_held": 300000,
+        "book_value": 1033000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "HMS",
+        "ownership_ratio": 100.0,
+        "shares_held": 25000,
+        "book_value": 68339000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "Hyundai Motor Investment",
+        "ownership_ratio": 0.0,
+        "shares_held": 0,
+        "book_value": 0,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "HMPH",
+        "ownership_ratio": 99.99,
+        "shares_held": 6449997,
+        "book_value": 16067000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "현대캐피탈",
+        "ownership_ratio": 59.72,
+        "shares_held": 59262481,
+        "book_value": 862877000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "현대카드",
+        "ownership_ratio": 36.96,
+        "shares_held": 59301937,
+        "book_value": 646370000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "현대로템",
+        "ownership_ratio": 33.77,
+        "shares_held": 36852432,
+        "book_value": 391906000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "현대케피코",
+        "ownership_ratio": 100.0,
+        "shares_held": 16670000,
+        "book_value": 285078000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "현대파텍스",
+        "ownership_ratio": 56.0,
+        "shares_held": 4480000,
+        "book_value": 25845000000,
+        "investment_purpose": "경영참여"
+      },
+      {
+        "name": "전북현대모터스에프씨",
+        "ownership_ratio": 100.0,
+        "shares_held": 200000,
+        "book_value": 1000000000,
+        "investment_purpose": "경영참여"
+      }
+    ],
+    "segment_info": "SINGLE_SEGMENT: 부문별 영업이익 데이터가 명확하지 않습니다. 사업부문을 나누지 말고 전사(회사 전체) 영업이익으로 EBITDA를 계산하세요.",
+    "history_3yr": {
+      "op": [
+        15126901000000,
+        14239592000000,
+        11467851000000
+      ],
+      "rev": [
+        162663579000000,
+        175231153000000,
+        186254472000000
+      ],
+      "ocf": [
+        -2518760000000,
+        -5661641000000,
+        -5991270000000
+      ]
+    },
+    "updated_at": "2026-06-17 01:19:01"
   },
   "000660": {
     "stock_code": "000660",
@@ -562,7 +569,7 @@
     "excess_cash": {
       "excess_cash": 37809690390000.0,
       "operating_cash_needed": 1577288610000.0,
-      "market_cap": 1680936381888000.0,
+      "market_cap": 1690874350362000.0,
       "excess_cash_ratio": 2.2
     },
     "subsidiaries": [
@@ -725,7 +732,7 @@
         53373126000000
       ]
     },
-    "updated_at": "2026-06-16 15:05:31"
+    "updated_at": "2026-06-17 01:20:08"
   },
   "010120": {
     "stock_code": "010120",
@@ -751,7 +758,7 @@
     "excess_cash": {
       "excess_cash": 755006662727.39,
       "operating_cash_needed": 41296567739.61,
-      "market_cap": 38163442275000.0,
+      "market_cap": 38312227625000.0,
       "excess_cash_ratio": 2.0
     },
     "subsidiaries": [
@@ -879,6 +886,6 @@
         299948385888
       ]
     },
-    "updated_at": "2026-06-16 15:06:42"
+    "updated_at": "2026-06-17 01:21:26"
   }
 }
