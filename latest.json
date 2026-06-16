@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-17 06:46:05",
+  "updated_at": "2026-06-17 06:51:05",
   "portfolio": {
     "rows": [
       {
@@ -81,8 +81,8 @@
         "name": "구글",
         "market": "US",
         "currency": "USD",
-        "price": 369.4581,
-        "day_change_pct": 0.7109445277361262,
+        "price": 369.5571,
+        "day_change_pct": 0.73793103448275,
         "session": "after"
       },
       {
@@ -90,8 +90,8 @@
         "name": "마이크론",
         "market": "US",
         "currency": "USD",
-        "price": 1033.9,
-        "day_change_pct": -4.579527412550987,
+        "price": 1036.0,
+        "day_change_pct": -4.385714672021309,
         "session": "after"
       },
       {
