@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-16 20:46:09",
+  "updated_at": "2026-06-16 20:51:10",
   "portfolio": {
     "rows": [
       {
@@ -30,8 +30,8 @@
         "price": 212.0,
         "day_change_pct": 0.028404292162212533,
         "shares": 189,
-        "value_krw": 60426148.75048828,
-        "pl_krw": 1057457.6031335518,
+        "value_krw": 60417334.96435547,
+        "pl_krw": 1057303.361876227,
         "pl_pct": 1.7811704834605635,
         "session": "pre"
       },
@@ -59,12 +59,12 @@
       }
     ],
     "summary": {
-      "total_value_krw": 212733838.75048828,
-      "day_change_krw": 2199523.746013105,
-      "day_change_pct": 1.0447340833566021,
-      "total_pl_krw": 11428327.60313356,
-      "total_pl_pct": 5.677106174588571,
-      "usdkrw": 1508.0899658203125
+      "total_value_krw": 212725024.96435547,
+      "day_change_krw": 2199521.243230462,
+      "day_change_pct": 1.044776620577088,
+      "total_pl_krw": 11428173.36187622,
+      "total_pl_pct": 5.677273772987052,
+      "usdkrw": 1507.8699951171875
     },
     "watchlist": [
       {
@@ -81,8 +81,8 @@
         "name": "구글",
         "market": "US",
         "currency": "USD",
-        "price": 367.09,
-        "day_change_pct": 0.0654218345372638,
+        "price": 367.24,
+        "day_change_pct": 0.1063104811230711,
         "session": "pre"
       },
       {
@@ -90,8 +90,8 @@
         "name": "마이크론",
         "market": "US",
         "currency": "USD",
-        "price": 1120.538,
-        "day_change_pct": 3.416447927454235,
+        "price": 1121.67,
+        "day_change_pct": 3.520922223777862,
         "session": "pre"
       },
       {
