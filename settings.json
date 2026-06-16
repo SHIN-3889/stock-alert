@@ -5,14 +5,6 @@
     "15:30"
   ],
   "holdings": {
-    "267260": {
-      "name": "HD현대일렉트릭",
-      "market": "KR",
-      "shares": 40,
-      "avg_price": 1020000,
-      "kr_query": "HD현대일렉트릭",
-      "en_query": null
-    },
     "476550": {
       "name": "TIGER 미국30년국채커버드콜액티브(H)",
       "market": "KR",
@@ -44,6 +36,14 @@
       "avg_price": 591600,
       "kr_query": "현대모비스",
       "en_query": "아틀라스"
+    },
+    "005380": {
+      "name": "현대차",
+      "market": "KR",
+      "shares": 71,
+      "avg_price": 641500,
+      "kr_query": "보스턴다이나믹스",
+      "en_query": "보스턴다이나믹스"
     }
   },
   "watchlist": {
