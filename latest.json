@@ -1,18 +1,7 @@
 {
-  "updated_at": "2026-06-16 16:51:04",
+  "updated_at": "2026-06-16 16:55:54",
   "portfolio": {
     "rows": [
-      {
-        "name": "HD현대일렉트릭",
-        "currency": "KRW",
-        "price": 1114000.0,
-        "day_change_pct": -6.700167504187604,
-        "shares": 40,
-        "value_krw": 44560000.0,
-        "pl_krw": 3760000.0,
-        "pl_pct": 9.215686274509805,
-        "session": "nxt"
-      },
       {
         "name": "TIGER 미국30년국채커버드콜액티브(H)",
         "currency": "KRW",
@@ -41,8 +30,8 @@
         "price": 212.45,
         "day_change_pct": 3.420343699220825,
         "shares": 189,
-        "value_krw": 60590148.604760736,
-        "pl_krw": 1186420.4198437482,
+        "value_krw": 60582521.87797851,
+        "pl_krw": 1186271.080312498,
         "pl_pct": 1.9972154208075263,
         "session": "market_closed"
       },
@@ -56,15 +45,26 @@
         "pl_krw": 7250400.0,
         "pl_pct": 11.561866125760648,
         "session": "nxt"
+      },
+      {
+        "name": "현대차",
+        "currency": "KRW",
+        "price": 640000.0,
+        "day_change_pct": -1.0819165378670788,
+        "shares": 71,
+        "value_krw": 45440000.0,
+        "pl_krw": -106500.0,
+        "pl_pct": -0.23382696804364772,
+        "session": "nxt"
       }
     ],
     "summary": {
-      "total_value_krw": 212017838.60476074,
-      "day_change_krw": 1483217.6812274456,
-      "day_change_pct": 0.7045006064661232,
-      "total_pl_krw": 15423790.419843763,
-      "total_pl_pct": 7.845502222598366,
-      "usdkrw": 1508.97998046875
+      "total_value_krw": 212890211.8779785,
+      "day_change_krw": 4185965.4481951,
+      "day_change_pct": 2.005692514552371,
+      "total_pl_krw": 11557141.08031249,
+      "total_pl_pct": 5.740309346360235,
+      "usdkrw": 1508.7900390625
     },
     "watchlist": [
       {
