@@ -45,7 +45,7 @@
 </head>
 <body>
 <div class="wrap">
-  <div class="header no-print"><h1>🚢 출하 선석표</h1><div class="sub">메일 선석표에서 YNCC 항차만 자동 추출 <span style="opacity:.7;font-size:11px;margin-left:6px;">v2.0</span></div></div>
+  <div class="header no-print"><h1>🚢 출하 선석표</h1><div class="sub">메일 선석표에서 YNCC 항차만 자동 추출 <span style="opacity:.7;font-size:11px;margin-left:6px;">v2.1</span></div></div>
 
   <div class="card no-print">
     <h2>📋 선석표 붙여넣기</h2>
@@ -79,16 +79,17 @@
 var DOC = null;
 
 function todayTitle(){ var d=new Date(); return (d.getMonth()+1)+'월 '+d.getDate()+'일 선석표'; }
-function loadDoc(){ try{var d=JSON.parse(localStorage.getItem('berth_doc')); if(d)return d;}catch(e){} return null; }
+// [v2.1] sessionStorage 사용: 탭/브라우저 닫으면 기록 자동 소멸
+function loadDoc(){ try{var d=JSON.parse(sessionStorage.getItem('berth_doc')); if(d)return d;}catch(e){} return null; }
 function saveDoc(){
   if(!DOC)return;
   DOC.title=document.getElementById('docTitle').value;
   DOC.note=document.getElementById('noteArea').value;
-  localStorage.setItem('berth_doc',JSON.stringify(DOC));
+  sessionStorage.setItem('berth_doc',JSON.stringify(DOC));
 }
 function clearDoc(){
   if(!confirm('현재 선석표를 지울까요?'))return;
-  localStorage.removeItem('berth_doc'); DOC=null;
+  sessionStorage.removeItem('berth_doc'); DOC=null;
   document.getElementById('resultCard').style.display='none';
 }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -139,7 +140,7 @@ function applyRows(rows){
     if(va!==null)return -1; if(vb!==null)return 1; return 0;
   });
   DOC={title:todayTitle(),rows:rows,note:(DOC&&DOC.note)||''};
-  localStorage.setItem('berth_doc',JSON.stringify(DOC));
+  sessionStorage.setItem('berth_doc',JSON.stringify(DOC));
   renderDoc();
   alert('✓ YNCC 항차 '+rows.length+'건을 추출했어요');
 }
