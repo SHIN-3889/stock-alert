@@ -1,28 +1,28 @@
 {
-  "updated_at": "2026-06-17 15:25:53",
+  "updated_at": "2026-06-17 15:31:12",
   "portfolio": {
     "rows": [
       {
         "name": "TIGER 미국30년국채커버드콜액티브(H)",
         "currency": "KRW",
-        "price": 7270.0,
-        "day_change_pct": 0.5532503457814661,
+        "price": 7272.0,
+        "day_change_pct": 0.5809128630705395,
         "shares": 503,
-        "value_krw": 3656810.0,
-        "pl_krw": 57342.0,
-        "pl_pct": 1.593068753493572,
-        "session": "open"
+        "value_krw": 3657816.0,
+        "pl_krw": 58348.0,
+        "pl_pct": 1.621017328116266,
+        "session": "nxt"
       },
       {
         "name": "삼성전자",
         "currency": "KRW",
-        "price": 344500.0,
-        "day_change_pct": 0.43731778425655976,
+        "price": 345000.0,
+        "day_change_pct": 0.5830903790087464,
         "shares": 97,
-        "value_krw": 33416500.0,
-        "pl_krw": 3335248.0,
-        "pl_pct": 11.087464045711927,
-        "session": "open"
+        "value_krw": 33465000.0,
+        "pl_krw": 3383748.0,
+        "pl_pct": 11.248694037069999,
+        "session": "nxt"
       },
       {
         "name": "엔비디아",
@@ -30,21 +30,21 @@
         "price": 207.41000366210938,
         "day_change_pct": -2.137303299281502,
         "shares": 189,
-        "value_krw": 59248407.36459005,
-        "pl_krw": -251378.3355967179,
+        "value_krw": 59321319.703051485,
+        "pl_krw": -251687.68707302213,
         "pl_pct": -0.42248611930031066,
         "session": "market_closed"
       },
       {
         "name": "현대모비스",
         "currency": "KRW",
-        "price": 633000.0,
-        "day_change_pct": -4.090909090909091,
+        "price": 631000.0,
+        "day_change_pct": -4.393939393939394,
         "shares": 106,
-        "value_krw": 67098000.0,
-        "pl_krw": 4388400.0,
-        "pl_pct": 6.9979716024340775,
-        "session": "open"
+        "value_krw": 66886000.0,
+        "pl_krw": 4176400.0,
+        "pl_pct": 6.659905341446924,
+        "session": "nxt"
       },
       {
         "name": "현대차",
@@ -55,16 +55,16 @@
         "value_krw": 43807000.0,
         "pl_krw": -1739500.0,
         "pl_pct": -3.819173811379579,
-        "session": "open"
+        "session": "nxt"
       }
     ],
     "summary": {
-      "total_value_krw": 207226717.36459005,
-      "day_change_krw": -5623354.321234733,
-      "day_change_pct": -2.6419320776809645,
-      "total_pl_krw": 5790111.66440329,
-      "total_pl_pct": 2.8744088713553624,
-      "usdkrw": 1511.4200439453125
+      "total_value_krw": 207137135.70305148,
+      "day_change_krw": -5787440.71329838,
+      "day_change_pct": -2.718070788588395,
+      "total_pl_krw": 5627308.312926978,
+      "total_pl_pct": 2.792572643135894,
+      "usdkrw": 1513.280029296875
     },
     "watchlist": [
       {
@@ -74,7 +74,7 @@
         "currency": "KRW",
         "price": 2510000.0,
         "day_change_pct": 5.373635600335852,
-        "session": "open"
+        "session": "nxt"
       },
       {
         "code": "GOOG",
@@ -99,9 +99,9 @@
         "name": "Ls일렉트릭",
         "market": "KR",
         "currency": "KRW",
-        "price": 255000.0,
-        "day_change_pct": -0.9708737864077669,
-        "session": "open"
+        "price": 255500.0,
+        "day_change_pct": -0.7766990291262136,
+        "session": "nxt"
       }
     ]
   },
