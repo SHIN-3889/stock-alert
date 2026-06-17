@@ -45,7 +45,7 @@
 </head>
 <body>
 <div class="wrap">
-  <div class="header no-print"><h1>🚢 출하 선석표</h1><div class="sub">메일 선석표에서 YNCC 항차만 자동 추출 <span style="opacity:.7;font-size:11px;margin-left:6px;">v2.1</span></div></div>
+  <div class="header no-print"><h1>🚢 출하 선석표</h1><div class="sub">메일 선석표에서 YNCC 항차만 자동 추출 <span style="opacity:.7;font-size:11px;margin-left:6px;">v2.3</span></div></div>
 
   <div class="card no-print">
     <h2>📋 선석표 붙여넣기</h2>
@@ -210,7 +210,7 @@ function doPrint(){
   h+='<colgroup>';
   PW.forEach(function(w){ h+='<col style="width:'+w+'px">'; });
   h+='</colgroup>';
-  // 헤더 (TANK 3칸은 colspan으로 병합)
+  // 헤더
   h+='<thead><tr>';
   function thStyle(w, nowrap){
     return 'style="border:1px solid #444;padding:3px 2px;font-size:11px;background:#eaf0f6;'+
@@ -218,15 +218,15 @@ function doPrint(){
       (nowrap?'white-space:nowrap;':'white-space:normal;word-break:keep-all;')+'"';
   }
   HD.forEach(function(t,idx){
-    if (idx===11) {
-      // TANK 첫 칸에서 3칸 병합
-      var tankW = PW[11]+PW[12]+PW[13];
+    if(idx===11){
+      // TANK 헤더만 3칸 병합 (colgroup은 16col 유지 — 열 수 불일치 없음)
+      var tankW=PW[11]+PW[12]+PW[13];
       h+='<th colspan="3" style="border:1px solid #444;padding:3px 2px;font-size:11px;background:#eaf0f6;'+
          'width:'+tankW+'px;height:34px;vertical-align:middle;white-space:normal;word-break:keep-all;">TANK</th>';
-    } else if (idx===12 || idx===13) {
-      // 병합됐으므로 건너뜀
+    } else if(idx===12||idx===13){
+      // colspan으로 병합됐으므로 건너뜀
     } else {
-      h+='<th '+thStyle(PW[idx], nowrapCols.indexOf(idx)!==-1)+'>'+t+'</th>';
+      h+='<th '+thStyle(PW[idx],nowrapCols.indexOf(idx)!==-1)+'>'+t+'</th>';
     }
   });
   h+='</tr></thead><tbody>';
