@@ -1,16 +1,16 @@
 {
-  "updated_at": "2026-06-18 13:15:52",
+  "updated_at": "2026-06-18 13:20:59",
   "portfolio": {
     "rows": [
       {
         "name": "TIGER 미국30년국채커버드콜액티브(H)",
         "currency": "KRW",
-        "price": 7302.0,
-        "day_change_pct": 0.5092911218169305,
+        "price": 7300.0,
+        "day_change_pct": 0.4817618719889883,
         "shares": 503,
-        "value_krw": 3672906.0,
-        "pl_krw": 73438.0,
-        "pl_pct": 2.04024594745668,
+        "value_krw": 3671900.0,
+        "pl_krw": 72432.0,
+        "pl_pct": 2.0122973728339857,
         "session": "open"
       },
       {
@@ -30,8 +30,8 @@
         "price": 204.64999389648438,
         "day_change_pct": -1.3968765495196502,
         "shares": 189,
-        "value_krw": 58791075.914158836,
-        "pl_krw": -1045687.1807581559,
+        "value_krw": 58798040.18442842,
+        "pl_krw": -1045811.0507168397,
         "pl_pct": -1.747566423503585,
         "session": "market_closed"
       },
@@ -59,12 +59,12 @@
       }
     ],
     "summary": {
-      "total_value_krw": 204053981.91415882,
-      "day_change_krw": -3724511.959716767,
-      "day_change_pct": -1.7925396850636512,
-      "total_pl_krw": 2280398.8192418218,
-      "total_pl_pct": 1.1301770946740295,
-      "usdkrw": 1519.97998046875
+      "total_value_krw": 204059940.18442842,
+      "day_change_krw": -3725616.620139301,
+      "day_change_pct": -1.793010388899851,
+      "total_pl_krw": 2279268.949283153,
+      "total_pl_pct": 1.1295774443266693,
+      "usdkrw": 1520.1600341796875
     },
     "watchlist": [
       {
@@ -72,8 +72,8 @@
         "name": "SK하이닉스",
         "market": "KR",
         "currency": "KRW",
-        "price": 2668000.0,
-        "day_change_pct": 6.294820717131475,
+        "price": 2671000.0,
+        "day_change_pct": 6.414342629482071,
         "session": "open"
       },
       {
@@ -99,8 +99,8 @@
         "name": "Ls일렉트릭",
         "market": "KR",
         "currency": "KRW",
-        "price": 243500.0,
-        "day_change_pct": -5.0682261208577,
+        "price": 244000.0,
+        "day_change_pct": -4.8732943469785575,
         "session": "open"
       }
     ]
