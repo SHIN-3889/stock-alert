@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-20 05:55:54",
+  "updated_at": "2026-06-20 06:01:21",
   "portfolio": {
     "rows": [
       {
@@ -30,8 +30,8 @@
         "price": 210.33,
         "day_change_pct": 1.9534658264663118,
         "shares": 189,
-        "value_krw": 60813968.53826294,
-        "pl_krw": 589837.3784912154,
+        "value_krw": 60730091.619873054,
+        "pl_krw": 589023.85253907,
         "pl_pct": 0.9794037159729322,
         "session": "after"
       },
@@ -59,12 +59,12 @@
       }
     ],
     "summary": {
-      "total_value_krw": 207216353.53826293,
-      "day_change_krw": 2141687.9584899843,
-      "day_change_pct": 1.0443454594623631,
-      "total_pl_krw": 5055402.378491193,
-      "total_pl_pct": 2.500681931643569,
-      "usdkrw": 1529.8199462890625
+      "total_value_krw": 207132476.61987305,
+      "day_change_krw": 2140080.8459472656,
+      "day_change_pct": 1.0439806012645643,
+      "total_pl_krw": 5054588.8525390625,
+      "total_pl_pct": 2.5013072476087803,
+      "usdkrw": 1527.7099609375
     },
     "watchlist": [
       {
@@ -106,24 +106,6 @@
     ]
   },
   "news": {
-    "267260": {
-      "name": "HD현대일렉트릭",
-      "domestic": [
-        {
-          "title": "AI 데이터센터가 불러온 전력 대란…HD현대일렉트릭 수혜 본격화",
-          "link": "https://www.pinpointnews.co.kr/news/articleView.html?idxno=459795"
-        },
-        {
-          "title": "HD현대일렉트릭 주가, 6월 12일 1,130,000원 9.39% 상승 마감",
-          "link": "https://www.joongangenews.com/news/articleView.html?idxno=525652"
-        },
-        {
-          "title": "HD현대일렉트릭 주가, 6월 11일 1,033,000원 4.77% 상승 마감",
-          "link": "https://www.topstarnews.net/news/articleView.html?idxno=16088379"
-        }
-      ],
-      "overseas": []
-    },
     "476550": {
       "name": "TIGER 미국30년국채커버드콜액티브(H)",
       "domestic": [
@@ -132,8 +114,8 @@
           "link": "https://www.sedaily.com/article/20053225?ref=naver"
         },
         {
-          "title": "PLUS 테슬라위클리커버드콜채권혼합 ETF 5월 분배금 187원",
-          "link": "https://www.g-enews.com/view.php?ud=202605191744548000c5557f8da8_1"
+          "title": "'불장'서 커버드콜 ETF 성적표도 갈렸다… 관건은 '기초자산'",
+          "link": "https://www.sidae.com/article/2026050813412451821"
         },
         {
           "title": "美 장기채 ETF 가격 추락…개미들 '눈물의 손절'",
@@ -146,16 +128,16 @@
       "name": "삼성전자",
       "domestic": [
         {
-          "title": "\"More HBM!\"의 의미…K반도체, 설계부터 참여 '슈퍼을' 도약[젠슨황 방한...",
-          "link": "https://www.newsis.com/view/NISX20260609_0003661756"
+          "title": "SK하이닉스도 차세대 HBM 샘플 공급",
+          "link": "https://www.hankyung.com/article/2026061851011"
         },
         {
-          "title": "삼성 파운드리, 구글 차세대 AI칩 수주 유력",
-          "link": "https://www.hankyung.com/article/2026061237311"
+          "title": "[그래픽] 삼성전자-SK하이닉스 HBM4E 비교",
+          "link": "https://www.yna.co.kr/view/GYH20260618001000044?input=1363m"
         },
         {
-          "title": "삼성전자, 16일부터 글로벌전략회의… 가전 수익성·HBM 주도권 점검",
-          "link": "https://biz.chosun.com/it-science/ict/2026/06/11/JAMCITLGK5BNRF3BUTG4I67FQU/?utm_source=naver&utm_medium=original&utm_campaign=biz"
+          "title": "SK하이닉스, 'HBM4E' 12단 샘플 공급…\"핀당 최대 16Gbps 구현\"",
+          "link": "https://www.newsis.com/view/NISX20260618_0003673660"
         }
       ],
       "overseas": []
@@ -164,16 +146,16 @@
       "name": "엔비디아",
       "domestic": [
         {
-          "title": "테슬라·엔비디아에 구글까지…TSMC 병목에 삼성 ‘대박’ 터지나",
-          "link": "https://www.joongang.co.kr/article/25436314"
+          "title": "[단독]LG·엔비디아, 내주 AI·로봇 2차 논의…협력 가속화",
+          "link": "https://www.dt.co.kr/article/12068486?ref=naver"
         },
         {
-          "title": "테슬라·엔비디아 이어 구글까지…'삼성 파운드리' AI칩 공급 기대감 확...",
-          "link": "https://www.newsis.com/view/NISX20260612_0003666851"
+          "title": "아마존, AI 칩 외부 판매 추진… 엔비디아 의존도 낮추나",
+          "link": "https://www.kmib.co.kr/article/view.asp?arcid=0029991138&code=61141411&cp=nv"
         },
         {
-          "title": "엔비디아와 물꼬 튼 정부…전력 인프라 없이는 '그림의 떡'",
-          "link": "https://www.nocutnews.co.kr/news/6532495?utm_source=naver&utm_medium=article&utm_campaign=20260614050036"
+          "title": "'젠슨 감옥' 깨질까…구글, 엔비디아 AI 칩 독점에 도전장",
+          "link": "https://www.newsis.com/view/NISX20260619_0003675959"
         }
       ],
       "overseas": []
@@ -182,34 +164,34 @@
       "name": "현대모비스",
       "domestic": [
         {
-          "title": "최근 5거래일간 현대모비스 주가 반등",
-          "link": "https://www.topstarnews.net/news/articleView.html?idxno=16092113"
+          "title": "[단독] 현대차, 피지컬AI 완전독립 … 그룹 지배구조 개편도 '드라이브...",
+          "link": "https://www.mk.co.kr/article/12078688"
         },
         {
-          "title": "\"천재는 주식으로 움직인다\"...현대차의 '테슬라 전략'",
-          "link": "http://www.fnnews.com/news/202606121815463883"
+          "title": "나스닥 상장 앞…현대차, ‘보스턴 다이내믹스’ 지분 100% 소유한다",
+          "link": "https://www.hani.co.kr/arti/economy/marketing/1264390.html"
         },
         {
-          "title": "[화보] 2026 KBL Y-리그(주말리그) U14 KCC와 현대모비스 경기 화보 (KCC 6...",
-          "link": "https://m.sports.naver.com/basketball/article/065/0000298724"
+          "title": "'현대모비스 램프 인수' 佛 OP...한국회장에 성민석 전 SK온 CCO 선임",
+          "link": "https://www.edaily.co.kr/news/newspath.asp?newsid=03306246645483032"
         }
       ],
       "overseas": []
     },
-    "006400": {
-      "name": "삼성SDI",
+    "005380": {
+      "name": "현대차",
       "domestic": [
         {
-          "title": "'친환경 배터리' 뒤편에 독성물질…헝가리 삼성SDI 공장의 그림자",
-          "link": "https://www.pressian.com/pages/articles/2026061217251641093?utm_source=naver&utm_medium=search"
+          "title": "현대차그룹, 보스턴다이나믹스 지분 100% 품나",
+          "link": "https://daily.hankooki.com/news/articleView.html?idxno=1378304"
         },
         {
-          "title": "6월 2주차 삼성SDI 주가, 50만원대 중반 회복",
-          "link": "https://www.topstarnews.net/news/articleView.html?idxno=16092089"
+          "title": "'풋? 콜? 아니면 고' ... 보스턴다이내믹스 지분 3가지 시나리오는",
+          "link": "https://biz.newdaily.co.kr/site/data/html/2026/06/19/2026061900207.html"
         },
         {
-          "title": "[르포] 삼성벨트 품은 '백석시그니처자이'…젊은 실수요자들로 북적",
-          "link": "https://www.news1.kr/realestate/general/6195985"
+          "title": "“아틀라스 양산 본격화시 '1억' 가능”…韓 휴머노이드 공급망 뜬다",
+          "link": "https://www.edaily.co.kr/news/newspath.asp?newsid=04355846645483032"
         }
       ],
       "overseas": []
