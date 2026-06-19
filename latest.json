@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-19 16:55:53",
+  "updated_at": "2026-06-19 17:01:24",
   "portfolio": {
     "rows": [
       {
@@ -27,13 +27,13 @@
       {
         "name": "엔비디아",
         "currency": "USD",
-        "price": 210.69000244140625,
-        "day_change_pct": 2.1279701606428687,
+        "price": 210.33,
+        "day_change_pct": 1.9534658264663118,
         "shares": 189,
-        "value_krw": 60941555.735319816,
-        "pl_krw": 694194.6976745576,
-        "pl_pct": 1.1522408379693014,
-        "session": "market_closed"
+        "value_krw": 60853327.84894043,
+        "pl_krw": 590219.1261914149,
+        "pl_pct": 0.9794037159729322,
+        "session": "pre"
       },
       {
         "name": "현대모비스",
@@ -59,12 +59,12 @@
       }
     ],
     "summary": {
-      "total_value_krw": 207343940.73531982,
-      "day_change_krw": 2246267.2156298757,
-      "day_change_pct": 1.095218281651658,
-      "total_pl_krw": 5159759.6976745725,
-      "total_pl_pct": 2.5520095940215333,
-      "usdkrw": 1530.4100341796875
+      "total_value_krw": 207255712.84894043,
+      "day_change_krw": 2142442.09732908,
+      "day_change_pct": 1.0445165685664195,
+      "total_pl_krw": 5055784.126191407,
+      "total_pl_pct": 2.500388678733789,
+      "usdkrw": 1530.81005859375
     },
     "watchlist": [
       {
@@ -81,18 +81,18 @@
         "name": "구글",
         "market": "US",
         "currency": "USD",
-        "price": 367.4599914550781,
-        "day_change_pct": 0.9541803441492355,
-        "session": "market_closed"
+        "price": 365.04,
+        "day_change_pct": 0.28932359928338874,
+        "session": "pre"
       },
       {
         "code": "MU",
         "name": "마이크론",
         "market": "US",
         "currency": "USD",
-        "price": 1133.989990234375,
-        "day_change_pct": 5.223159528103827,
-        "session": "market_closed"
+        "price": 1151.95,
+        "day_change_pct": 6.889672450589218,
+        "session": "pre"
       },
       {
         "code": "010120",
