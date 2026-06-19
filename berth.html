@@ -45,7 +45,7 @@
 </head>
 <body>
 <div class="wrap">
-  <div class="header no-print"><h1>🚢 출하 선석표</h1><div class="sub">메일 선석표에서 YNCC 항차만 자동 추출 <span style="opacity:.7;font-size:11px;margin-left:6px;">v2.3</span></div></div>
+  <div class="header no-print"><h1>🚢 출하 선석표</h1><div class="sub">메일 선석표에서 YNCC 항차만 자동 추출 <span style="opacity:.7;font-size:11px;margin-left:6px;">v3.0</span></div></div>
 
   <div class="card no-print">
     <h2>📋 선석표 붙여넣기</h2>
@@ -193,44 +193,44 @@ function renderDoc(){
 function setField(i,k,v){DOC.rows[i][k]=v;saveDoc();}
 function toggleOk(i,k){DOC.rows[i][k]=DOC.rows[i][k]==='OK'?'':'OK';saveDoc();renderDoc();}
 
-// ── 인쇄 전용 표 생성 (px 고정) ──
+// ── 인쇄 전용 표 생성 (% 기반 — 인쇄 스케일링에도 비율 유지) ──
 function doPrint(){
   if(!DOC)return;
   saveDoc();
-  // A4 가로 인쇄영역 약 277mm ≈ 1047px (96dpi, 8mm 여백)
-  // 픽셀 고정 너비 (합계 약 1040px)
-  var PW=[30,56,132,66,66,66,112,42,52,42,72,68,68,68,42,50];
+  // 각 열 너비를 %로 (table width:100% 기준). 합계 100%.
+  // px 고정 방식은 인쇄 시 브라우저가 A4 영역에 맞춰 스케일링하면서
+  // 특정 칸(분석완료/성적서)만 늘어나는 문제가 있어 % 비율 고정으로 해결.
+  var PCT=[2.907,5.426,12.791,6.395,6.395,6.395,10.853,4.07,5.039,4.07,6.977,6.589,6.589,6.589,4.07,4.845];
   var HD=['순번','회사명','VESSEL NAME','입항예정','접안예정','이안예정','CARGO','검정','행선지','공장','REMARK','TANK','TANK','TANK','분석<br>완료','성적서<br>발행'];
-  var nowrapCols=[3,4,5,7,8,9]; // 입항,접안,이안,검정,행선지,공장
+  var nowrapCols=[3,4,5,7,8,9];
 
   var h='<div style="text-align:center;font-size:16px;font-weight:700;margin-bottom:8px;">'+esc(DOC.title)+'</div>';
-  var TOTAL_W = PW.reduce(function(a,b){return a+b;},0);
-  h+='<table style="border-collapse:collapse;table-layout:fixed;font-family:inherit;width:'+TOTAL_W+'px;">';
-  // colgroup px 고정
+  // table-layout:fixed + width:100% + colgroup % → 인쇄 영역 전체를 비율대로 채움
+  h+='<table style="border-collapse:collapse;table-layout:fixed;font-family:inherit;width:100%;">';
+  // colgroup만 너비 담당 (셀에는 width 일절 없음 — 충돌 방지)
   h+='<colgroup>';
-  PW.forEach(function(w){ h+='<col style="width:'+w+'px">'; });
+  PCT.forEach(function(p){ h+='<col style="width:'+p+'%">'; });
   h+='</colgroup>';
-  // 헤더
+  // 헤더 (셀에 width 없음 — colgroup이 결정)
   h+='<thead><tr>';
-  function thStyle(w, nowrap){
+  function thStyle(nowrap){
     return 'style="border:1px solid #444;padding:3px 2px;font-size:11px;background:#eaf0f6;'+
-      'width:'+w+'px;max-width:'+w+'px;height:34px;vertical-align:middle;'+
+      'height:34px;vertical-align:middle;overflow:hidden;'+
       (nowrap?'white-space:nowrap;':'white-space:normal;word-break:keep-all;')+'"';
   }
   HD.forEach(function(t,idx){
     if(idx===11){
-      // TANK 헤더만 3칸 병합 (colgroup은 16col 유지 — 열 수 불일치 없음)
-      var tankW=PW[11]+PW[12]+PW[13];
+      // TANK 헤더만 시각적 병합 (colgroup은 16칸 그대로 — 열 수 일치)
       h+='<th colspan="3" style="border:1px solid #444;padding:3px 2px;font-size:11px;background:#eaf0f6;'+
-         'width:'+tankW+'px;height:34px;vertical-align:middle;white-space:normal;word-break:keep-all;">TANK</th>';
+         'height:34px;vertical-align:middle;white-space:normal;word-break:keep-all;overflow:hidden;">TANK</th>';
     } else if(idx===12||idx===13){
-      // colspan으로 병합됐으므로 건너뜀
+      // 병합됐으므로 건너뜀
     } else {
-      h+='<th '+thStyle(PW[idx],nowrapCols.indexOf(idx)!==-1)+'>'+t+'</th>';
+      h+='<th '+thStyle(nowrapCols.indexOf(idx)!==-1)+'>'+t+'</th>';
     }
   });
   h+='</tr></thead><tbody>';
-  // 데이터
+  // 데이터 (셀에 width 없음)
   DOC.rows.forEach(function(r,i){
     var cells=[
       String(i+1),
@@ -248,7 +248,7 @@ function doPrint(){
       var isComp=(idx===1);
       var isOk=(idx===14||idx===15);
       h+='<td style="border:1px solid #444;padding:3px 2px;font-size:12px;text-align:center;'+
-         'width:'+PW[idx]+'px;max-width:'+PW[idx]+'px;height:34px;vertical-align:middle;overflow:hidden;'+
+         'height:34px;vertical-align:middle;overflow:hidden;'+
          (nowrapCols.indexOf(idx)!==-1?'white-space:nowrap;':'white-space:normal;word-break:keep-all;')+
          (isComp?'background:#1a2c47;color:#fff;font-weight:700;font-size:10px;':'')+
          (isOk?'color:#1e8449;font-weight:700;':'')+'">'+c+'</td>';
