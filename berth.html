@@ -32,12 +32,12 @@
   .note-area { margin-top:10px; }
   .empty { color:#aaa; font-size:13px; text-align:center; padding:16px; }
   /* 인쇄 전용 영역은 평소 숨김 */
-  #printArea { display:none; }
+  #printArea { display:none; width:1059px; }
   @media print {
     @page { size:A4 landscape; margin:8mm; }
     body { background:#fff; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
     body > .wrap { display:none !important; }
-    #printArea { display:block !important; }
+    #printArea { display:block !important; width:1059px !important; }
     #printArea table { page-break-inside:auto; }
     #printArea tr { page-break-inside:avoid; }
   }
@@ -45,7 +45,7 @@
 </head>
 <body>
 <div class="wrap">
-  <div class="header no-print"><h1>🚢 출하 선석표</h1><div class="sub">메일 선석표에서 YNCC 항차만 자동 추출 <span style="opacity:.7;font-size:11px;margin-left:6px;">v3.0</span></div></div>
+  <div class="header no-print"><h1>🚢 출하 선석표</h1><div class="sub">메일 선석표에서 YNCC 항차만 자동 추출 <span style="opacity:.7;font-size:11px;margin-left:6px;">v3.1</span></div></div>
 
   <div class="card no-print">
     <h2>📋 선석표 붙여넣기</h2>
@@ -79,17 +79,18 @@
 var DOC = null;
 
 function todayTitle(){ var d=new Date(); return (d.getMonth()+1)+'월 '+d.getDate()+'일 선석표'; }
-// [v2.1] sessionStorage 사용: 탭/브라우저 닫으면 기록 자동 소멸
-function loadDoc(){ try{var d=JSON.parse(sessionStorage.getItem('berth_doc')); if(d)return d;}catch(e){} return null; }
+// [v3.1] 저장소를 쓰지 않음 — 메모리(DOC 변수)에만 유지.
+// 새로고침/새 창/탭을 열면 이전 추출 내용이 보이지 않음.
+function loadDoc(){ return null; }
 function saveDoc(){
   if(!DOC)return;
+  // 메모리에만 갱신 (저장소 사용 안 함 — 새로고침 시 사라짐)
   DOC.title=document.getElementById('docTitle').value;
   DOC.note=document.getElementById('noteArea').value;
-  sessionStorage.setItem('berth_doc',JSON.stringify(DOC));
 }
 function clearDoc(){
   if(!confirm('현재 선석표를 지울까요?'))return;
-  sessionStorage.removeItem('berth_doc'); DOC=null;
+  DOC=null;
   document.getElementById('resultCard').style.display='none';
 }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -140,7 +141,6 @@ function applyRows(rows){
     if(va!==null)return -1; if(vb!==null)return 1; return 0;
   });
   DOC={title:todayTitle(),rows:rows,note:(DOC&&DOC.note)||''};
-  sessionStorage.setItem('berth_doc',JSON.stringify(DOC));
   renderDoc();
   alert('✓ YNCC 항차 '+rows.length+'건을 추출했어요');
 }
@@ -193,44 +193,45 @@ function renderDoc(){
 function setField(i,k,v){DOC.rows[i][k]=v;saveDoc();}
 function toggleOk(i,k){DOC.rows[i][k]=DOC.rows[i][k]==='OK'?'':'OK';saveDoc();renderDoc();}
 
-// ── 인쇄 전용 표 생성 (% 기반 — 인쇄 스케일링에도 비율 유지) ──
+// ── 인쇄 전용 표 생성 (px 고정 + 셀 직접지정 — table-layout:fixed 확실 적용) ──
 function doPrint(){
   if(!DOC)return;
   saveDoc();
-  // 각 열 너비를 %로 (table width:100% 기준). 합계 100%.
-  // px 고정 방식은 인쇄 시 브라우저가 A4 영역에 맞춰 스케일링하면서
-  // 특정 칸(분석완료/성적서)만 늘어나는 문제가 있어 % 비율 고정으로 해결.
-  var PCT=[2.907,5.426,12.791,6.395,6.395,6.395,10.853,4.07,5.039,4.07,6.977,6.589,6.589,6.589,4.07,4.845];
+  // A4 가로 인쇄영역(281mm≈1062px)보다 살짝 작게 잡아 브라우저 스케일업 방지.
+  // 스케일업이 일어나면 칸 비율이 틀어지므로 1056px로 고정.
+  // 각 셀(th/td)에도 직접 width+max-width를 박아 colgroup 미적용 브라우저에서도 고정.
+  var PW=[31,57,135,68,68,68,115,43,53,43,74,70,70,70,43,51];
+  var TOTAL_W=PW.reduce(function(a,b){return a+b;},0); // 1059px
   var HD=['순번','회사명','VESSEL NAME','입항예정','접안예정','이안예정','CARGO','검정','행선지','공장','REMARK','TANK','TANK','TANK','분석<br>완료','성적서<br>발행'];
   var nowrapCols=[3,4,5,7,8,9];
 
-  var h='<div style="text-align:center;font-size:16px;font-weight:700;margin-bottom:8px;">'+esc(DOC.title)+'</div>';
-  // table-layout:fixed + width:100% + colgroup % → 인쇄 영역 전체를 비율대로 채움
-  h+='<table style="border-collapse:collapse;table-layout:fixed;font-family:inherit;width:100%;">';
-  // colgroup만 너비 담당 (셀에는 width 일절 없음 — 충돌 방지)
+  var h='<div style="text-align:center;font-size:16px;font-weight:700;margin-bottom:8px;width:'+TOTAL_W+'px;">'+esc(DOC.title)+'</div>';
+  // table 너비 px 고정 + table-layout:fixed
+  h+='<table style="border-collapse:collapse;table-layout:fixed;font-family:inherit;width:'+TOTAL_W+'px;min-width:'+TOTAL_W+'px;max-width:'+TOTAL_W+'px;">';
+  // colgroup px 고정 (1차 너비 결정)
   h+='<colgroup>';
-  PCT.forEach(function(p){ h+='<col style="width:'+p+'%">'; });
+  PW.forEach(function(w){ h+='<col style="width:'+w+'px">'; });
   h+='</colgroup>';
-  // 헤더 (셀에 width 없음 — colgroup이 결정)
+  // 헤더 — 각 th에 직접 width+max-width (2차 강제 고정)
   h+='<thead><tr>';
-  function thStyle(nowrap){
-    return 'style="border:1px solid #444;padding:3px 2px;font-size:11px;background:#eaf0f6;'+
-      'height:34px;vertical-align:middle;overflow:hidden;'+
-      (nowrap?'white-space:nowrap;':'white-space:normal;word-break:keep-all;')+'"';
-  }
+  function cellW(w){ return 'width:'+w+'px;min-width:'+w+'px;max-width:'+w+'px;'; }
   HD.forEach(function(t,idx){
     if(idx===11){
-      // TANK 헤더만 시각적 병합 (colgroup은 16칸 그대로 — 열 수 일치)
+      // TANK 헤더만 시각적 병합 (너비는 3칸 합)
+      var tankW=PW[11]+PW[12]+PW[13];
       h+='<th colspan="3" style="border:1px solid #444;padding:3px 2px;font-size:11px;background:#eaf0f6;'+
-         'height:34px;vertical-align:middle;white-space:normal;word-break:keep-all;overflow:hidden;">TANK</th>';
+         cellW(tankW)+'height:34px;vertical-align:middle;white-space:normal;word-break:keep-all;overflow:hidden;">TANK</th>';
     } else if(idx===12||idx===13){
-      // 병합됐으므로 건너뜀
+      // 병합으로 건너뜀
     } else {
-      h+='<th '+thStyle(nowrapCols.indexOf(idx)!==-1)+'>'+t+'</th>';
+      var nw=nowrapCols.indexOf(idx)!==-1;
+      h+='<th style="border:1px solid #444;padding:3px 2px;font-size:11px;background:#eaf0f6;'+
+         cellW(PW[idx])+'height:34px;vertical-align:middle;overflow:hidden;'+
+         (nw?'white-space:nowrap;':'white-space:normal;word-break:keep-all;')+'">'+t+'</th>';
     }
   });
   h+='</tr></thead><tbody>';
-  // 데이터 (셀에 width 없음)
+  // 데이터 — 각 td에도 직접 width+max-width
   DOC.rows.forEach(function(r,i){
     var cells=[
       String(i+1),
@@ -247,9 +248,10 @@ function doPrint(){
     cells.forEach(function(c,idx){
       var isComp=(idx===1);
       var isOk=(idx===14||idx===15);
+      var nw=nowrapCols.indexOf(idx)!==-1;
       h+='<td style="border:1px solid #444;padding:3px 2px;font-size:12px;text-align:center;'+
-         'height:34px;vertical-align:middle;overflow:hidden;'+
-         (nowrapCols.indexOf(idx)!==-1?'white-space:nowrap;':'white-space:normal;word-break:keep-all;')+
+         cellW(PW[idx])+'height:34px;vertical-align:middle;overflow:hidden;'+
+         (nw?'white-space:nowrap;':'white-space:normal;word-break:keep-all;')+
          (isComp?'background:#1a2c47;color:#fff;font-weight:700;font-size:10px;':'')+
          (isOk?'color:#1e8449;font-weight:700;':'')+'">'+c+'</td>';
     });
@@ -257,7 +259,7 @@ function doPrint(){
   });
   h+='</tbody></table>';
   h+='<div style="font-size:12px;font-weight:700;margin-top:8px;">*특이사항</div>';
-  h+='<div style="font-size:11px;white-space:pre-wrap;min-height:24px;">'+esc(DOC.note||'')+'</div>';
+  h+='<div style="font-size:11px;white-space:pre-wrap;min-height:24px;width:'+TOTAL_W+'px;">'+esc(DOC.note||'')+'</div>';
 
   document.getElementById('printArea').innerHTML=h;
   window.print();
