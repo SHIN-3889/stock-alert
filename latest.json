@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-21 23:55:52",
+  "updated_at": "2026-06-22 00:01:25",
   "portfolio": {
     "rows": [
       {
@@ -11,7 +11,7 @@
         "value_krw": 3669385.0,
         "pl_krw": 69917.0,
         "pl_pct": 1.9424259362772498,
-        "session": "closed"
+        "session": "market_closed"
       },
       {
         "name": "삼성전자",
@@ -22,7 +22,7 @@
         "value_krw": 34338000.0,
         "pl_krw": 4256748.0,
         "pl_pct": 14.150833881515304,
-        "session": "closed"
+        "session": "market_closed"
       },
       {
         "name": "엔비디아",
@@ -44,7 +44,7 @@
         "value_krw": 64872000.0,
         "pl_krw": 2162400.0,
         "pl_pct": 3.4482758620689653,
-        "session": "closed"
+        "session": "market_closed"
       },
       {
         "name": "현대차",
@@ -55,7 +55,7 @@
         "value_krw": 43523000.0,
         "pl_krw": -2023500.0,
         "pl_pct": -4.442712392829307,
-        "session": "closed"
+        "session": "market_closed"
       }
     ],
     "summary": {
@@ -74,7 +74,7 @@
         "currency": "KRW",
         "price": 2764000.0,
         "day_change_pct": 2.942271880819367,
-        "session": "closed"
+        "session": "market_closed"
       },
       {
         "code": "GOOG",
@@ -101,7 +101,7 @@
         "currency": "KRW",
         "price": 259000.0,
         "day_change_pct": 7.024793388429752,
-        "session": "closed"
+        "session": "market_closed"
       }
     ]
   },
