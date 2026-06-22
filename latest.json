@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-22 08:55:50",
+  "updated_at": "2026-06-22 09:01:25",
   "portfolio": {
     "rows": [
       {
@@ -11,7 +11,7 @@
         "value_krw": 3669385.0,
         "pl_krw": 69917.0,
         "pl_pct": 1.9424259362772498,
-        "session": "market_closed"
+        "session": "open"
       },
       {
         "name": "삼성전자",
@@ -22,7 +22,7 @@
         "value_krw": 34338000.0,
         "pl_krw": 4256748.0,
         "pl_pct": 14.150833881515304,
-        "session": "market_closed"
+        "session": "open"
       },
       {
         "name": "엔비디아",
@@ -30,8 +30,8 @@
         "price": 210.69000244140625,
         "day_change_pct": 2.1279701606428687,
         "shares": 189,
-        "value_krw": 60889388.66438817,
-        "pl_krw": 693600.4544919357,
+        "value_krw": 60936378.88752423,
+        "pl_krw": 694135.7273997217,
         "pl_pct": 1.1522408379693014,
         "session": "closed"
       },
@@ -44,7 +44,7 @@
         "value_krw": 64872000.0,
         "pl_krw": 2162400.0,
         "pl_pct": 3.4482758620689653,
-        "session": "market_closed"
+        "session": "open"
       },
       {
         "name": "현대차",
@@ -55,16 +55,16 @@
         "value_krw": 43523000.0,
         "pl_krw": -2023500.0,
         "pl_pct": -4.442712392829307,
-        "session": "market_closed"
+        "session": "open"
       }
     ],
     "summary": {
-      "total_value_krw": 207291773.66438818,
-      "day_change_krw": 2245180.2463095784,
-      "day_change_pct": 1.094961008072824,
-      "total_pl_krw": 5159165.454491943,
-      "total_pl_pct": 2.552366735967025,
-      "usdkrw": 1529.0999755859375
+      "total_value_krw": 207338763.88752425,
+      "day_change_krw": 2246159.349218577,
+      "day_change_pct": 1.0951927565964752,
+      "total_pl_krw": 5159700.727399737,
+      "total_pl_pct": 2.5520450271912116,
+      "usdkrw": 1530.280029296875
     },
     "watchlist": [
       {
@@ -74,7 +74,7 @@
         "currency": "KRW",
         "price": 2764000.0,
         "day_change_pct": 2.942271880819367,
-        "session": "market_closed"
+        "session": "open"
       },
       {
         "code": "GOOG",
@@ -101,7 +101,7 @@
         "currency": "KRW",
         "price": 259000.0,
         "day_change_pct": 7.024793388429752,
-        "session": "market_closed"
+        "session": "open"
       }
     ]
   },
