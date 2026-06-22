@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-22 19:55:56",
+  "updated_at": "2026-06-22 20:01:28",
   "portfolio": {
     "rows": [
       {
@@ -11,7 +11,7 @@
         "value_krw": 3669385.0,
         "pl_krw": 69917.0,
         "pl_pct": 1.9424259362772498,
-        "session": "nxt"
+        "session": "market_closed"
       },
       {
         "name": "삼성전자",
@@ -22,17 +22,17 @@
         "value_krw": 34289500.0,
         "pl_krw": 4208248.0,
         "pl_pct": 13.989603890157232,
-        "session": "nxt"
+        "session": "market_closed"
       },
       {
         "name": "엔비디아",
         "currency": "USD",
-        "price": 209.56,
-        "day_change_pct": -0.36609138021205256,
+        "price": 209.65,
+        "day_change_pct": -0.32330147862882463,
         "shares": 189,
-        "value_krw": 60897102.32074219,
-        "pl_krw": 369055.73557617515,
-        "pl_pct": 0.6097268231792262,
+        "value_krw": 60916121.45557251,
+        "pl_krw": 395163.010634765,
+        "pl_pct": 0.6529358106486215,
         "session": "pre"
       },
       {
@@ -44,7 +44,7 @@
         "value_krw": 60314000.0,
         "pl_krw": -2395600.0,
         "pl_pct": -3.8201487491548343,
-        "session": "nxt"
+        "session": "market_closed"
       },
       {
         "name": "현대차",
@@ -55,16 +55,16 @@
         "value_krw": 41251000.0,
         "pl_krw": -4295500.0,
         "pl_pct": -9.431021044427123,
-        "session": "nxt"
+        "session": "market_closed"
       }
     ],
     "summary": {
-      "total_value_krw": 200420987.3207422,
-      "day_change_krw": -7102258.201884776,
-      "day_change_pct": -3.422391638102245,
-      "total_pl_krw": -2043879.2644238174,
-      "total_pl_pct": -1.0094982398163723,
-      "usdkrw": 1537.5400390625
+      "total_value_krw": 200440006.45557252,
+      "day_change_krw": -7076081.50531739,
+      "day_change_pct": -3.4098953844248463,
+      "total_pl_krw": -2017771.98936522,
+      "total_pl_pct": -0.9966384126426596,
+      "usdkrw": 1537.3599853515625
     },
     "watchlist": [
       {
@@ -74,15 +74,15 @@
         "currency": "KRW",
         "price": 2919000.0,
         "day_change_pct": 5.6078147612156295,
-        "session": "nxt"
+        "session": "market_closed"
       },
       {
         "code": "GOOG",
         "name": "구글",
         "market": "US",
         "currency": "USD",
-        "price": 360.84,
-        "day_change_pct": -1.1505588428665474,
+        "price": 361.07,
+        "day_change_pct": -1.0875520490905182,
         "session": "pre"
       },
       {
@@ -90,8 +90,8 @@
         "name": "마이크론",
         "market": "US",
         "currency": "USD",
-        "price": 1180.73,
-        "day_change_pct": 2.498372325187723,
+        "price": 1180.74,
+        "day_change_pct": 2.499240418420935,
         "session": "pre"
       },
       {
@@ -101,7 +101,7 @@
         "currency": "KRW",
         "price": 245000.0,
         "day_change_pct": -5.405405405405405,
-        "session": "nxt"
+        "session": "market_closed"
       }
     ]
   },
