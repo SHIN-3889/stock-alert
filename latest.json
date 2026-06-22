@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-22 16:55:59",
+  "updated_at": "2026-06-22 17:01:30",
   "portfolio": {
     "rows": [
       {
@@ -27,13 +27,13 @@
       {
         "name": "엔비디아",
         "currency": "USD",
-        "price": 210.69000244140625,
-        "day_change_pct": 2.1279701606428687,
+        "price": 209.7,
+        "day_change_pct": -0.29952931108259584,
         "shares": 189,
-        "value_krw": 61314672.78690778,
-        "pl_krw": 698444.9317832664,
-        "pl_pct": 1.1522408379693014,
-        "session": "market_closed"
+        "value_krw": 61028939.317346185,
+        "pl_krw": 410351.9524914548,
+        "pl_pct": 0.6769408036871654,
+        "session": "pre"
       },
       {
         "name": "현대모비스",
@@ -59,12 +59,12 @@
       }
     ],
     "summary": {
-      "total_value_krw": 200838557.7869078,
-      "day_change_krw": -5600928.401397884,
-      "day_change_pct": -2.713109059130745,
-      "total_pl_krw": -1714490.0682167113,
-      "total_pl_pct": -0.846440024661093,
-      "usdkrw": 1539.780029296875
+      "total_value_krw": 200552824.3173462,
+      "day_change_krw": -7061848.744730234,
+      "day_change_pct": -3.4014208343640306,
+      "total_pl_krw": -2002583.0475085378,
+      "total_pl_pct": -0.9886593863679815,
+      "usdkrw": 1539.8399658203125
     },
     "watchlist": [
       {
@@ -81,18 +81,18 @@
         "name": "구글",
         "market": "US",
         "currency": "USD",
-        "price": 367.4599914550781,
-        "day_change_pct": 0.9541803441492355,
-        "session": "market_closed"
+        "price": 363.47,
+        "day_change_pct": -0.4300898531667744,
+        "session": "pre"
       },
       {
         "code": "MU",
         "name": "마이크론",
         "market": "US",
         "currency": "USD",
-        "price": 1133.989990234375,
-        "day_change_pct": 5.223159528103827,
-        "session": "market_closed"
+        "price": 1168.0,
+        "day_change_pct": 1.3932896393072576,
+        "session": "pre"
       },
       {
         "code": "010120",
