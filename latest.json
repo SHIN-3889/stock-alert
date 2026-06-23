@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-23 10:31:18",
+  "updated_at": "2026-06-23 10:35:51",
   "portfolio": {
     "rows": [
       {
@@ -30,8 +30,8 @@
         "price": 208.64999389648438,
         "day_change_pct": -0.7987477314294857,
         "shares": 189,
-        "value_krw": 60628321.7800581,
-        "pl_krw": 104604.96732982993,
+        "value_krw": 60639754.61282303,
+        "pl_krw": 104624.69294754416,
         "pl_pct": 0.1728330195805766,
         "session": "market_closed"
       },
@@ -49,22 +49,22 @@
       {
         "name": "현대차",
         "currency": "KRW",
-        "price": 548000.0,
-        "day_change_pct": -5.679862306368331,
+        "price": 547500.0,
+        "day_change_pct": -5.76592082616179,
         "shares": 71,
-        "value_krw": 38908000.0,
-        "pl_krw": -6638500.0,
-        "pl_pct": -14.575214341387374,
+        "value_krw": 38872500.0,
+        "pl_krw": -6674000.0,
+        "pl_pct": -14.65315666406859,
         "session": "open"
       }
     ],
     "summary": {
-      "total_value_krw": 194057607.7800581,
-      "day_change_krw": -6651780.564178973,
-      "day_change_pct": -3.314135237545785,
-      "total_pl_krw": -8402929.0326702,
-      "total_pl_pct": -4.150403414391186,
-      "usdkrw": 1537.4300537109375
+      "total_value_krw": 194033540.61282304,
+      "day_change_krw": -6687372.618956745,
+      "day_change_pct": -3.331677059098765,
+      "total_pl_krw": -8438409.307052463,
+      "total_pl_pct": -4.167693011497053,
+      "usdkrw": 1537.719970703125
     },
     "watchlist": [
       {
@@ -72,8 +72,8 @@
         "name": "SK하이닉스",
         "market": "KR",
         "currency": "KRW",
-        "price": 2864000.0,
-        "day_change_pct": -0.5555555555555556,
+        "price": 2866000.0,
+        "day_change_pct": -0.4861111111111111,
         "session": "open"
       },
       {
@@ -99,8 +99,8 @@
         "name": "Ls일렉트릭",
         "market": "KR",
         "currency": "KRW",
-        "price": 254500.0,
-        "day_change_pct": 3.4552845528455287,
+        "price": 255000.0,
+        "day_change_pct": 3.6585365853658534,
         "session": "open"
       }
     ]
