@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-24 05:55:58",
+  "updated_at": "2026-06-24 06:01:29",
   "portfolio": {
     "rows": [
       {
@@ -30,8 +30,8 @@
         "price": 200.5,
         "day_change_pct": -3.524600024058698,
         "shares": 189,
-        "value_krw": 58081656.92980957,
-        "pl_krw": -2256638.940065913,
+        "value_krw": 58074838.510253906,
+        "pl_krw": -2256374.024912104,
         "pl_pct": -3.7399779154064006,
         "session": "after"
       },
@@ -59,12 +59,12 @@
       }
     ],
     "summary": {
-      "total_value_krw": 182149466.92980957,
-      "day_change_krw": -17578010.845440686,
-      "day_change_pct": -8.800997760168435,
-      "total_pl_krw": -20125648.94006592,
-      "total_pl_pct": -9.949641533273347,
-      "usdkrw": 1532.719970703125
+      "total_value_krw": 182142648.5102539,
+      "day_change_krw": -17577761.74357909,
+      "day_change_pct": -8.801184476458253,
+      "total_pl_krw": -20125384.02491212,
+      "total_pl_pct": -9.949858992875281,
+      "usdkrw": 1532.5400390625
     },
     "watchlist": [
       {
@@ -81,8 +81,8 @@
         "name": "구글",
         "market": "US",
         "currency": "USD",
-        "price": 346.44,
-        "day_change_pct": 0.30127440869902594,
+        "price": 346.95,
+        "day_change_pct": 0.4489295580710257,
         "session": "after"
       },
       {
@@ -90,8 +90,8 @@
         "name": "마이크론",
         "market": "US",
         "currency": "USD",
-        "price": 1058.92,
-        "day_change_pct": -13.939029444990775,
+        "price": 1060.8,
+        "day_change_pct": -13.786237331664546,
         "session": "after"
       },
       {
@@ -128,16 +128,16 @@
       "name": "삼성전자",
       "domestic": [
         {
-          "title": "SK하이닉스도 차세대 HBM 샘플 공급",
-          "link": "https://www.hankyung.com/article/2026061851011"
+          "title": "이재용, 천안 HBM 라인 점검…AI 반도체 기술 리더십 '고삐'",
+          "link": "https://www.yna.co.kr/view/AKR20260623114400003?input=1195m"
         },
         {
-          "title": "[그래픽] 삼성전자-SK하이닉스 HBM4E 비교",
-          "link": "https://www.yna.co.kr/view/GYH20260618001000044?input=1363m"
+          "title": "'최초 또 최초' 삼성전자 HBM4 매출 10억달러 돌파",
+          "link": "https://news.jtbc.co.kr/article/NB12304686?influxDiv=NAVER"
         },
         {
-          "title": "SK하이닉스, 'HBM4E' 12단 샘플 공급…\"핀당 최대 16Gbps 구현\"",
-          "link": "https://www.newsis.com/view/NISX20260618_0003673660"
+          "title": "이재용 회장, 천안 HBM 패키징 생산 현장 점검",
+          "link": "https://www.chosun.com/economy/industry-company/2026/06/23/YCZ7XX4OVRHMHNQ3GACWKD3YDU/?utm_source=naver&utm_medium=referral&utm_campaign=naver-news"
         }
       ],
       "overseas": []
@@ -146,16 +146,16 @@
       "name": "엔비디아",
       "domestic": [
         {
-          "title": "[단독]LG·엔비디아, 내주 AI·로봇 2차 논의…협력 가속화",
-          "link": "https://www.dt.co.kr/article/12068486?ref=naver"
+          "title": "엔비디아·TSMC 사로잡은 슈나이더 일렉트릭…\"다음 타깃은 K반도체\"",
+          "link": "https://view.asiae.co.kr/article/2026062313221103346"
         },
         {
-          "title": "아마존, AI 칩 외부 판매 추진… 엔비디아 의존도 낮추나",
-          "link": "https://www.kmib.co.kr/article/view.asp?arcid=0029991138&code=61141411&cp=nv"
+          "title": "현대차그룹, SDV 조직 새판…테슬라·엔비디아 인재 영입",
+          "link": "http://www.fnnews.com/news/202606231420124144"
         },
         {
-          "title": "'젠슨 감옥' 깨질까…구글, 엔비디아 AI 칩 독점에 도전장",
-          "link": "https://www.newsis.com/view/NISX20260619_0003675959"
+          "title": "반도체지수 두 배 뛰었는데…엔비디아는 30개 종목 중 상승률 꼴찌",
+          "link": "https://www.newsis.com/view/NISX20260623_0003680311"
         }
       ],
       "overseas": []
@@ -164,16 +164,16 @@
       "name": "현대모비스",
       "domestic": [
         {
-          "title": "[단독] 현대차, 피지컬AI 완전독립 … 그룹 지배구조 개편도 '드라이브...",
-          "link": "https://www.mk.co.kr/article/12078688"
+          "title": "현대차그룹, 보스턴다이내믹스 지분 100% 품는다… IPO 채비 본격화",
+          "link": "https://www.donga.com/news/Economy/article/all/20260622/134160338/2"
         },
         {
-          "title": "나스닥 상장 앞…현대차, ‘보스턴 다이내믹스’ 지분 100% 소유한다",
-          "link": "https://www.hani.co.kr/arti/economy/marketing/1264390.html"
+          "title": "‘아틀라스’ 기업 지분 100% 품는 현대차그룹…‘완전 자회사’ 나선 ...",
+          "link": "https://www.khan.co.kr/article/202606230600061"
         },
         {
-          "title": "'현대모비스 램프 인수' 佛 OP...한국회장에 성민석 전 SK온 CCO 선임",
-          "link": "https://www.edaily.co.kr/news/newspath.asp?newsid=03306246645483032"
+          "title": "현대모비스, 임직원 가족과 함께 하는 사회공헌...\"지역사회와 상생\"",
+          "link": "https://www.ajunews.com/view/20260623142442260"
         }
       ],
       "overseas": []
@@ -182,16 +182,16 @@
       "name": "현대차",
       "domestic": [
         {
-          "title": "현대차그룹, 보스턴다이나믹스 지분 100% 품나",
-          "link": "https://daily.hankooki.com/news/articleView.html?idxno=1378304"
+          "title": "보스턴다이나믹스 완전 자회사化…정의선 두 가지 셈법",
+          "link": "https://www.edaily.co.kr/news/newspath.asp?newsid=04503446645484672"
         },
         {
-          "title": "'풋? 콜? 아니면 고' ... 보스턴다이내믹스 지분 3가지 시나리오는",
-          "link": "https://biz.newdaily.co.kr/site/data/html/2026/06/19/2026061900207.html"
+          "title": "현대차그룹, 보스턴다이나믹스 완전히 품나…소프트뱅크 지분 9.65% 풋옵...",
+          "link": "https://www.newsis.com/view/NISX20260622_0003677896"
         },
         {
-          "title": "“아틀라스 양산 본격화시 '1억' 가능”…韓 휴머노이드 공급망 뜬다",
-          "link": "https://www.edaily.co.kr/news/newspath.asp?newsid=04355846645483032"
+          "title": "日 소뱅 보유 보스턴다이내믹스 9% 잔여지분 향방 주목",
+          "link": "http://www.inews24.com/view/1978582"
         }
       ],
       "overseas": []
