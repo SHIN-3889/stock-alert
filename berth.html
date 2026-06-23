@@ -22,7 +22,7 @@
   .title-input { font-size:18px; font-weight:700; border:1px solid #ccd6e0; border-radius:8px; padding:8px 12px; width:260px; }
   /* 화면용 표 */
   table.berth { width:100%; border-collapse:collapse; font-size:13px; table-layout:fixed; }
-  table.berth th, table.berth td { border:1px solid #999; padding:6px 3px; text-align:center; word-break:keep-all; overflow-wrap:break-word; white-space:normal; vertical-align:middle; height:36px; overflow:hidden; }
+  table.berth th, table.berth td { border:1px solid #999; padding:11px 3px; text-align:center; word-break:keep-all; overflow-wrap:break-word; white-space:normal; vertical-align:middle; height:46px; overflow:hidden; }
   table.berth th { background:#eaf0f6; font-size:12px; }
   table.berth td.comp { background:#1a2c47; color:#fff; font-weight:700; font-size:11px; }
   table.berth input.cell { width:100%; border:none; background:transparent; text-align:center; font-size:13px; font-family:inherit; }
@@ -41,11 +41,47 @@
     #printArea table { page-break-inside:auto; }
     #printArea tr { page-break-inside:avoid; }
   }
+  /* 📢 공지사항 배너 + AI 요약 */
+  .notice { display:none; background:#fff8e1; border:1px solid #f0c36d; border-left:6px solid #f39c12; border-radius:10px; padding:14px 16px; margin-bottom:12px; }
+  .notice .notice-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+  .notice .notice-title { font-size:15px; font-weight:700; color:#9a6700; }
+  .notice .notice-body { font-size:13px; line-height:1.7; color:#333; }
+  .notice .notice-body ul { margin:6px 0 0 18px; }
+  .notice .notice-body li { margin-bottom:4px; }
+  .notice .notice-body div { margin-bottom:3px; }
+  .notice .x-btn { border:none; background:transparent; font-size:20px; cursor:pointer; color:#9a6700; line-height:1; padding:0 4px; }
+  .key-row { display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin-bottom:8px; font-size:12px; }
+  .key-row input { flex:1; min-width:160px; border:1px solid #ccd6e0; border-radius:6px; padding:7px 9px; font-size:12px; }
+  .key-status { font-size:11px; }
+  .key-status.ok { color:#1e8449; }
+  .key-status.no { color:#c0392b; }
+  .spin { display:inline-block; width:14px; height:14px; border:2px solid #fff; border-top-color:transparent; border-radius:50%; animation:sp .7s linear infinite; vertical-align:middle; margin-right:6px; }
+  @keyframes sp { to { transform:rotate(360deg); } }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="header no-print"><h1>🚢 출하 선석표</h1><div class="sub">메일 선석표에서 YNCC 항차만 자동 추출 <span style="opacity:.7;font-size:11px;margin-left:6px;">v3.1</span></div></div>
+  <div class="header no-print"><h1>🚢 출하 선석표</h1><div class="sub">메일 선석표에서 YNCC 항차만 자동 추출 <span style="opacity:.7;font-size:11px;margin-left:6px;">v3.2</span></div></div>
+
+  <div class="notice no-print" id="noticeBanner">
+    <div class="notice-head">
+      <div class="notice-title">📢 공지사항</div>
+      <button class="x-btn" onclick="closeNotice()" title="닫기">&times;</button>
+    </div>
+    <div class="notice-body" id="noticeBody"></div>
+  </div>
+
+  <div class="card no-print">
+    <h2>🤖 메일 요약 → 공지 띄우기</h2>
+    <div class="key-row">
+      <span>Gemini API 키:</span>
+      <input type="password" id="apiKey" placeholder="API 키 입력 (최초 1회)">
+      <button class="btn btn-gray" style="margin-top:0;padding:7px 12px;" onclick="saveKey()">저장</button>
+      <span class="key-status" id="keyStatus"></span>
+    </div>
+    <textarea id="mailArea" placeholder="요약할 메일 내용을 여기에 붙여넣으세요 (Ctrl+V)"></textarea>
+    <button class="btn btn-orange" id="sumBtn" onclick="summarizeMail()">🤖 요약해서 공지 띄우기</button>
+  </div>
 
   <div class="card no-print">
     <h2>📋 선석표 붙여넣기</h2>
@@ -219,14 +255,14 @@ function doPrint(){
     if(idx===11){
       // TANK 헤더만 시각적 병합 (너비는 3칸 합)
       var tankW=PW[11]+PW[12]+PW[13];
-      h+='<th colspan="3" style="border:1px solid #444;padding:3px 2px;font-size:11px;background:#eaf0f6;'+
-         cellW(tankW)+'height:34px;vertical-align:middle;white-space:normal;word-break:keep-all;overflow:hidden;">TANK</th>';
+      h+='<th colspan="3" style="border:1px solid #444;padding:6px 2px;font-size:11px;background:#eaf0f6;'+
+         cellW(tankW)+'height:40px;vertical-align:middle;white-space:normal;word-break:keep-all;overflow:hidden;">TANK</th>';
     } else if(idx===12||idx===13){
       // 병합으로 건너뜀
     } else {
       var nw=nowrapCols.indexOf(idx)!==-1;
-      h+='<th style="border:1px solid #444;padding:3px 2px;font-size:11px;background:#eaf0f6;'+
-         cellW(PW[idx])+'height:34px;vertical-align:middle;overflow:hidden;'+
+      h+='<th style="border:1px solid #444;padding:6px 2px;font-size:11px;background:#eaf0f6;'+
+         cellW(PW[idx])+'height:40px;vertical-align:middle;overflow:hidden;'+
          (nw?'white-space:nowrap;':'white-space:normal;word-break:keep-all;')+'">'+t+'</th>';
     }
   });
@@ -249,8 +285,8 @@ function doPrint(){
       var isComp=(idx===1);
       var isOk=(idx===14||idx===15);
       var nw=nowrapCols.indexOf(idx)!==-1;
-      h+='<td style="border:1px solid #444;padding:3px 2px;font-size:12px;text-align:center;'+
-         cellW(PW[idx])+'height:34px;vertical-align:middle;overflow:hidden;'+
+      h+='<td style="border:1px solid #444;padding:6px 2px;font-size:12px;text-align:center;'+
+         cellW(PW[idx])+'height:40px;vertical-align:middle;overflow:hidden;'+
          (nw?'white-space:nowrap;':'white-space:normal;word-break:keep-all;')+
          (isComp?'background:#1a2c47;color:#fff;font-weight:700;font-size:10px;':'')+
          (isOk?'color:#1e8449;font-weight:700;':'')+'">'+c+'</td>';
@@ -265,6 +301,86 @@ function doPrint(){
   window.print();
 }
 
+// ── 📢 메일 요약 공지 (Gemini) ──
+// 더 새 모델로 바꾸려면 아래 한 줄만 수정 (예: 'gemini-3.5-flash')
+var GEMINI_MODEL = 'gemini-2.5-flash';
+
+function refreshKeyStatus(){
+  var k = localStorage.getItem('geminiApiKey') || '';
+  var el = document.getElementById('keyStatus');
+  if(k){ el.textContent='✔ 키 저장됨'; el.className='key-status ok'; }
+  else { el.textContent='✖ 키 미설정'; el.className='key-status no'; }
+}
+function saveKey(){
+  var k = document.getElementById('apiKey').value.trim();
+  if(!k){ alert('API 키를 입력하세요.'); return; }
+  localStorage.setItem('geminiApiKey', k);
+  document.getElementById('apiKey').value='';
+  refreshKeyStatus();
+  alert('API 키를 이 브라우저에만 저장했어요.\n(파일을 공유해도 키는 함께 전달되지 않습니다)');
+}
+function closeNotice(){ document.getElementById('noticeBanner').style.display='none'; }
+
+// 간단 마크다운 -> HTML (굵게, 불릿, 줄바꿈)
+function mdLite(t){
+  t = esc(t);
+  t = t.replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>');
+  var lines = t.split(/\r?\n/), out=[], inUl=false;
+  lines.forEach(function(ln){
+    var m = ln.match(/^\s*[-*\u2022]\s+(.*)$/);
+    if(m){ if(!inUl){ out.push('<ul>'); inUl=true; } out.push('<li>'+m[1]+'</li>'); }
+    else { if(inUl){ out.push('</ul>'); inUl=false; } if(ln.trim()) out.push('<div>'+ln+'</div>'); }
+  });
+  if(inUl) out.push('</ul>');
+  return out.join('');
+}
+
+async function summarizeMail(){
+  var key = localStorage.getItem('geminiApiKey') || '';
+  if(!key){ alert('먼저 Gemini API 키를 입력하고 [저장]을 눌러주세요.'); return; }
+  var mail = document.getElementById('mailArea').value.trim();
+  if(!mail){ alert('요약할 메일 내용을 붙여넣으세요.'); return; }
+
+  var btn = document.getElementById('sumBtn');
+  var orig = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span>요약 중...';
+
+  var prompt = '아래는 회사 업무 메일 내용입니다. 직원들이 빠르게 파악할 수 있도록 간결한 사내 공지사항으로 요약해줘.\n'
+    + '- 첫 줄에 한 줄 제목\n'
+    + '- 그 아래 핵심 항목 3~6개를 "- "로 시작하는 불릿으로\n'
+    + '- 날짜, 대상, 해야 할 조치가 있으면 반드시 포함\n'
+    + '- 인사말, 서명, 군더더기는 모두 제외\n'
+    + '- 한국어로, 사실만 간결하게\n\n'
+    + '=== 메일 내용 ===\n' + mail;
+
+  try {
+    var res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+GEMINI_MODEL+':generateContent', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'x-goog-api-key': key },
+      body: JSON.stringify({ contents:[{ parts:[{ text: prompt }] }] })
+    });
+    var data = await res.json();
+    if(!res.ok){
+      var msg = (data && data.error && data.error.message) ? data.error.message : ('HTTP '+res.status);
+      throw new Error(msg);
+    }
+    var text = '';
+    try { text = data.candidates[0].content.parts.map(function(p){return p.text||'';}).join(''); } catch(e){ text=''; }
+    if(!text.trim()) throw new Error('빈 응답을 받았어요. 메일 내용을 확인하거나 다시 시도해 주세요.');
+
+    document.getElementById('noticeBody').innerHTML = mdLite(text);
+    document.getElementById('noticeBanner').style.display = 'block';
+    window.scrollTo({top:0, behavior:'smooth'});
+  } catch(err){
+    alert('요약 실패: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = orig;
+  }
+}
+
+refreshKeyStatus();
 DOC=loadDoc();
 if(DOC)renderDoc();
 </script>
