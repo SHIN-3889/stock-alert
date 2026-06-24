@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-25 05:55:50",
+  "updated_at": "2026-06-25 06:01:27",
   "portfolio": {
     "rows": [
       {
@@ -27,12 +27,12 @@
       {
         "name": "엔비디아",
         "currency": "USD",
-        "price": 200.59,
-        "day_change_pct": -0.15430562468890108,
+        "price": 200.375,
+        "day_change_pct": -0.26132404181184954,
         "shares": 189,
-        "value_krw": 58464856.58674439,
-        "pl_krw": -2244276.363317862,
-        "pl_pct": -3.696768927937005,
+        "value_krw": 58410522.210250854,
+        "pl_krw": -2307270.284686886,
+        "pl_pct": -3.799990398002781,
         "session": "after"
       },
       {
@@ -59,12 +59,12 @@
       }
     ],
     "summary": {
-      "total_value_krw": 185250711.5867444,
-      "day_change_krw": 2627691.0165417492,
-      "day_change_pct": 1.4388607790722807,
-      "total_pl_krw": -17395241.363317847,
-      "total_pl_pct": -8.584055644873665,
-      "usdkrw": 1542.1400146484375
+      "total_value_krw": 185196377.21025085,
+      "day_change_krw": 2565004.3304534853,
+      "day_change_pct": 1.4044708146292566,
+      "total_pl_krw": -17458235.284686893,
+      "total_pl_pct": -8.614773219199732,
+      "usdkrw": 1542.3599853515625
     },
     "watchlist": [
       {
@@ -81,8 +81,8 @@
         "name": "구글",
         "market": "US",
         "currency": "USD",
-        "price": 344.7,
-        "day_change_pct": -0.9482473989216768,
+        "price": 344.45,
+        "day_change_pct": -1.0200865000248667,
         "session": "after"
       },
       {
@@ -90,8 +90,8 @@
         "name": "마이크론",
         "market": "US",
         "currency": "USD",
-        "price": 1195.4146,
-        "day_change_pct": 12.245639360874334,
+        "price": 1198.89,
+        "day_change_pct": 12.571968397707902,
         "session": "after"
       },
       {
@@ -118,8 +118,8 @@
           "link": "https://www.sidae.com/article/2026050813412451821"
         },
         {
-          "title": "美 장기채 ETF 가격 추락…개미들 '눈물의 손절'",
-          "link": "http://www.fnnews.com/news/202605251800063358"
+          "title": "\"배당금 쏠쏠\" … 이란전쟁에 '커버드콜' 재조명, 수익률은 '제각각' [마...",
+          "link": "https://biz.newdaily.co.kr/site/data/html/2026/04/16/2026041600068.html"
         }
       ],
       "overseas": []
@@ -132,12 +132,12 @@
           "link": "https://www.yna.co.kr/view/AKR20260623114400003?input=1195m"
         },
         {
-          "title": "'최초 또 최초' 삼성전자 HBM4 매출 10억달러 돌파",
-          "link": "https://news.jtbc.co.kr/article/NB12304686?influxDiv=NAVER"
+          "title": "천안캠퍼스 찾은 이재용…HBM 생산라인 직접 점검",
+          "link": "https://www.hankyung.com/article/2026062335691"
         },
         {
-          "title": "이재용 회장, 천안 HBM 패키징 생산 현장 점검",
-          "link": "https://www.chosun.com/economy/industry-company/2026/06/23/YCZ7XX4OVRHMHNQ3GACWKD3YDU/?utm_source=naver&utm_medium=referral&utm_campaign=naver-news"
+          "title": "삼성전자, HBM 생산능력 절반 HBM4에 배치",
+          "link": "https://www.chosun.com/economy/tech_it/2026/06/24/Q4SZW36SVRDUZGWS6CSPWU2RGU/?utm_source=naver&utm_medium=referral&utm_campaign=naver-news"
         }
       ],
       "overseas": []
@@ -146,16 +146,16 @@
       "name": "엔비디아",
       "domestic": [
         {
-          "title": "엔비디아·TSMC 사로잡은 슈나이더 일렉트릭…\"다음 타깃은 K반도체\"",
-          "link": "https://view.asiae.co.kr/article/2026062313221103346"
+          "title": "\"中 암시장서 엔비디아 제품 가격 2배 이상 급등\"",
+          "link": "https://www.newsis.com/view/NISX20260624_0003682231"
         },
         {
-          "title": "현대차그룹, SDV 조직 새판…테슬라·엔비디아 인재 영입",
-          "link": "http://www.fnnews.com/news/202606231420124144"
+          "title": "“엔비디아 없이 美 추월”…'GPU 없이 100% CPU' 中 슈퍼컴, 세계 1위 탈...",
+          "link": "https://www.etnews.com/20260624000207"
         },
         {
-          "title": "반도체지수 두 배 뛰었는데…엔비디아는 30개 종목 중 상승률 꼴찌",
-          "link": "https://www.newsis.com/view/NISX20260623_0003680311"
+          "title": "엔비디아 없이 美 압도했다...‘CPU100%’ 中 슈퍼컴퓨터, 세계 1위 탈환",
+          "link": "https://www.mk.co.kr/article/12081667"
         }
       ],
       "overseas": []
@@ -164,16 +164,16 @@
       "name": "현대모비스",
       "domestic": [
         {
-          "title": "현대차그룹, 보스턴다이내믹스 지분 100% 품는다… IPO 채비 본격화",
-          "link": "https://www.donga.com/news/Economy/article/all/20260622/134160338/2"
+          "title": "한화證 “현대모비스 로봇 매출 5년간 3.8조원 전망…목표가 37% ↑”",
+          "link": "https://biz.chosun.com/stock/stock_general/2026/06/24/3UQX3TDMPZFHVC7MYMNWGK7ZCA/?utm_source=naver&utm_medium=original&utm_campaign=biz"
         },
         {
-          "title": "‘아틀라스’ 기업 지분 100% 품는 현대차그룹…‘완전 자회사’ 나선 ...",
-          "link": "https://www.khan.co.kr/article/202606230600061"
+          "title": "[아침밥] 한화증권 \"현대모비스 로봇 사업 확대, 주가 상승 요소\"",
+          "link": "https://www.sidae.com/article/2026062407525075551"
         },
         {
-          "title": "현대모비스, 임직원 가족과 함께 하는 사회공헌...\"지역사회와 상생\"",
-          "link": "https://www.ajunews.com/view/20260623142442260"
+          "title": "한화證 \"현대모비스, 로봇 사업 가치 본격 반영…목표가↑\"",
+          "link": "https://www.ajunews.com/view/20260624080743147"
         }
       ],
       "overseas": []
@@ -190,8 +190,8 @@
           "link": "https://www.newsis.com/view/NISX20260622_0003677896"
         },
         {
-          "title": "日 소뱅 보유 보스턴다이내믹스 9% 잔여지분 향방 주목",
-          "link": "http://www.inews24.com/view/1978582"
+          "title": "현대차 보스턴다이나믹스 임원 미국 정부 비공개회의 참여, 현지 로봇 ...",
+          "link": "https://www.businesspost.co.kr/BP?command=article_view&num=440710"
         }
       ],
       "overseas": []
