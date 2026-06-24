@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-24 16:55:54",
+  "updated_at": "2026-06-24 17:01:25",
   "portfolio": {
     "rows": [
       {
@@ -27,13 +27,13 @@
       {
         "name": "엔비디아",
         "currency": "USD",
-        "price": 200.0399932861328,
-        "day_change_pct": -3.7459433243677016,
+        "price": 201.02,
+        "day_change_pct": 0.05973120955699579,
         "shares": 189,
-        "value_krw": 58379785.84802839,
-        "pl_krw": -2407686.6694923565,
-        "pl_pct": -3.960827074687781,
-        "session": "market_closed"
+        "value_krw": 58663890.072795406,
+        "pl_krw": -2121612.1820178255,
+        "pl_pct": -3.490325987805455,
+        "session": "pre"
       },
       {
         "name": "현대모비스",
@@ -59,12 +59,12 @@
       }
     ],
     "summary": {
-      "total_value_krw": 185165640.8480284,
-      "day_change_krw": 446064.19598677754,
-      "day_change_pct": 0.24148182021174386,
-      "total_pl_krw": -17558651.669492364,
-      "total_pl_pct": -8.661345639164004,
-      "usdkrw": 1544.1300048828125
+      "total_value_krw": 185449745.0727954,
+      "day_change_krw": 2753064.7334032953,
+      "day_change_pct": 1.5069046291859163,
+      "total_pl_krw": -17272577.182017833,
+      "total_pl_pct": -8.520313397114181,
+      "usdkrw": 1544.0799560546875
     },
     "watchlist": [
       {
@@ -81,18 +81,18 @@
         "name": "구글",
         "market": "US",
         "currency": "USD",
-        "price": 346.0799865722656,
-        "day_change_pct": 0.19704335684011345,
-        "session": "market_closed"
+        "price": 347.99,
+        "day_change_pct": -0.0028448284036909225,
+        "session": "pre"
       },
       {
         "code": "MU",
         "name": "마이크론",
         "market": "US",
         "currency": "USD",
-        "price": 1051.77001953125,
-        "day_change_pct": -14.52012552268313,
-        "session": "market_closed"
+        "price": 1069.4,
+        "day_change_pct": 0.41326811009252795,
+        "session": "pre"
       },
       {
         "code": "010120",
