@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-26 05:55:48",
+  "updated_at": "2026-06-26 06:01:20",
   "portfolio": {
     "rows": [
       {
@@ -27,12 +27,12 @@
       {
         "name": "엔비디아",
         "currency": "USD",
-        "price": 195.155,
-        "day_change_pct": -2.7567735907816875,
+        "price": 195.37,
+        "day_change_pct": -2.6496418561195867,
         "shares": 189,
-        "value_krw": 56979229.92013916,
-        "pl_krw": -3835014.1426098645,
-        "pl_pct": -6.306111671227612,
+        "value_krw": 57047908.02031494,
+        "pl_krw": -3772631.2720605433,
+        "pl_pct": -6.202890201161836,
         "session": "after"
       },
       {
@@ -59,12 +59,12 @@
       }
     ],
     "summary": {
-      "total_value_krw": 185541779.92013916,
-      "day_change_krw": 161375.94830688834,
-      "day_change_pct": 0.08705124427898468,
-      "total_pl_krw": -17209284.142609864,
-      "total_pl_pct": -8.487888446930073,
-      "usdkrw": 1544.81005859375
+      "total_value_krw": 185610458.02031493,
+      "day_change_krw": 223988.59216856956,
+      "day_change_pct": 0.12082251356288164,
+      "total_pl_krw": -17146901.272060543,
+      "total_pl_pct": -8.456857660754382,
+      "usdkrw": 1544.969970703125
     },
     "watchlist": [
       {
@@ -81,8 +81,8 @@
         "name": "구글",
         "market": "US",
         "currency": "USD",
-        "price": 341.8782,
-        "day_change_pct": -0.03561403508772148,
+        "price": 341.75,
+        "day_change_pct": -0.07309941520467836,
         "session": "after"
       },
       {
@@ -90,8 +90,8 @@
         "name": "마이크론",
         "market": "US",
         "currency": "USD",
-        "price": 1205.75,
-        "day_change_pct": -0.6762990543345775,
+        "price": 1206.12,
+        "day_change_pct": -0.6458202906191427,
         "session": "after"
       },
       {
@@ -128,16 +128,16 @@
       "name": "삼성전자",
       "domestic": [
         {
-          "title": "이재용, 천안 HBM 라인 점검…AI 반도체 기술 리더십 '고삐'",
-          "link": "https://www.yna.co.kr/view/AKR20260623114400003?input=1195m"
+          "title": "삼성, D램·낸드 1위 수성…HBM은 SK하이닉스 58%",
+          "link": "https://www.sedaily.com/article/20060173?ref=naver"
         },
         {
-          "title": "천안캠퍼스 찾은 이재용…HBM 생산라인 직접 점검",
-          "link": "https://www.hankyung.com/article/2026062335691"
+          "title": "삼성전자, D램·낸드 점유율 1위… SK하이닉스는 HBM 58% 차지",
+          "link": "https://biz.chosun.com/it-science/ict/2026/06/25/RCG5WKWJYFDSPDYC6E44ZJPHS4/?utm_source=naver&utm_medium=original&utm_campaign=biz"
         },
         {
-          "title": "삼성전자, HBM 생산능력 절반 HBM4에 배치",
-          "link": "https://www.chosun.com/economy/tech_it/2026/06/24/Q4SZW36SVRDUZGWS6CSPWU2RGU/?utm_source=naver&utm_medium=referral&utm_campaign=naver-news"
+          "title": "\"HBM 호황에 취해선 안 된다\"… 추미애 경기준비위, AI 시대 반도체 초격...",
+          "link": "https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0003246257&CMPT_CD=P0010&utm_source=naver&utm_medium=newsearch&utm_campaign=naver_news"
         }
       ],
       "overseas": []
@@ -150,12 +150,12 @@
           "link": "https://www.newsis.com/view/NISX20260624_0003682231"
         },
         {
-          "title": "“엔비디아 없이 美 추월”…'GPU 없이 100% CPU' 中 슈퍼컴, 세계 1위 탈...",
-          "link": "https://www.etnews.com/20260624000207"
+          "title": "엔비디아·테슬라 만난 'K-피지컬 AI'…실리콘밸리서 협력 논의",
+          "link": "https://www.hankyung.com/article/202606256485i"
         },
         {
-          "title": "엔비디아 없이 美 압도했다...‘CPU100%’ 中 슈퍼컴퓨터, 세계 1위 탈환",
-          "link": "https://www.mk.co.kr/article/12081667"
+          "title": "오픈AI, 첫 자체 AI칩 '할라피뇨' 공개",
+          "link": "https://www.mk.co.kr/article/12083143"
         }
       ],
       "overseas": []
@@ -164,16 +164,16 @@
       "name": "현대모비스",
       "domestic": [
         {
+          "title": "현대차 노조, 파업권 확보…30일 파업 수위 논의",
+          "link": "https://biz.heraldcorp.com/article/10788525?ref=naver"
+        },
+        {
+          "title": "[단독] 현대모비스 램프 사업 매각 5부능선 넘어…생산 노조, 사측과 합...",
+          "link": "https://news.tf.co.kr/read/economy/2336348.htm"
+        },
+        {
           "title": "한화證 “현대모비스 로봇 매출 5년간 3.8조원 전망…목표가 37% ↑”",
           "link": "https://biz.chosun.com/stock/stock_general/2026/06/24/3UQX3TDMPZFHVC7MYMNWGK7ZCA/?utm_source=naver&utm_medium=original&utm_campaign=biz"
-        },
-        {
-          "title": "[아침밥] 한화증권 \"현대모비스 로봇 사업 확대, 주가 상승 요소\"",
-          "link": "https://www.sidae.com/article/2026062407525075551"
-        },
-        {
-          "title": "한화證 \"현대모비스, 로봇 사업 가치 본격 반영…목표가↑\"",
-          "link": "https://www.ajunews.com/view/20260624080743147"
         }
       ],
       "overseas": []
@@ -182,16 +182,16 @@
       "name": "현대차",
       "domestic": [
         {
-          "title": "보스턴다이나믹스 완전 자회사化…정의선 두 가지 셈법",
-          "link": "https://www.edaily.co.kr/news/newspath.asp?newsid=04503446645484672"
+          "title": "보스턴다이나믹스, 美 월섬에 로봇·AI 센터 신설",
+          "link": "https://www.edaily.co.kr/news/newspath.asp?newsid=06976566645485328"
         },
         {
-          "title": "현대차그룹, 보스턴다이나믹스 완전히 품나…소프트뱅크 지분 9.65% 풋옵...",
-          "link": "https://www.newsis.com/view/NISX20260622_0003677896"
+          "title": "보스턴다이나믹스, 美 AI·첨단 로봇 센터 설립에 1억 달러 투자",
+          "link": "https://www.newsis.com/view/NISX20260625_0003684206"
         },
         {
-          "title": "현대차 보스턴다이나믹스 임원 미국 정부 비공개회의 참여, 현지 로봇 ...",
-          "link": "https://www.businesspost.co.kr/BP?command=article_view&num=440710"
+          "title": "보스턴다이나믹스, 美 로봇·AI 센터 조성에 1억 달러 투자",
+          "link": "https://www.news1.kr/industry/auto-industry/6208792"
         }
       ],
       "overseas": []
