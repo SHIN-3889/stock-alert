@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-27 05:55:52",
+  "updated_at": "2026-06-27 06:01:21",
   "portfolio": {
     "rows": [
       {
@@ -27,12 +27,12 @@
       {
         "name": "엔비디아",
         "currency": "USD",
-        "price": 192.3999,
-        "day_change_pct": -1.232084188911709,
+        "price": 192.25,
+        "day_change_pct": -1.3090349075975416,
         "shares": 189,
-        "value_krw": 55817369.00665181,
-        "pl_krw": -4609896.238265179,
-        "pl_pct": -7.628834797637904,
+        "value_krw": 55774608.75,
+        "pl_krw": -4653444.599999994,
+        "pl_pct": -7.700801766767484,
         "session": "after"
       },
       {
@@ -59,12 +59,12 @@
       }
     ],
     "summary": {
-      "total_value_krw": 178132934.00665182,
-      "day_change_krw": -6943280.930262268,
-      "day_change_pct": -3.751579279179113,
-      "total_pl_krw": -24231151.238265157,
-      "total_pl_pct": -11.974037393512148,
-      "usdkrw": 1534.97998046875
+      "total_value_krw": 178090173.75,
+      "day_change_krw": -6986778.25,
+      "day_change_pct": -3.7750666274210096,
+      "total_pl_krw": -24274699.599999994,
+      "total_pl_pct": -11.995510484675721,
+      "usdkrw": 1535.0
     },
     "watchlist": [
       {
@@ -81,8 +81,8 @@
         "name": "구글",
         "market": "US",
         "currency": "USD",
-        "price": 335.7,
-        "day_change_pct": -1.7904160084254883,
+        "price": 335.9,
+        "day_change_pct": -1.7319056813527633,
         "session": "after"
       },
       {
@@ -90,8 +90,8 @@
         "name": "마이크론",
         "market": "US",
         "currency": "USD",
-        "price": 1129.5,
-        "day_change_pct": -4.944917704768588,
+        "price": 1130.0,
+        "day_change_pct": -4.9028393150849965,
         "session": "after"
       },
       {
@@ -128,16 +128,16 @@
       "name": "삼성전자",
       "domestic": [
         {
-          "title": "삼성, D램·낸드 1위 수성…HBM은 SK하이닉스 58%",
-          "link": "https://www.sedaily.com/article/20060173?ref=naver"
+          "title": "삼성전자 \"2030년까지 HBM 에너지효율 2.5배↑…최적 AI인프라 제공\"",
+          "link": "https://www.newsis.com/view/NISX20260626_0003685602"
         },
         {
-          "title": "삼성전자, D램·낸드 점유율 1위… SK하이닉스는 HBM 58% 차지",
-          "link": "https://biz.chosun.com/it-science/ict/2026/06/25/RCG5WKWJYFDSPDYC6E44ZJPHS4/?utm_source=naver&utm_medium=original&utm_campaign=biz"
+          "title": "삼성전자 “HBM 에너지 효율 2.5배 높일 것… 퇴직률 한 자릿수로 하락...",
+          "link": "https://biz.chosun.com/it-science/ict/2026/06/26/UVT2GZUMRZFNHG6T332IJ25NCM/?utm_source=naver&utm_medium=original&utm_campaign=biz"
         },
         {
-          "title": "\"HBM 호황에 취해선 안 된다\"… 추미애 경기준비위, AI 시대 반도체 초격...",
-          "link": "https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0003246257&CMPT_CD=P0010&utm_source=naver&utm_medium=newsearch&utm_campaign=naver_news"
+          "title": "한미반도체, HBM 이어 시스템반도체도 넘본다…FC 본더 3.5 공개",
+          "link": "https://www.bloter.net/news/articleView.html?idxno=666603"
         }
       ],
       "overseas": []
@@ -146,16 +146,16 @@
       "name": "엔비디아",
       "domestic": [
         {
-          "title": "\"中 암시장서 엔비디아 제품 가격 2배 이상 급등\"",
-          "link": "https://www.newsis.com/view/NISX20260624_0003682231"
+          "title": "LG전자 류재철 \"엔비디아와 피지컬AI 협력 구체화\"",
+          "link": "https://imnews.imbc.com/news/2026/econo/article/6833139_36932.html"
         },
         {
-          "title": "엔비디아·테슬라 만난 'K-피지컬 AI'…실리콘밸리서 협력 논의",
-          "link": "https://www.hankyung.com/article/202606256485i"
+          "title": "류재철 LG전자 사장 \"엔비디아와 차세대 피지컬 AI 생태계 기반 마련\"",
+          "link": "https://www.newsis.com/view/NISX20260626_0003685252"
         },
         {
-          "title": "오픈AI, 첫 자체 AI칩 '할라피뇨' 공개",
-          "link": "https://www.mk.co.kr/article/12083143"
+          "title": "류재철 “엔비디아와 피지컬AI 협력 구체화…차세대 AI생태계 구축”",
+          "link": "https://www.segye.com/newsView/20260626508983?OutUrl=naver"
         }
       ],
       "overseas": []
@@ -172,8 +172,8 @@
           "link": "https://news.tf.co.kr/read/economy/2336348.htm"
         },
         {
-          "title": "한화證 “현대모비스 로봇 매출 5년간 3.8조원 전망…목표가 37% ↑”",
-          "link": "https://biz.chosun.com/stock/stock_general/2026/06/24/3UQX3TDMPZFHVC7MYMNWGK7ZCA/?utm_source=naver&utm_medium=original&utm_campaign=biz"
+          "title": "에이텀, 현대모비스 공급사 선정에 MLCC 호황까지…하반기 턴어라운드 ...",
+          "link": "https://www.mt.co.kr/stock/2026/06/26/2026062609010959543"
         }
       ],
       "overseas": []
