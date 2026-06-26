@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-26 22:25:50",
+  "updated_at": "2026-06-26 22:31:16",
   "portfolio": {
     "rows": [
       {
@@ -27,13 +27,13 @@
       {
         "name": "엔비디아",
         "currency": "USD",
-        "price": 192.82,
-        "day_change_pct": -1.016427104722802,
+        "price": 191.9199981689453,
+        "day_change_pct": -1.4784403650178124,
         "shares": 189,
-        "value_krw": 56005938.22913086,
-        "pl_krw": -4493371.35361816,
-        "pl_pct": -7.4271448461279945,
-        "session": "pre"
+        "value_krw": 55728200.8537719,
+        "pl_krw": -4753390.781165838,
+        "pl_pct": -7.859235599911028,
+        "session": "open"
       },
       {
         "name": "현대모비스",
@@ -59,12 +59,12 @@
       }
     ],
     "summary": {
-      "total_value_krw": 178321503.22913086,
-      "day_change_krw": -6822090.06012696,
-      "day_change_pct": -3.6847562148523902,
-      "total_pl_krw": -24114626.353618145,
-      "total_pl_pct": -11.912214683871886,
-      "usdkrw": 1536.81005859375
+      "total_value_krw": 178043765.8537719,
+      "day_change_krw": -7083256.998913676,
+      "day_change_pct": -3.8261604868729306,
+      "total_pl_krw": -24374645.78116584,
+      "total_pl_pct": -12.041713786948192,
+      "usdkrw": 1536.3599853515625
     },
     "watchlist": [
       {
@@ -81,18 +81,18 @@
         "name": "구글",
         "market": "US",
         "currency": "USD",
-        "price": 340.02,
-        "day_change_pct": -0.5265929436545583,
-        "session": "pre"
+        "price": 337.6400146484375,
+        "day_change_pct": -1.2228615503956741,
+        "session": "open"
       },
       {
         "code": "MU",
         "name": "마이크론",
         "market": "US",
         "currency": "USD",
-        "price": 1134.16,
-        "day_change_pct": -4.5527471129175145,
-        "session": "pre"
+        "price": 1148.010009765625,
+        "day_change_pct": -3.387174896838511,
+        "session": "open"
       },
       {
         "code": "010120",
