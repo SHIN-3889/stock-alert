@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-27 22:01:22",
+  "updated_at": "2026-06-27 22:05:47",
   "portfolio": {
     "rows": [
       {
@@ -81,8 +81,8 @@
         "name": "구글",
         "market": "US",
         "currency": "USD",
-        "price": 334.69,
-        "day_change_pct": -2.085893160142764,
+        "price": 334.69000244140625,
+        "day_change_pct": -2.0858924459053725,
         "session": "closed"
       },
       {
