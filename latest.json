@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-27 12:55:46",
+  "updated_at": "2026-06-27 13:01:19",
   "portfolio": {
     "rows": [
       {
@@ -33,7 +33,7 @@
         "value_krw": 55855840.59585571,
         "pl_krw": -4572212.754144281,
         "pl_pct": -7.566374391810992,
-        "session": "market_closed"
+        "session": "closed"
       },
       {
         "name": "현대모비스",
@@ -83,7 +83,7 @@
         "currency": "USD",
         "price": 334.69000244140625,
         "day_change_pct": -2.0858924459053725,
-        "session": "market_closed"
+        "session": "closed"
       },
       {
         "code": "MU",
@@ -92,7 +92,7 @@
         "currency": "USD",
         "price": 1132.3299560546875,
         "day_change_pct": -4.7067577174554325,
-        "session": "market_closed"
+        "session": "closed"
       },
       {
         "code": "010120",
