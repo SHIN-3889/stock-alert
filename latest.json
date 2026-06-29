@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-30 05:55:44",
+  "updated_at": "2026-06-30 06:01:18",
   "portfolio": {
     "rows": [
       {
@@ -16,12 +16,12 @@
       {
         "name": "엔비디아",
         "currency": "USD",
-        "price": 194.845,
-        "day_change_pct": 1.065926655946889,
+        "price": 194.8702,
+        "day_change_pct": 1.0789978733336891,
         "shares": 189,
-        "value_krw": 56729261.31914795,
-        "pl_krw": -3914521.3807690367,
-        "pl_pct": -6.454942628066634,
+        "value_krw": 56543607.02559946,
+        "pl_krw": -3893893.9743590355,
+        "pl_pct": -6.442844111575198,
         "session": "after"
       },
       {
@@ -48,12 +48,12 @@
       }
     ],
     "summary": {
-      "total_value_krw": 176559261.31914794,
-      "day_change_krw": 1812314.722014159,
-      "day_change_pct": 1.0371080910456862,
-      "total_pl_krw": -22421873.380769044,
-      "total_pl_pct": -11.268341300085268,
-      "usdkrw": 1540.47998046875
+      "total_value_krw": 176373607.02559945,
+      "day_change_krw": 1817591.577032566,
+      "day_change_pct": 1.0412655057242193,
+      "total_pl_krw": -22401245.974359035,
+      "total_pl_pct": -11.26965792517211,
+      "usdkrw": 1535.239990234375
     },
     "watchlist": [
       {
@@ -70,8 +70,8 @@
         "name": "구글",
         "market": "US",
         "currency": "USD",
-        "price": 350.76,
-        "day_change_pct": 4.350775208212168,
+        "price": 350.55,
+        "day_change_pct": 4.288300402665007,
         "session": "after"
       },
       {
@@ -79,8 +79,8 @@
         "name": "마이크론",
         "market": "US",
         "currency": "USD",
-        "price": 1138.83,
-        "day_change_pct": 0.4825647754889706,
+        "price": 1138.22,
+        "day_change_pct": 0.428742550474668,
         "session": "after"
       },
       {
@@ -95,38 +95,20 @@
     ]
   },
   "news": {
-    "476550": {
-      "name": "TIGER 미국30년국채커버드콜액티브(H)",
-      "domestic": [
-        {
-          "title": "美장기국채 ETF서 발 빼는 투자자들",
-          "link": "https://www.sedaily.com/article/20053225?ref=naver"
-        },
-        {
-          "title": "'불장'서 커버드콜 ETF 성적표도 갈렸다… 관건은 '기초자산'",
-          "link": "https://www.sidae.com/article/2026050813412451821"
-        },
-        {
-          "title": "\"배당금 쏠쏠\" … 이란전쟁에 '커버드콜' 재조명, 수익률은 '제각각' [마...",
-          "link": "https://biz.newdaily.co.kr/site/data/html/2026/04/16/2026041600068.html"
-        }
-      ],
-      "overseas": []
-    },
     "005930": {
       "name": "삼성전자",
       "domestic": [
         {
-          "title": "[하이닉스 역전사]④ 'AI 프리미엄' 계속될까…HBM 정점론 시험대",
-          "link": "https://www.bloter.net/news/articleView.html?idxno=666692"
+          "title": "이재용 삼성전자 회장 \"광주에 새 반도체 단지 계획…충청선 HBM 패키징...",
+          "link": "https://www.newsis.com/view/NISX20260629_0003687969"
         },
         {
-          "title": "메모리 값 못버틴 애플, 中 CXMT 도입 추진",
-          "link": "https://www.chosun.com/economy/tech_it/2026/06/28/Z3UYF43KHVH7RAMLXBTORCV4FI/?utm_source=naver&utm_medium=referral&utm_campaign=naver-news"
+          "title": "이재용 \"광주에 반도체 생산단지 검토, 충청권에 HBM 팹 투자\"",
+          "link": "https://news.tf.co.kr/read/economy/2337617.htm"
         },
         {
-          "title": "반도체 '피크아웃 논쟁' ⋯HBM 성장 여부가 관건",
-          "link": "https://www.ilemonde.com/news/articleView.html?idxno=30241"
+          "title": "이재용 “새 반도체 단지는 광주…HBM은 천안·온양, 로봇은 구미”",
+          "link": "https://www.donga.com/news/Economy/article/all/20260629/134202355/2"
         }
       ],
       "overseas": []
@@ -135,16 +117,16 @@
       "name": "엔비디아",
       "domestic": [
         {
+          "title": "앤트로픽-엔비디아-MS 삼각동맹 결실…애저시스템서 클로드 구동",
+          "link": "https://news.kbs.co.kr/news/pc/view/view.do?ncd=8597845&ref=A"
+        },
+        {
           "title": "\"한국 경찰에 밥 사고 싶다\" K치안에 반한 젠슨 황 딸",
           "link": "https://www.mk.co.kr/article/12085100"
         },
         {
-          "title": "이원택, 엔비디아 젠슨 황에 만남 요청…“새만금 투자 제안”",
-          "link": "https://news.kbs.co.kr/news/pc/view/view.do?ncd=8596694&ref=A"
-        },
-        {
-          "title": "젠슨 황 가족 \"한국 경찰에 밥 사고 싶다\"…K-치안에 '감탄'",
-          "link": "https://www.hankyung.com/article/2026062817267"
+          "title": "3년 전엔 적자였는데…엔비디아·구글 빼면 美서 제일 돈 잘 버는 '이 기...",
+          "link": "https://www.edaily.co.kr/news/newspath.asp?newsid=04450966645486640"
         }
       ],
       "overseas": []
@@ -153,16 +135,16 @@
       "name": "현대모비스",
       "domestic": [
         {
-          "title": "현대모비스, 협력사 맞춤형 SW인재 육성 팔걷어",
-          "link": "https://www.mk.co.kr/article/12084944"
+          "title": "현대모비스, 3년간 협력사에 구매대금 157조원 지급…\"회사 성장 협력사...",
+          "link": "https://www.newsis.com/view/NISX20260629_0003687066"
         },
         {
-          "title": "[KBL Y리그] 폭풍처럼 몰아친 현대모비스, 다재다능함 뽐낸 윤지민",
-          "link": "https://basketkorea.com/news/newsview.php?ncode=1065579502676542"
+          "title": "현대모비스, 지난 3년간 협력사에 157조 지급…R＆D엔 5조 투자",
+          "link": "https://www.yna.co.kr/view/AKR20260629029400003?input=1195m"
         },
         {
-          "title": "[화보] 2026 KBL Y-리그(주말리그) U14 울산현대모비스와 KT Y2 결승 화보...",
-          "link": "https://m.sports.naver.com/general/article/065/0000299114"
+          "title": "현대모비스 ‘R&D 경영’…누적 특허 1만건 돌파",
+          "link": "https://www.sedaily.com/article/20061333?ref=naver"
         }
       ],
       "overseas": []
@@ -179,8 +161,8 @@
           "link": "https://www.newsis.com/view/NISX20260625_0003684206"
         },
         {
-          "title": "보스턴다이나믹스, 美 로봇·AI 센터 조성에 1억 달러 투자",
-          "link": "https://www.news1.kr/industry/auto-industry/6208792"
+          "title": "경제개혁연대 \"정의선 회장, 보스턴다이나믹스 추가 지분 인수 자제해야...",
+          "link": "https://www.ngonews.kr/news/articleView.html?idxno=231890"
         }
       ],
       "overseas": []
