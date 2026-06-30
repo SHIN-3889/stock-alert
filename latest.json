@@ -1,16 +1,16 @@
 {
-  "updated_at": "2026-06-30 09:31:07",
+  "updated_at": "2026-06-30 09:35:43",
   "portfolio": {
     "rows": [
       {
         "name": "삼성전자",
         "currency": "KRW",
-        "price": 329000.0,
-        "day_change_pct": -0.7541478129713424,
+        "price": 330000.0,
+        "day_change_pct": -0.4524886877828055,
         "shares": 97,
-        "value_krw": 31913000.0,
-        "pl_krw": 1831748.0,
-        "pl_pct": 6.089334313611681,
+        "value_krw": 32010000.0,
+        "pl_krw": 1928748.0,
+        "pl_pct": 6.411794296327826,
         "session": "open"
       },
       {
@@ -27,12 +27,12 @@
       {
         "name": "현대모비스",
         "currency": "KRW",
-        "price": 502000.0,
-        "day_change_pct": -0.9861932938856016,
+        "price": 507000.0,
+        "day_change_pct": 0.0,
         "shares": 106,
-        "value_krw": 53212000.0,
-        "pl_krw": -9497600.0,
-        "pl_pct": -15.145368492224476,
+        "value_krw": 53742000.0,
+        "pl_krw": -8967600.0,
+        "pl_pct": -14.300202839756594,
         "session": "open"
       },
       {
@@ -48,11 +48,11 @@
       }
     ],
     "summary": {
-      "total_value_krw": 177206151.4046436,
-      "day_change_krw": -491678.59823846817,
-      "day_change_pct": -0.27669364236495947,
-      "total_pl_krw": -21881276.56558466,
-      "total_pl_pct": -10.990787710039033,
+      "total_value_krw": 177833151.4046436,
+      "day_change_krw": 135321.40176153183,
+      "day_change_pct": 0.07615253476046223,
+      "total_pl_krw": -21254276.56558466,
+      "total_pl_pct": -10.675850696490512,
       "usdkrw": 1543.1800537109375
     },
     "watchlist": [
@@ -61,8 +61,8 @@
         "name": "SK하이닉스",
         "market": "KR",
         "currency": "KRW",
-        "price": 2630000.0,
-        "day_change_pct": -1.7556966753828913,
+        "price": 2639000.0,
+        "day_change_pct": -1.419499439671274,
         "session": "open"
       },
       {
@@ -88,8 +88,8 @@
         "name": "Ls일렉트릭",
         "market": "KR",
         "currency": "KRW",
-        "price": 225000.0,
-        "day_change_pct": 0.6711409395973155,
+        "price": 229500.0,
+        "day_change_pct": 2.684563758389262,
         "session": "open"
       }
     ]
