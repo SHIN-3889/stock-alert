@@ -1,16 +1,16 @@
 {
-  "updated_at": "2026-06-30 11:31:05",
+  "updated_at": "2026-06-30 11:35:43",
   "portfolio": {
     "rows": [
       {
         "name": "삼성전자",
         "currency": "KRW",
-        "price": 328500.0,
-        "day_change_pct": -0.904977375565611,
+        "price": 329000.0,
+        "day_change_pct": -0.7541478129713424,
         "shares": 97,
-        "value_krw": 31864500.0,
-        "pl_krw": 1783248.0,
-        "pl_pct": 5.928104322253609,
+        "value_krw": 31913000.0,
+        "pl_krw": 1831748.0,
+        "pl_pct": 6.089334313611681,
         "session": "open"
       },
       {
@@ -27,32 +27,32 @@
       {
         "name": "현대모비스",
         "currency": "KRW",
-        "price": 502000.0,
-        "day_change_pct": -0.9861932938856016,
+        "price": 499000.0,
+        "day_change_pct": -1.5779092702169626,
         "shares": 106,
-        "value_krw": 53212000.0,
-        "pl_krw": -9497600.0,
-        "pl_pct": -15.145368492224476,
+        "value_krw": 52894000.0,
+        "pl_krw": -9815600.0,
+        "pl_pct": -15.652467883705206,
         "session": "open"
       },
       {
         "name": "현대차",
         "currency": "KRW",
-        "price": 497000.0,
-        "day_change_pct": -0.7984031936127743,
+        "price": 494000.0,
+        "day_change_pct": -1.3972055888223553,
         "shares": 71,
-        "value_krw": 35287000.0,
-        "pl_krw": -10259500.0,
-        "pl_pct": -22.525331254871396,
+        "value_krw": 35074000.0,
+        "pl_krw": -10472500.0,
+        "pl_pct": -22.992985190958688,
         "session": "open"
       }
     ],
     "summary": {
-      "total_value_krw": 177228651.4046436,
-      "day_change_krw": -469178.59823846817,
-      "day_change_pct": -0.264031698209741,
-      "total_pl_krw": -21858776.56558466,
-      "total_pl_pct": -10.979486142567197,
+      "total_value_krw": 176746151.4046436,
+      "day_change_krw": -951678.5982384682,
+      "day_change_pct": -0.5355600562049817,
+      "total_pl_krw": -22341276.56558466,
+      "total_pl_pct": -11.221841978352142,
       "usdkrw": 1543.1800537109375
     },
     "watchlist": [
@@ -61,8 +61,8 @@
         "name": "SK하이닉스",
         "market": "KR",
         "currency": "KRW",
-        "price": 2612000.0,
-        "day_change_pct": -2.428091146806126,
+        "price": 2607000.0,
+        "day_change_pct": -2.6148673888681357,
         "session": "open"
       },
       {
@@ -88,8 +88,8 @@
         "name": "Ls일렉트릭",
         "market": "KR",
         "currency": "KRW",
-        "price": 233000.0,
-        "day_change_pct": 4.250559284116331,
+        "price": 232500.0,
+        "day_change_pct": 4.026845637583892,
         "session": "open"
       }
     ]
