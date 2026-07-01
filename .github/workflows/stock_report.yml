@@ -1,26 +1,22 @@
 name: 주식 리포트 자동 실행
-
 on:
   workflow_dispatch:        # cron-job.org 또는 수동 실행
-
 permissions:
   contents: write
-
 jobs:
   send-report:
     runs-on: ubuntu-latest
     steps:
       - name: 코드 가져오기
         uses: actions/checkout@v4
-
+        with:
+          fetch-depth: 0
       - name: 파이썬 설치
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
       - name: 라이브러리 설치
         run: pip install -r requirements.txt
-
       - name: 리포트 실행
         env:
           NAVER_CLIENT_ID:     ${{ secrets.NAVER_CLIENT_ID }}
@@ -30,7 +26,6 @@ jobs:
           GMAIL_APP_PASSWORD:  ${{ secrets.GMAIL_APP_PASSWORD }}
           MAIL_TO:             ${{ secrets.MAIL_TO }}
         run: python main.py
-
       - name: latest.json 저장소에 커밋
         run: |
           git config --local user.email "actions@github.com"
@@ -40,5 +35,6 @@ jobs:
             echo "변경 사항 없음"
           else
             git commit -m "Update latest.json [skip ci]"
+            git pull --rebase origin main
             git push
           fi
