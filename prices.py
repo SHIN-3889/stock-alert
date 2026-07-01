@@ -6,6 +6,7 @@
 """
 
 import yfinance as yf
+import requests
 from datetime import datetime, timezone, timedelta
 
 # ── 미국 동부시간(ET) 기준 정규장 시간 ────────────────────────────
@@ -116,8 +117,69 @@ def _kr_session_label() -> str:
         return 'market_closed'
 
 
+def _get_kr_price_naver(code: str) -> dict:
+    """네이버 증권 통합시세(KRX+NXT) 조회.
+    정규장엔 KRX 실시간, 애프터마켓(15:30~20:00)엔 NXT 가격을 통합시세로 사용.
+    실패 시 None 반환(→ yfinance 폴백).
+    """
+    try:
+        url = f"https://polling.finance.naver.com/api/realtime/domestic/stock/{code}"
+        headers = {"User-Agent": "Mozilla/5.0", "Referer": "https://m.stock.naver.com/"}
+        r = requests.get(url, headers=headers, timeout=8)
+        if r.status_code != 200:
+            return None
+        data = r.json()
+        datas = data.get("datas", [])
+        if not datas:
+            return None
+        d = datas[0]
+        krx_price = float((d.get("closePriceRaw") or "0").replace(",", "") or 0)
+        if krx_price <= 0:
+            return None
+        prev_close = krx_price - float((d.get("compareToPreviousClosePriceRaw") or "0").replace(",", "") or 0)
+
+        # NXT 애프터/프리마켓 정보
+        over = d.get("overMarketPriceInfo") or {}
+        over_price_str = (over.get("overPrice") or "").replace(",", "")
+        over_session = over.get("tradingSessionType")
+
+        # 통합시세: NXT 시간외 가격이 있으면 최신 거래가로 사용
+        price = krx_price
+        session = _kr_session_label()  # 기본은 시각 기반
+        if over_price_str:
+            try:
+                over_price = float(over_price_str)
+                if over_price > 0:
+                    price = over_price
+                    if over_session == "PRE_MARKET":
+                        session = "pre"
+                    elif over_session == "AFTER_MARKET":
+                        session = "nxt"
+            except ValueError:
+                pass
+
+        change = price - prev_close
+        change_pct = (change / prev_close * 100) if prev_close else 0.0
+        return {
+            "price":      round(price, 2),
+            "prev_close": round(prev_close, 2),
+            "change":     round(change, 2),
+            "change_pct": round(change_pct, 2),
+            "currency":   "KRW",
+            "session":    session,
+            "source":     "naver_integrated",
+        }
+    except Exception:
+        return None
+
+
 def get_kr_price(code: str) -> dict:
-    """국내 종목/ETF — 코드 뒤에 .KS 붙여 yfinance 로 조회."""
+    """국내 종목/ETF — 네이버 통합시세(KRX+NXT) 우선, 실패 시 yfinance(.KS) 폴백."""
+    # 1) 네이버 통합시세 시도 (KRX+NXT, 애프터마켓 반영)
+    naver = _get_kr_price_naver(code)
+    if naver:
+        return naver
+    # 2) 폴백: yfinance (KRX만)
     result = _yf_price(f"{code}.KS", "KRW", extended_hours=False)
     result["session"] = _kr_session_label()
     return result
