@@ -320,7 +320,7 @@
   const SESSION_KEY   = 'gunho_unlocked';
   const TOKEN_KEY     = 'gh_token_stock_alert';
   const DASHBOARD_DATE    = '2026-06-16 14:00';
-  const DASHBOARD_VERSION = 'v70.0';
+  const DASHBOARD_VERSION = 'v70.1';
   const CRONJOB_KEY   = 'cronjob_api_key';
   const REPO_OWNER    = 'SHIN-3889';
   const REPO_NAME     = 'stock-alert';
@@ -586,6 +586,13 @@
     reBtn.style.cssText = 'width:100%;margin-top:10px;padding:9px;background:#f0f4ff;color:#1967d2;border:1px solid #1967d2;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;';
     reBtn.textContent = '🔄 다시 평가하기 (저장 결과 삭제 후 재분석)';
     tmp.appendChild(reBtn);
+    // "🔼 결과 접기" 버튼 추가 (저장은 유지, 화면에서만 접기)
+    var foldBtn = document.createElement('button');
+    foldBtn.setAttribute('data-code', code);
+    foldBtn.setAttribute('onclick', 'toggleEvalFold(this)');
+    foldBtn.style.cssText = 'width:100%;margin-top:6px;padding:9px;background:#f5f5f5;color:#666;border:1px solid #ddd;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;';
+    foldBtn.textContent = '🔼 결과 접기 (저장은 유지)';
+    tmp.appendChild(foldBtn);
     return tmp.innerHTML;
   }
 
@@ -613,6 +620,42 @@
     if (resultDiv) {
       resultDiv.style.display = 'none';
       resultDiv.innerHTML = '';
+    }
+  }
+
+  // 평가 결과 접기/펼치기 (저장은 유지, 화면 표시만 토글)
+  var EVAL_FOLD_KEY = 'eval_folded_';
+  function isEvalFolded(code) {
+    try { return localStorage.getItem(EVAL_FOLD_KEY + code) === '1'; } catch(e) { return false; }
+  }
+  function setEvalFolded(code, folded) {
+    try {
+      if (folded) localStorage.setItem(EVAL_FOLD_KEY + code, '1');
+      else localStorage.removeItem(EVAL_FOLD_KEY + code);
+    } catch(e) {}
+  }
+  function toggleEvalFold(btn) {
+    var code = btn.getAttribute('data-code');
+    var resultDiv = document.getElementById('eval-' + code);
+    if (!resultDiv) return;
+    var folded = !isEvalFolded(code);
+    setEvalFolded(code, folded);
+    applyEvalFold(code);
+  }
+  // 접힘 상태 적용: 접히면 결과 내용은 숨기고 "펼치기" 버튼만 표시
+  function applyEvalFold(code) {
+    var resultDiv = document.getElementById('eval-' + code);
+    if (!resultDiv) return;
+    var folded = isEvalFolded(code);
+    // 결과 내부의 모든 직계 자식을 접기 버튼 빼고 숨김
+    var foldBtn = resultDiv.querySelector('button[onclick*="toggleEvalFold"]');
+    Array.prototype.forEach.call(resultDiv.children, function(child) {
+      if (child === foldBtn) return;
+      child.style.display = folded ? 'none' : '';
+    });
+    if (foldBtn) {
+      foldBtn.textContent = folded ? '🔽 저장된 AI 평가 펼치기' : '🔼 결과 접기 (저장은 유지)';
+      foldBtn.style.marginTop = folded ? '0' : '6px';
     }
   }
 
@@ -1330,6 +1373,14 @@
     if (!addingWatch) html += '<button class="add-btn" onclick="startAddWatch()"><span style="font-size:16px;">+</span> 관심 종목 추가</button>';
 
     document.getElementById('content').innerHTML = html;
+    // 저장된 AI 평가 결과의 접힘 상태 복원
+    try {
+      var evalDivs = document.querySelectorAll('.eval-result[id^="eval-"]');
+      Array.prototype.forEach.call(evalDivs, function(div) {
+        var code = div.id.replace('eval-', '');
+        if (typeof applyEvalFold === 'function') applyEvalFold(code);
+      });
+    } catch(e) {}
   }
 
   document.addEventListener('DOMContentLoaded', function() {
