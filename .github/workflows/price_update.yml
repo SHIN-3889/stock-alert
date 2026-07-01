@@ -1,8 +1,6 @@
 name: 시세 업데이트 (15분마다)
 on:
-  schedule:
-    - cron: '*/15 * * * *'   # 15분마다 (UTC 기준, 24시간)
-  workflow_dispatch:          # 수동 실행도 가능
+  workflow_dispatch:   # cron-job.org에서 호출 또는 수동 실행
 permissions:
   contents: write
 jobs:
