@@ -24,9 +24,25 @@
   .i-diet { background:#eafaf1; }
   .m-title { font-size:17px; font-weight:700; margin-bottom:3px; }
   .m-desc { font-size:12px; color:#888; }
+  /* 잠금 화면 (PC 전용) */
+  #lock-screen { position:fixed; inset:0; background:#1d1d1f; z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 20px; }
+  .lock-icon { font-size:52px; margin-bottom:14px; }
+  .lock-title { color:#fff; font-size:20px; font-weight:600; margin-bottom:6px; }
+  .lock-sub { color:#86868b; font-size:13px; margin-bottom:26px; }
+  #lock-input { width:100%; max-width:300px; padding:13px 15px; font-size:16px; border:1px solid #424245; border-radius:12px; background:#2c2c2e; color:#fff; margin-bottom:10px; text-align:center; }
+  #lock-btn { width:100%; max-width:300px; padding:13px; background:#2980b9; color:#fff; border:none; border-radius:12px; font-size:15px; font-weight:600; cursor:pointer; }
+  .lock-err { color:#ff453a; font-size:13px; margin-top:10px; min-height:18px; }
 </style>
 </head>
 <body>
+<div id="lock-screen" style="display:none;">
+  <div class="lock-icon">🔒</div>
+  <div class="lock-title">SHIN 워크스페이스</div>
+  <div class="lock-sub">PC에서는 비밀번호가 필요해요</div>
+  <input type="password" id="lock-input" placeholder="비밀번호" autocomplete="off" />
+  <button id="lock-btn" onclick="checkLockPassword()">잠금 해제</button>
+  <div class="lock-err" id="lock-err"></div>
+</div>
 <div class="box">
   <h1>워크스페이스</h1>
   <div class="sub">이동할 페이지를 선택하세요</div>
@@ -51,5 +67,43 @@
     <div class="m-desc">칼로리 분석 · 체중 변화 · 목표 달성률</div></div>
   </a>
 </div>
+<script>
+// PC 전용 비밀번호 잠금 (모바일은 잠금 없음, 주식대시보드/분석스케줄과 동일 비번)
+var LOCK_PASSWORD_HASH = 'be3a0200cadbc7519c69077a3855d83f7c58469ee1fd7a3524587b297a658f88';
+var LOCK_SESSION_KEY = 'ncc_lab_unlocked';
+function isPcDevice(){
+  var isTouchOnly = ('ontouchstart' in window) && !window.matchMedia('(pointer:fine)').matches;
+  return window.innerWidth >= 900 && !isTouchOnly;
+}
+async function sha256Hex(text){
+  var buf = new TextEncoder().encode(text);
+  var hash = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(hash)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+}
+async function checkLockPassword(){
+  var input = document.getElementById('lock-input');
+  var err = document.getElementById('lock-err');
+  if (!input.value) { err.textContent = '비밀번호를 입력하세요'; return; }
+  var hash = await sha256Hex(input.value);
+  if (hash === LOCK_PASSWORD_HASH) {
+    sessionStorage.setItem(LOCK_SESSION_KEY, '1');
+    document.getElementById('lock-screen').style.display = 'none';
+    err.textContent = '';
+  } else {
+    err.textContent = '비밀번호가 틀렸어요';
+    input.value = '';
+    input.focus();
+  }
+}
+function checkLockOnLoad(){
+  if (!isPcDevice()) return;                                   // 모바일은 잠금 없음
+  if (sessionStorage.getItem(LOCK_SESSION_KEY) === '1') return; // 브라우저 켜있는 동안 유지
+  document.getElementById('lock-screen').style.display = 'flex';
+  var inp = document.getElementById('lock-input');
+  inp.addEventListener('keydown', function(e){ if (e.key === 'Enter') checkLockPassword(); });
+  inp.focus();
+}
+checkLockOnLoad();
+</script>
 </body>
 </html>
